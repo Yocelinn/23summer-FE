@@ -174,7 +174,7 @@ export default {
                 message: '欢迎回到!',
                 type: 'success',
               });
-              this.$router.push('/documentadmin');
+              this.$router.push('/home');
             }
           } else {
             this.loading = false;
