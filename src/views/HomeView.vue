@@ -15,14 +15,23 @@
        <img v-if="showImg" src="../assets/home-img.png" class="home-img" alt="img loading..."> 
       </transition>
     </div>
+  <div class="home">
+    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
+    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
+    <Notification/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import Notification from '@/components/NotificationView.vue'
 
 export default {
   name: 'HomeView',
+  
+  components: {
+    Notification
+  },
 
   data() {
     return{

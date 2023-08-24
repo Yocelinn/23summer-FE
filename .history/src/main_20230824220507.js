@@ -7,14 +7,11 @@ import DevUI from 'vue-devui';
 import 'vue-devui/style.css';
 import '@devui-design/icons/icomoon/devui-icon.css';
 import { ThemeServiceInit, infinityTheme } from 'devui-theme';
-import * as icons from '@element-plus/icons'
+
+ThemeServiceInit({ infinityTheme }, 'infinityTheme');
 import App from './App.vue'
 
-const app=createApp(App)
-Object.keys(icons).forEach(key => {
-    app.component(key, icons[key])
-})
-ThemeServiceInit({ infinityTheme }, 'infinityTheme');
+const app = createApp(App)
 
 app.use(store)
 app.use(router)
