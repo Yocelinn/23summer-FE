@@ -1,21 +1,13 @@
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import App from './App.vue'
 import router from './router'
 import store from './store'
 
-import 'element-plus/dist/index.css'
+createApp(App).use(store).use(router).mount('#app')
 
-import * as icons from '@element-plus/icons'
-
-const app=createApp(App)
-Object.keys(icons).forEach(key => {
-    app.component(key, icons[key])
-})
-
-
-
-app.use(store).use(router).use(ElementPlus).mount('#app')
-
-
+app.use(store)
+app.use(router)
+app.use(ElementPlus)
+app.use(DevUI)
+app.mount('#app')
