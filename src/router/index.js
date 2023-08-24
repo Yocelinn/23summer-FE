@@ -21,7 +21,7 @@ const routes = [
       },
       {
         path: 'documentadmin',
-        component: () => import('@/documentadmin/DAdmin.vue'),
+        component: () => import('@/documentadmin/DAdminHome.vue'),
         meta: {
           title: '文档管理',
         },

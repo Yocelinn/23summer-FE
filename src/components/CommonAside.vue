@@ -1,6 +1,6 @@
 <template>
     <el-row class="tac">
-      <el-col :span="12">
+      <el-col :span="24">
         <el-menu
           active-text-color="#ffd04b"
           background-color="#545c64"

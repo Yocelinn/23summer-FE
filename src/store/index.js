@@ -5,12 +5,4 @@ export default createStore({
     isLoggedIn: false,
     user: undefined,
   },
-  getters: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
 })
