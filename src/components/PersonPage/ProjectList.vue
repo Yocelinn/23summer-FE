@@ -1,7 +1,7 @@
 <template>
     <div class="flex-container">
         <span>
-            <h3>所有项目</h3>
+            <h2>所有项目</h2>
         </span>
         <div class="align-right">
             <!--            <span>-->
@@ -89,6 +89,7 @@ el-table {
 .flex-container {
     display: flex;
     align-items: center;
+    padding: 15px;
 }
 
 .align-right {

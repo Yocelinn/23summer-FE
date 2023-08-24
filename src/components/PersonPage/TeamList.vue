@@ -23,7 +23,8 @@
 <style>
 .center-container {
     display: flex;
-    justify-content: center;
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
     height: 100vh;
 }
 
