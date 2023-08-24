@@ -15,10 +15,11 @@
        <img v-if="showImg" src="../assets/home-img.png" class="home-img" alt="img loading..."> 
       </transition>
     </div>
-  <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <Notification/>
+    <div class="home">
+      <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
+      <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
+      <Notification/>
+    </div>
   </div>
 </template>
 
