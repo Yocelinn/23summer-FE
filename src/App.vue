@@ -1,9 +1,22 @@
 <template>
+  <div>
+    <header-top></header-top>
+    <router-view/>
+  </div>
   <nav>
 
   </nav>
   <router-view/>
 </template>
+
+<script>
+import HeaderTop from './components/HeaderTop.vue';
+export default {
+  components: {
+    HeaderTop
+  }
+}
+</script>
 
 <style>
 #app {
@@ -12,26 +25,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  height: 100%;
 }
 
-/*nav {*/
-/*  padding: 30px;*/
-/*}*/
-
-/*nav a {*/
-/*  font-weight: bold;*/
-/*  color: #2c3e50;*/
-/*}*/
-
-/*nav a.router-link-exact-active {*/
-/*  color: #42b983;*/
-/* }*/
 </style>
-
-<script>
-
-export default {
-    components: {
-    },
-};
-</script>
