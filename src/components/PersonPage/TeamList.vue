@@ -54,10 +54,16 @@
 
 .custom-button:focus {
     outline: none; /* 去掉按钮的焦点样式 */
+    color: #9E9CF4;
 }
 
 .custom-button:active {
-    background-color: #f2f6fc; /* 点击时的背景色 */
+    background-color: rgba(158, 156, 244, 0.32); /* 点击时的背景色 */
+    color: #9E9CF4;
+}
+
+.custom-button:hover {
+    color: #9E9CF4; /* 修改悬停状态下的文字颜色 */
 }
 
 .custom-button {
