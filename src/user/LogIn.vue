@@ -174,6 +174,9 @@ export default {
                 message: '欢迎回到!',
                 type: 'success',
               });
+              this.$store.commit('login', r.data);
+              console.log(this.$store.state.user);
+              console.log(this.$store.state.user.token);
               this.$router.push('/home');
             }
           } else {
