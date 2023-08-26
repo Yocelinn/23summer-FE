@@ -1,11 +1,9 @@
 <template>
   <el-row class="tac">
-    <el-col :span="24">
       <el-menu
         active-text-color="#ffd04b"
         background-color="#545c64"
         class="el-menu-vertical-demo"
-        default-active="2"
         text-color="#fff"
         @open="handleOpen"
         @close="handleClose"
@@ -30,7 +28,6 @@
           </el-menu-item>
         </router-link>
       </el-menu>
-    </el-col>
   </el-row>
 </template>
 
@@ -47,6 +44,11 @@ import {
 <style>
 .el-menu {
   height: 100vh;
+  width: 200px;
+}
+
+.el-col{
+  margin-top: 0px;
 }
 
 .el-menu h2{
@@ -74,5 +76,8 @@ color: #fff
 .el-menu-item span {
   font-size: 16px;
   margin-left: 6px;
+}
+.el-menu-vertical-demo{
+  padding-top: 0;
 }
 </style>
