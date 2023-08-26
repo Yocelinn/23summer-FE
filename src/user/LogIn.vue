@@ -177,12 +177,6 @@ export default {
                 type: 'success',
               });
               this.$store.commit('login', r.data);
-<<<<<<< HEAD
-              window.localStorage.setItem('token', this.$store.state.user.token)
-              console.log(this.$store.state.user);
-              console.log(this.$store.state.user.token);
-              this.$router.push('/home');
-=======
               //这里打印 this指向的是你现在这个组件对象
               //你在控制台直接执行this是不可以的
               // 其实你在其他页面里面写 this.$store.state.user 一样可以访问到
@@ -192,7 +186,7 @@ export default {
               // 所以现在在控制台里面可以获取到数据
               // 知识点：作用域
               console.log(this.$store.state.user);
-              this.$router.push('/documentadmin');
+              this.$router.push('/person');
               }
               else if(r.data.code==10101)
               {
@@ -208,7 +202,6 @@ export default {
                 message: '其他错误',
                 type: 'other',
               });
->>>>>>> ignister
             }
           } else {
             this.loading = false;

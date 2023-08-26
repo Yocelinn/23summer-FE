@@ -16,10 +16,4 @@ export default createStore({
       state.isLoggedIn = false;
     },
   },
-<<<<<<< HEAD
-=======
-  plugins: [
-    createPersistedState(),
-  ],
->>>>>>> ignister
 })
