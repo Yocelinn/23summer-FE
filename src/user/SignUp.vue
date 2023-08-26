@@ -209,12 +209,31 @@ export default {
               }
               this.$refs['signupForm'].validate((isValid) => {});
             } else {
+              if(r.data.code==200)
+              {
               ElNotification({
                 title: '注册成功',
                 message: '欢迎加入！',
                 type: 'success',
               });
               this.$router.push('/login');
+              }
+              else if(r.data.code==10001)
+              {
+                ElNotification({
+                title: '注册失败',
+                message: '用户已存在！',
+                type: 'existed',
+              });
+              }
+              else if(r.data.code==10003)
+              {
+                ElNotification({
+                title: '注册失败',
+                message: '不合法的邮箱！',
+                type: 'emailfail',
+              });
+              }
             }
           } else {
             this.loading = false;
