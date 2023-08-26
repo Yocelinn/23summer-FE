@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 
 export default createStore({
   state: {
@@ -28,5 +29,15 @@ export default createStore({
       state.user.token = data.token;
     },
   },
+<<<<<<< HEAD
 
 })
+=======
+<<<<<<< HEAD
+=======
+  plugins: [
+    createPersistedState(),
+  ],
+>>>>>>> ignister
+})
+>>>>>>> bb0f53b9943b6d78fe0edb74cd98baf94f919438
