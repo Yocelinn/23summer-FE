@@ -15,7 +15,19 @@
                     </el-input>
             </div>
             <div class="item bell">
+<<<<<<< HEAD
+                <el-icon size="20" @click="toggleNotiList" ><Bell /></el-icon>
+            </div>
+           
+            <div class="noti-column"  :class="{ 'slide-out': showNotiList }">
+                <transition name="slide">
+                    <div v-if="showNotiList" class="noti-list-wrapper" >
+                        <Notification/>
+                    </div>
+                </transition>
+=======
                 <el-icon size="20"><Bell /></el-icon>
+>>>>>>> ignister
             </div>
             <div class="item avatar">
                 <el-popover
@@ -66,6 +78,11 @@
 <script>
 
 import { Search } from '@element-plus/icons-vue'
+<<<<<<< HEAD
+import Notification from './NotificationView.vue'
+=======
+
+>>>>>>> ignister
 export default {
     setup() {
         return {
@@ -74,14 +91,22 @@ export default {
     },
     data() {
         return {
+<<<<<<< HEAD
             input2: '',
             showNotiList:false,
         }
+    },
+    components:{
+        Notification
     },
     methods:{
         toggleNotiList() {
         this.showNotiList = !this.showNotiList; // 切换列表显示状态
         },
+=======
+            input2: ''
+        }
+>>>>>>> ignister
     }
 }
 </script>
@@ -91,7 +116,11 @@ export default {
     width: 40px
 }
 .header-container {
+<<<<<<< HEAD
+    height:10vh;
     line-height:50px;
+=======
+>>>>>>> ignister
     display: flex;
     justify-content: space-between;
     padding-bottom: 10px;
@@ -109,7 +138,11 @@ export default {
 
 }
 .bell {
+<<<<<<< HEAD
+    line-height: 60px;
+=======
     line-height: 40px;
+>>>>>>> ignister
     align-items: center;
     justify-content: center;
 }
@@ -118,6 +151,7 @@ export default {
     align-items: center;
     justify-content: center;
 }
+<<<<<<< HEAD
 .noti-list-wrapper {
   
   position: fixed;
@@ -150,4 +184,6 @@ export default {
   transform: translateX(0); /* 向右滑出时恢复初始位置 */
 }
 
+=======
+>>>>>>> ignister
 </style>

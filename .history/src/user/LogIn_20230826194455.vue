@@ -4,6 +4,7 @@ import { ElNotification } from 'element-plus'
 </script>
 
 <template>
+<<<<<<< HEAD
   <div class="container main-container">
     <el-row class="card-wrapper">
       <el-col :span="10" :offset="7">
@@ -11,7 +12,21 @@ import { ElNotification } from 'element-plus'
           <template #header>
             <div class="header">
               <div class="header-welcome">
-                欢迎回来！
+                欢迎回到绿色心情！
+=======
+    <div class="container main-container">
+      <el-row class="card-wrapper">
+        <el-col :span="10" :offset="7">
+          <el-card class="card" body-style="padding: 0">
+            <template #header>
+              <div class="header">
+                <div class="header-welcome">
+                  欢迎回来！
+                </div>
+                <div class="header-title">
+                  <h1>登录</h1>
+                </div>
+>>>>>>> bb0f53b9943b6d78fe0edb74cd98baf94f919438
               </div>
               <div class="header-title">
                 <h1>登录</h1>
