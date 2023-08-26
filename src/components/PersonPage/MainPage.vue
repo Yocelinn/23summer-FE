@@ -1,30 +1,30 @@
 <!--整体作为模板不需要大改，10行和22行分别放该页面vue文件和聊天页面vue文件-->
 <template>
-    <section>
-        <d-splitter class="splitter-border" :orientation="orientation" :splitBarSize="splitBarSize">
-            <template v-slot:DSplitterPane>
-                <d-splitter-pane
-                    minSize="30%"
-                >
-                    <div class="pane-content">
-                        <ProjectList/>
-                    </div>
-                </d-splitter-pane>
-                <d-splitter-pane
-                    collapseDirection="after"
-                    :size="size"
-                    :minSize="minSize"
-                    :collapsible="false"
-                    @sizeChange="sizeChange"
-                    @collapsedChange="collapsedChange"
-                >
-                    <div class="pane-content">
-                        <TeamList/>
-                    </div>
-                </d-splitter-pane>
-            </template>
-        </d-splitter>
-    </section>
+    <div class="body">
+        <section>
+            <d-splitter class="splitter-border" :orientation="orientation" :splitBarSize="splitBarSize">
+                <template v-slot:DSplitterPane>
+                    <d-splitter-pane minSize="40%">
+                        <div class="pane-content">
+                            <ProjectList/>
+                        </div>
+                    </d-splitter-pane>
+                    <d-splitter-pane
+                            collapseDirection="after"
+                            :size="size"
+                            :minSize="minSize"
+                            :collapsible="false"
+                            @sizeChange="sizeChange"
+                            @collapsedChange="collapsedChange"
+                    >
+                        <div class="pane-content">
+                            <TeamList/>
+                        </div>
+                    </d-splitter-pane>
+                </template>
+            </d-splitter>
+        </section>
+    </div>
 </template>
 
 <script>
@@ -33,7 +33,7 @@ import ProjectList from "@/components/PersonPage/ProjectList.vue";
 import TeamList from "@/components/PersonPage/TeamList.vue";
 
 export default defineComponent({
-    name: 'DSplitterDemoBasic',
+    name: 'MainPage',
     components: {TeamList, ProjectList},
     setup() {
         const orientation = ref('horizontal');
@@ -67,8 +67,15 @@ export default defineComponent({
     padding: 0 5px;
 }
 
+.body {
+    height: calc(100vh - 70px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
 .splitter-border {
     border: 1px solid #dfe1e6;
-    height: 724px;
+    height: 100%;
 }
 </style>

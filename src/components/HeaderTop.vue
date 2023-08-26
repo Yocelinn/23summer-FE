@@ -52,7 +52,7 @@
 
                             <p class="demo-rich-content__desc" style="margin: 0">
                                 所在企业：123456
-                                <button style="float: right;">切换企业</button>
+                                <button style="float: right;">进入企业</button>
                             </p>
                         </div>
                     </template>
@@ -89,6 +89,7 @@ export default {
     display: flex;
     justify-content: space-between;
     padding-bottom: 10px;
+    height: 40px;
 }
 .left-container {
     margin-left: 20px;

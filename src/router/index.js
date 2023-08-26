@@ -39,7 +39,13 @@ const routes = [
     path: '/test',
     name: 'test',
     component: () => import('@/components/test/testUI.vue')
-  }
+  },
+  {
+    path: '/teamCenter',
+    name: 'teamCenter',
+    component: () => import('@/components/TeamPage/TeamCenter.vue')
+  },
+
 ]
 
 const router = createRouter({
