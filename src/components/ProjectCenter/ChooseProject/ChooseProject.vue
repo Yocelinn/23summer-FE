@@ -402,10 +402,8 @@ export default defineComponent( {
             }
             visible.value = false;
             // 发送POST请求
-            axios.post('http://81.70.184.77:8000/team/create',{
+            axios.post('/team/create',{
                 teamName: valueBasic1.value // 使用输入框的值作为参数
-            }, {
-                headers: { Authorization: user.token } // 使用输入框的值作为参数
             })
                 .then((response) => {
                     // 处理响应
@@ -436,9 +434,7 @@ export default defineComponent( {
         };
 
         const fetchTeamList = () => {
-            axios.get('http://81.70.184.77:8000/team/all', {
-                headers: { Authorization: user.token }
-            }) // 从后端获取团队列表数据
+            axios.get('/team/all') // 从后端获取团队列表数据
                 .then((response) => {
                     if (response.data.code === 200) {
                         tableData.value = response.data.res; // 将获取的数据赋值给tableData
@@ -464,9 +460,7 @@ export default defineComponent( {
             }
         };
         const fetchSelfInform = () => {
-            axios.get('http://81.70.184.77:8000/user/myself', {
-                headers: { Authorization: user.token }
-            })
+            axios.get('/user/myself')
                 .then((response) => {
                     if (response.data.code === 200) {
                         message({
@@ -498,11 +492,9 @@ export default defineComponent( {
         };
 
         const updateSelfInform = () => {
-            axios.put('http://81.70.184.77:8000/user/myself/', {
+            axios.put('/user/myself/', {
                 nickname: curNitName.value,
                 description: curDescription.value
-            }, {
-                headers: { Authorization: user.token }
             })
                 .then((response2) => {
                     if (response2.data.code === 200) {
@@ -533,11 +525,9 @@ export default defineComponent( {
         };
 
         const updatePassword = () => {
-            axios.post('http://81.70.184.77:8000/user/changepassword', {
+            axios.post('/user/changepassword', {
                 old_password: passwordO.value,
                 new_password: passwordN.value
-            }, {
-                headers: { Authorization: user.token }
             })
                 .then((response) => {
                     if (response.data.code === 200) {

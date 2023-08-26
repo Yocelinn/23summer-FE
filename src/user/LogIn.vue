@@ -1,8 +1,3 @@
-<script setup>
-import { post, isError } from '@/utils/request.js'
-import { ElNotification } from 'element-plus'
-</script>
-
 <template>
   <div class="container main-container">
     <el-row class="card-wrapper">
@@ -49,6 +44,10 @@ import { ElNotification } from 'element-plus'
 </template>
 
 <script>
+import { isError } from '@/utils/request.js'
+import { ElNotification } from 'element-plus'
+import axios from "axios";
+
 export default {
   name: 'LogIn',
 
@@ -161,7 +160,7 @@ export default {
       this.$refs['loginEmailForm'].validate(
         async (isValid) => {
           if (isValid) {
-            const r = await post('/login/', this.loginEmailForm);
+            const r = await axios.post('/user/login', this.loginEmailForm);
             this.loading = false;
             if (isError(r)) {
               if (r.data) {
@@ -185,7 +184,8 @@ export default {
               // 我刚刚通过 window.$store=store 的方式将这个对象暴露到windows对象上了
               // 所以现在在控制台里面可以获取到数据
               // 知识点：作用域
-              console.log(this.$store.state.user);
+              console.log(this.$store.state.user.token);
+              window.sessionStorage.setItem('token',this.$store.state.user.token);
               this.$router.push('/person');
               }
               else if(r.data.code==10101)

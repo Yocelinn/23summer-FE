@@ -10,6 +10,7 @@
   "dependencies": {
     "@devui-design/icons": "^1.3.0",
     "@element-plus/icons": "^0.0.11",
+    "@gausszhou/vue3-drag-resize-rotate": "^3.0.1",
     "@vicons/ionicons5": "^0.12.0",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.4.0",
@@ -23,7 +24,8 @@
     "vue-resizable": "^2.1.7",
     "vue-router": "^4.0.3",
     "vuesax": "^3.12.2",
-    "vuex": "^4.1.0"
+    "vuex": "^4.0.0",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

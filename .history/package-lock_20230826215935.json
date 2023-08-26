@@ -16,7 +16,7 @@
         "axios": "^1.4.0",
         "core-js": "^3.8.3",
         "devui-theme": "^0.0.7",
-        "element-plus": "^2.3.12",
+        "element-plus": "^2.3.9",
         "moment": "^2.29.4",
         "vue": "^3.2.13",
         "vue-devui": "^1.5.12",
@@ -24,8 +24,7 @@
         "vue-resizable": "^2.1.7",
         "vue-router": "^4.0.3",
         "vuesax": "^3.12.2",
-        "vuex": "^4.0.0",
-        "vuex-persistedstate": "^4.1.0"
+        "vuex": "^4.1.0"
       },
       "devDependencies": {
         "@babel/core": "^7.12.16",
@@ -7630,9 +7629,9 @@
     },
     "node_modules/has-symbols": {
       "version": "1.0.3",
+      "license": "MIT",
       "resolved": "https://registry.npmmirror.com/has-symbols/-/has-symbols-1.0.3.tgz",
       "integrity": "sha512-l3LCuF6MgDNwTDKkdYGEihYjt5pRPbEg46rtlmnSPlUbgmB8LOIrKJbYYFBSbnPaJexMKtiPO8hmeRjRz2Td+A==",
-      "license": "MIT",
       "engines": {
         "node": ">= 0.4"
       },
@@ -9413,9 +9412,9 @@
     },
     "node_modules/moment-mini": {
       "version": "2.29.4",
+      "license": "MIT",
       "resolved": "https://registry.npmjs.org/moment-mini/-/moment-mini-2.29.4.tgz",
-      "integrity": "sha512-uhXpYwHFeiTbY9KSgPPRoo1nt8OxNVdMVoTBYHfSEKeRkIkwGpO+gERmhuhBtzfaeOyTkykSrm2+noJBgqt3Hg==",
-      "license": "MIT"
+      "integrity": "sha512-uhXpYwHFeiTbY9KSgPPRoo1nt8OxNVdMVoTBYHfSEKeRkIkwGpO+gERmhuhBtzfaeOyTkykSrm2+noJBgqt3Hg=="
     },
     "node_modules/monaco-editor": {
       "version": "0.34.0",
@@ -11266,6 +11265,15 @@
         "node": ">=8"
       }
     },
+    "node_modules/quick-lru": {
+      "version": "4.0.1",
+      "resolved": "https://registry.npmjs.org/quick-lru/-/quick-lru-4.0.1.tgz",
+      "integrity": "sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==",
+      "dev": true,
+      "engines": {
+        "node": ">=8"
+      }
+    },
     "node_modules/quill": {
       "version": "1.3.7",
       "resolved": "https://registry.npmjs.org/quill/-/quill-1.3.7.tgz",
@@ -12042,13 +12050,13 @@
     },
     "node_modules/shell-quote": {
       "version": "1.8.1",
-      "resolved": "https://registry.npmmirror.com/shell-quote/-/shell-quote-1.8.1.tgz",
-      "integrity": "sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA==",
       "dev": true,
       "license": "MIT",
       "funding": {
         "url": "https://github.com/sponsors/ljharb"
-      }
+      },
+      "resolved": "https://registry.npmmirror.com/shell-quote/-/shell-quote-1.8.1.tgz",
+      "integrity": "sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA=="
     },
     "node_modules/shvl": {
       "version": "2.0.3",

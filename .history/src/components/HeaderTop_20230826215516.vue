@@ -74,7 +74,7 @@
 <script>
 
 import { Search } from '@element-plus/icons-vue'
-// import Notification from './NotificationView.vue'
+import Notification from './NotificationView.vue'
 export default {
     setup() {
         return {
