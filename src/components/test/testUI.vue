@@ -12,22 +12,22 @@
                 <!--                <div class="text">昵称：</div>-->
                 <div class="cp-div-input">
                     <el-input
-                            v-model="curNitName"
-                            placeholder=我的昵称
+                            v-model="curProjectName"
+                            placeholder=项目名称
                             clearable
                             class="cp-input1"
-                            @input="updateCurNitName"
+                            @input="updateCurProjectName"
                     />
                 </div>
 
                 <!--                <div class="text">描述：</div>-->
                 <div class="cp-div-input">
                     <el-input
-                            v-model="curDescription"
+                            v-model="curPjDescription"
                             placeholder="描述"
                             clearable
                             class="cp-input4"
-                            @input="updateCurDescription"
+                            @input="updateCurPjDescription"
                     />
                 </div>
 

@@ -51,7 +51,7 @@
 
     </div>
     <div class="table-container-pl">
-        <el-table class="table-pl" :data="tableData" style="width: 100%" stripe="true" fit="true">
+        <el-table class="table-pl" :data="pltableData" style="width: 100%" stripe="true" fit="true">
             <el-table-column label="项目名称">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
@@ -118,8 +118,8 @@ export default {
         const curTeamId = store.state.curTeamId;
         const curProjectId = store.state.curProjectId;
         const plNewPjVisable = ref(false);
-        const tableData = ref([]);
-        // const tableData = [
+        const pltableData = ref([]);
+        // const pltableData = [
         //     {
         //         project_id: 1,
         //         projectName: "体通却者",
@@ -187,7 +187,7 @@ export default {
                 plNewPjVisable.value = false;
             }
             else {
-                axios.post('http://127.0.0.1:8000/project/create', {
+                axios.post('http://81.70.184.77:8000/project/create', {
                     team_id: curTeamId.value,
                     projectName: newPjName.value,
                     projectDescription: newPjDes.value
@@ -263,7 +263,7 @@ export default {
         }
 
         const fetchProjectList = () => {
-            axios.post('http://81.70.184.77:8000//project/info', {
+            axios.post('http://81.70.184.77:8000/project/info', {
                 team_id: curTeamId.value
             }, {
                 headers: { Authorization: user.token }
@@ -275,7 +275,7 @@ export default {
                             type: 'success'
                         });
                         console.log(response);
-                        tableData.value = response.data.projects;
+                        pltableData.value = response.data.projects;
                     }
                     else {
                         ElMessage( {
@@ -306,7 +306,7 @@ export default {
             curTeamId,
             curProjectId,
             plNewPjVisable,
-            tableData,
+            pltableData,
             newPjName,
             newPjDes,
 

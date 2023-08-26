@@ -29,8 +29,8 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import ProjectList from "@/components/PersonPage/ProjectList.vue";
-import TeamList from "@/components/PersonPage/TeamList.vue";
+import ProjectList from "@/components/PersonPage/ProjectList/ProjectList.vue";
+import TeamList from "@/components/PersonPage/TeamList/TeamList.vue";
 
 export default defineComponent({
     name: 'MainPage',

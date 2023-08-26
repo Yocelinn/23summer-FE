@@ -29,8 +29,8 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import ShowProject from "@/components/ProjectCenter/ShowProject.vue";
-import ChooseProject from "@/components/ProjectCenter/ChooseProject.vue";
+import ShowProject from "@/components/ProjectCenter/ShowProject/ShowProject.vue";
+import ChooseProject from "@/components/ProjectCenter/ChooseProject/ChooseProject.vue";
 
 export default defineComponent({
     name: 'ProjectCenter',

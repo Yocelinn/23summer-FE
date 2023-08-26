@@ -314,6 +314,7 @@ import {ElMessage} from "element-plus";
 import router from "@/router";
 import { useStore } from 'vuex';
 
+
 // const API_URL = 'http://81.70.184.77:8000/'; // 新增这一行，定义API_URL
 
 export default defineComponent( {
@@ -339,9 +340,8 @@ export default defineComponent( {
         const passwordN = ref(""); // Initialize
         const fetchProjectList = inject('fetchProjectList');
         const callFetchProjectList = () => {
-            if (fetchProjectList) {
-                fetchProjectList();
-            }
+            // console.log(fetchProjectList);
+            //     fetchProjectList();
         };
         const data = reactive({
             name: 'Tom',
@@ -465,6 +465,7 @@ export default defineComponent( {
                     curTeamId.value = -1;
                 }
             }
+            callFetchProjectList();
         };
         const fetchSelfInform = () => {
             axios.get('http://81.70.184.77:8000/user/myself', {
@@ -606,6 +607,7 @@ export default defineComponent( {
             updateVisable,
             passwordO,
             passwordN,
+            fetchProjectList,
             callFetchProjectList,
             updateSelfInform,
             updatePassword,
