@@ -45,7 +45,17 @@ const routes = [
     path: '/chat',
     name: 'chat',
     component: () => import('@/views/chat/ChatUI.vue')
-  }
+  },
+  {
+    path: '/teamCenter',
+    name: 'teamCenter',
+    component: () => import('@/components/TeamPage/TeamCenter.vue')
+  },
+  {
+    path: '/person/protectCenter',
+    name: 'porjectcenter',
+    component: () => import('@/components/ProjectCenter/ProjectCenter.vue')
+  },
 ]
 
 const router = createRouter({

@@ -6,7 +6,7 @@
                 <template v-slot:DSplitterPane>
                     <d-splitter-pane minSize="40%">
                         <div class="pane-content">
-                            <ProjectList/>
+                            <ShowProject/>
                         </div>
                     </d-splitter-pane>
                     <d-splitter-pane
@@ -18,7 +18,7 @@
                             @collapsedChange="collapsedChange"
                     >
                         <div class="pane-content">
-                            <TeamList/>
+                            <ChooseProject/>
                         </div>
                     </d-splitter-pane>
                 </template>
@@ -29,12 +29,12 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import ProjectList from "@/components/PersonPage/ProjectList.vue";
-import TeamList from "@/components/PersonPage/TeamList.vue";
+import ShowProject from "@/components/ProjectCenter/ShowProject.vue";
+import ChooseProject from "@/components/ProjectCenter/ChooseProject.vue";
 
 export default defineComponent({
-    name: 'MainPage',
-    components: {TeamList, ProjectList},
+    name: 'ProjectCenter',
+    components: {ShowProject, ChooseProject},
     setup() {
         const orientation = ref('horizontal');
         const splitBarSize = '2px';
