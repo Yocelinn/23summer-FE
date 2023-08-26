@@ -98,7 +98,7 @@ export default {
     width: 40px
 }
 .header-container {
-    height:10vh;
+    height: 7vh;
     line-height:50px;
     display: flex;
     justify-content: space-between;
@@ -121,7 +121,7 @@ export default {
     justify-content: center;
 }
 .avatar {
-    line-height: 40px;
+    line-height: 60px;
     align-items: center;
     justify-content: center;
 }

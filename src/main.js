@@ -7,25 +7,25 @@ import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 import * as icons from '@element-plus/icons-vue'
 import App from './App.vue'
-// axios 不需要use 到时候直接用
+import axios from 'axios';
 
-// axios 不需要引用 到时候直接用
-// import axios from 'axios'
-//例如
-// axios({
-//     method: 'post',
-//     url: '/user/12345',
-//     data: {
-//         firstName: 'Fred',
-//         lastName: 'Flintstone'
-//     }
-// });
 
-// import VueAxios from 'vue-axios'
-// import VueQuillEditor from 'vue-quill-editor'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-const app = createApp(App)
+
+import VueDragResizeRotate from "@gausszhou/vue3-drag-resize-rotate";
+import "@gausszhou/vue3-drag-resize-rotate/lib/bundle.esm.css";
+
+axios.defaults.baseURL='http://81.70.184.77:8000'
+axios.interceptors.request.use(
+    config => {
+     config.headers.Authorization = window.localStorage.getItem('token')
+     console.log(localStorage.getItem('token'))
+     console.log(config)
+ return config 
+})
+ 
+const app=createApp(App)
 Object.keys(icons).forEach(key => {
     app.component(key, icons[key])
 })
@@ -34,4 +34,7 @@ app.use(store)
 app.use(router)
 app.use(ElementPlus)
 app.component('quill-editor', QuillEditor)
+
+app.use(VueDragResizeRotate)
+
 app.mount('#app')
