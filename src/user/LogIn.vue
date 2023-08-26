@@ -4,49 +4,49 @@ import { ElNotification } from 'element-plus'
 </script>
 
 <template>
-    <div class="container main-container">
-      <el-row class="card-wrapper">
-        <el-col :span="10" :offset="7">
-          <el-card class="card" body-style="padding: 0">
-            <template #header>
-              <div class="header">
-                <div class="header-welcome">
-                  欢迎回到绿色心情！
-                </div>
-                <div class="header-title">
-                  <h1>登录</h1>
-                </div>
+  <div class="container main-container">
+    <el-row class="card-wrapper">
+      <el-col :span="10" :offset="7">
+        <el-card class="card" body-style="padding: 0">
+          <template #header>
+            <div class="header">
+              <div class="header-welcome">
+                欢迎回到绿色心情！
               </div>
-            </template>
-            <div class="body-wrapper">
-                <el-form :model="loginEmailForm" :rules="rulesEmail"
-                  ref="loginEmailForm" label-width="70px" status-icon>
-                  <el-form-item label="邮箱" prop="email" required>
-                    <el-input v-model="loginEmailForm.email" type="email"
-                      autocomplete="off" placeholder="请输入邮箱" />
-                  </el-form-item>
-                  <el-form-item label="密码" prop="password" required>
-                    <el-input v-model="loginEmailForm.password" type="password"
-                      placeholder="请输入密码" />
-                  </el-form-item>
-                </el-form>
-                <div class="submit">
-                  <el-button class="submit-button" type="primary"
-                    @click="submitEmailForm" :loading="loading">登录</el-button>
-                </div>
-              <div class="footer">
-                没有用户？
-                <router-link to="/signup">
-                  <el-link :underline="false">立即注册</el-link>
-                </router-link>
+              <div class="header-title">
+                <h1>登录</h1>
               </div>
-              <div class="clear"></div>
             </div>
-          </el-card>
-        </el-col>
-      </el-row>
-    </div>
-  </template>
+          </template>
+          <div class="body-wrapper">
+            <el-form :model="loginEmailForm" :rules="rulesEmail"
+                     ref="loginEmailForm" label-width="70px" status-icon>
+              <el-form-item label="邮箱" prop="email" required>
+                <el-input v-model="loginEmailForm.email" type="email"
+                          autocomplete="off" placeholder="请输入邮箱" />
+              </el-form-item>
+              <el-form-item label="密码" prop="password" required>
+                <el-input v-model="loginEmailForm.password" type="password"
+                          placeholder="请输入密码" />
+              </el-form-item>
+            </el-form>
+            <div class="submit">
+              <el-button class="submit-button" type="primary"
+                         @click="submitEmailForm" :loading="loading">登录</el-button>
+            </div>
+            <div class="footer">
+              没有用户？
+              <router-link to="/signup">
+                <el-link :underline="false">立即注册</el-link>
+              </router-link>
+            </div>
+            <div class="clear"></div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
+</template>
 
 <script>
 export default {
@@ -54,7 +54,6 @@ export default {
 
   data() {
     return {
-
       loginEmailForm: {
         email: '',
         password: '',
@@ -106,7 +105,7 @@ export default {
         callback('请输入密码');
       }
       if (value.length < 8 || value.length > 18
-        || value.search('[0-9]') < 0 || value.search('[A-Za-z]') < 0) {
+              || value.search('[0-9]') < 0 || value.search('[A-Za-z]') < 0) {
         callback('不是有效的密码');
       }
       if (value.search('[^A-Za-z0-9\\!\\@\\#\\$\\%\\&\\?]') >= 0) {
@@ -143,7 +142,7 @@ export default {
         callback('请输入密码');
       }
       if (value.length < 8 || value.length > 18
-        || value.search('[0-9]') < 0 || value.search('[A-Za-z]') < 0) {
+              || value.search('[0-9]') < 0 || value.search('[A-Za-z]') < 0) {
         callback('不是有效的密码');
       }
       if (value.search('[^A-Za-z0-9\\!\\@\\#\\$\\%\\&\\?]') >= 0) {
@@ -155,35 +154,42 @@ export default {
       }
       callback();
     },
-    
+
     submitEmailForm() {
       this.loading = true;
       this.errorsEmail = {};
       this.$refs['loginEmailForm'].validate(
-        async (isValid) => {
-          if (isValid) {
-            const r = await post('/login/', this.loginEmailForm);
-            this.loading = false;
-            if (isError(r)) {
-              if (r.data) {
-                this.errors = r.data;
+              async (isValid) => {
+                if (isValid) {
+                  const r = await post('/user/login', this.loginEmailForm);
+                  this.loading = false;
+                  if (isError(r)) {
+                    if (r.data) {
+                      this.errors = r.data;
+                    }
+                    this.$refs['loginEmailForm'].validate((isValid) => {});
+                  } else {
+                    ElNotification({
+                      title: '登录成功',
+                      message: '欢迎回到!',
+                      type: 'success',
+                    });
+                    // this.$store.dispatch('updateUser', r);
+                    this.$store.commit('login', r.data);
+                    console.log(this.$store.state.user);
+                    console.log(this.$store.state.user.token);
+                    console.log(this.$store.state.isLoggedIn);
+                    console.log(r.data);
+                    // this.$router.push('/home');
+                    this.$router.push('/person');
+                  }
+                } else {
+                  this.loading = false;
+                }
               }
-              this.$refs['loginEmailForm'].validate((isValid) => {});
-            } else {
-              ElNotification({
-                title: '登录成功',
-                message: '欢迎回到!',
-                type: 'success',
-              });
-              this.$router.push('/home');
-            }
-          } else {
-            this.loading = false;
-          }
-        }
       );
     },
-}
+  }
 };
 </script>
 

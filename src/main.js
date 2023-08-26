@@ -43,3 +43,4 @@ app.use(Input)
 app.config.globalProperties.$message = ElMessage;
 // app.use(DevUI)
 app.mount('#app')
+window.$store = store;

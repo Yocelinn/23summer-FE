@@ -5,60 +5,60 @@
                 <template #header>
                     <d-modal-header>
                         <!--                <d-icon name="like"></d-icon>-->
-                        <span>修改个人信息</span>
+                        <span>修改项目信息</span>
                     </d-modal-header>
                 </template>
 
                 <!--                <div class="text">昵称：</div>-->
-                <div class="tl-div-input">
+                <div class="cp-div-input">
                     <el-input
                             v-model="curNitName"
                             placeholder=我的昵称
                             clearable
-                            class="tl-input1"
+                            class="cp-input1"
                             @input="updateCurNitName"
                     />
                 </div>
 
                 <!--                <div class="text">描述：</div>-->
-                <div class="tl-div-input">
+                <div class="cp-div-input">
                     <el-input
                             v-model="curDescription"
                             placeholder="描述"
                             clearable
-                            class="tl-input4"
+                            class="cp-input4"
                             @input="updateCurDescription"
                     />
                 </div>
 
                 <!--                <div class="text">旧密码：</div>-->
-                <div class="tl-div-input">
+                <div class= "cp-div-input">
                     <el-input
                             v-model="passwordO"
                             type="password"
                             placeholder="Please input password"
                             show-password="false"
                             clearable
-                            class="tl-input2"
+                            class="cp-input2"
                             @input="updatePasswordO"
                     />
                 </div>
 
                 <!--                <div class="text">新密码：</div>-->
-                <div class="tl-div-input">
+                <div class="cp-div-input">
                     <el-input
                             v-model="passwordN"
                             type="password"
                             placeholder="Please input password"
                             show-password="false"
                             clearable
-                            class="tl-input3"
+                            class="cp-input3"
                             @input="updatePasswordN"
                     />
                 </div>
 
                 <template #footer>
-                    <d-modal-footer class="tl-button-container" style="text-align: right; padding-right: 20px;">
+                    <d-modal-footer class="cp-button-container" style="text-align: right; padding-right: 20px;">
                         <d-button class="custom-button-i" @click="updateSelfInform">修改信息</d-button>
                         <d-button class="custom-button-i" @click="updatePassword">修改密码</d-button>
                         <d-button class="custom-button" @click="updateVisable=false">取消</d-button>
@@ -68,12 +68,11 @@
 
             <el-descriptions class="main-descriptions" title="个人信息">
                 <el-descriptions-item label="昵称：">{{nitName}}</el-descriptions-item>
-                <el-descriptions-item label="邮箱：">{{email}}</el-descriptions-item>
-                <el-descriptions-item label="id：">{{uid}}</el-descriptions-item>
-                <el-descriptions-item label="姓名：">{{name}}</el-descriptions-item>
-                <el-descriptions-item label="描述：">{{description}}</el-descriptions-item>
                 <el-descriptions-item>
-                    <el-button class="custom-save-button-tl" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
+                    <el-button class="custom-save-button-cp" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
+                </el-descriptions-item>
+                <el-descriptions-item>
+                    <el-button class="custom-save-button-cp" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
                 </el-descriptions-item>
             </el-descriptions>
         </div>
@@ -101,7 +100,7 @@
                         </d-modal>
                     </div>
                 </template>
-                <el-table class="tl-card-table" :data="tableData" style="width: 100%" flex="1" :show-header="false">
+                <el-table class="cp-card-table" :data="tableData" style="width: 100%" flex="1" :show-header="false">
                     <el-table-column label="Name" fit="true" align="center">
                         <template #default="scope">
                             <d-button class="custom-button-w"  v-ripple="{ duration: 300 }" @click="chooseCurTeam(scope.row.team_id)">
@@ -116,35 +115,35 @@
 </template>
 
 <style>
-.tl-button-container {
+.cp-button-container {
     display: flex;
     justify-content: flex-end;
     /*padding-right: 20px; !* 调整按钮与容器边缘的间距 *!*/
     max-width: 100%;
 }
 
-.tl-input1 {
+.cp-input1 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
-.tl-input2 {
+.cp-input2 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
-.tl-input3 {
+.cp-input3 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
-.tl-input4 {
+.cp-input4 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
 
-.tl-card-table {
+.cp-card-table {
     height: 450px;
     overflow: auto;
 }
@@ -219,14 +218,14 @@
     line-height: 40px; /* 使文本垂直居中 */
 }
 
-.custom-save-button-tl {
+.custom-save-button-cp {
     background-color: white;
     border-color: #9E9CF4;
     color: #9E9CF4;
 }
 
-.custom-save-button-tl:hover,
-.custom-save-button-tl:focus {
+.custom-save-button-cp:hover,
+.custom-save-button-cp:focus {
     background-color: white;
     border-color: #7E7CCB;
     color: #7E7CCB;
@@ -234,7 +233,7 @@
     transition: background-color 0.3s, color 0.3s;
 }
 
-.custom-save-button-tl:active {
+.custom-save-button-cp:active {
     background-color: #9E9CF4;
     border-color: white;
     color: white;
@@ -303,8 +302,6 @@
     background-color: white;
     color: #7E7CCB;
 }
-
-
 </style>
 
 <script>
@@ -317,7 +314,7 @@ import { useStore } from 'vuex';
 // const API_URL = 'http://81.70.184.77:8000/'; // 新增这一行，定义API_URL
 
 export default defineComponent( {
-    name: 'TeamList',
+    name: 'ChooseProject',
     setup() {
         const store = useStore();
         const user = store.state.user;
