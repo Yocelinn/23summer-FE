@@ -161,7 +161,7 @@ export default {
       this.$refs['loginEmailForm'].validate(
         async (isValid) => {
           if (isValid) {
-            const r = await post('/login/', this.loginEmailForm);
+            const r = await post('/user/login', this.loginEmailForm);
             this.loading = false;
             if (isError(r)) {
               if (r.data) {

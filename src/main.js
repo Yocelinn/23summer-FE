@@ -16,6 +16,8 @@ Object.keys(icons).forEach(key => {
 })
 ThemeServiceInit({ infinityTheme }, 'infinityTheme');
 
+
+
 app.use(store)
 app.use(router)
 app.use(ElementPlus)
