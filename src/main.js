@@ -7,6 +7,7 @@ import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 import * as icons from '@element-plus/icons-vue'
 import App from './App.vue'
+import splitPane from 'vue-splitpane'
 // axios 不需要use 到时候直接用
 
 // axios 不需要引用 到时候直接用
@@ -35,3 +36,4 @@ app.use(router)
 app.use(ElementPlus)
 app.component('quill-editor', QuillEditor)
 app.mount('#app')
+app.component('d-splitter-pane', splitPane);
