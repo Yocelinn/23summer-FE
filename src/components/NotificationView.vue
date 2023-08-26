@@ -16,8 +16,6 @@
                         :value="item.value"
                         />
                     </el-select>
-                    <div class="noti-allChecked">
-                    </div>
                     <el-dropdown>
                         <span class="el-dropdown-link">
                             <el-icon class="el-icon--right"><MoreFilled /></el-icon>
@@ -30,381 +28,100 @@
                         </template>
                     </el-dropdown>
                 </div>
-                
-                <n-list hoverable clickable class="noti-list">
-                    <n-list-item  @mouseover="setHover(true)" @mouseleave="setHover(false)">
-                        <n-thing title="task" content-style="margin-top: 10px;">  
-                        <template #description>
+                <div v-if="value==='AllNoti'">
+                   <n-list hoverable clickable class="noti-list"  v-for="(noti,index) in this.notifications" :key="index">
+                    <n-list-item   @mouseenter="setHover(index, true)" @mouseleave="setHover(index, false)">
+                        <n-thing title="您有一条新消息" content-style="margin-top: 10px;">  
+                        <!-- <template #description>
                             <n-space size="small" style="margin-top: 4px">
                                 <n-tag :bordered="false" type="info" size="small">
-                                团队
+                                    {{ noti.sender }}
                             </n-tag>
                             </n-space>
-                        </template>
+                        </template> -->
                         <div class="noti-list-item">
                             <div class="noti-list-content">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                            </div>
-                            <div class="icon-choose">
-                                <el-icon style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti"><CircleCheckFilled /></el-icon>
+                                <div class="noti-avator">
+                                    <el-avatar :size="30" :src="circleUrl" />
+                                </div>
+                                <div class="noti-content">
+                                    <div class="noti-msg">{{ noti.sender }} {{ noti.content }}</div>
+                                    <div class="noti-time">{{ formattedTime(noti.send_time) }}</div>
+                                </div>
+                            </div> 
+                            <div class="icon-choose" :class="{'hovered': isHovered}">
+                                <template v-if="!noti.is_read&!isHovered[index]">
+                                    <!-- 未读消息的图标 -->
+                                    <!-- 显示数字标识未读消息数量 -->
+                                    <div class="unread-badge">1</div>
+                                    <CircleCheckFilled />
+
+                                </template>
+                                <el-icon class="noti-icon-check"
+                                    style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti(noti.msg_id)" v-if="isHovered[index]&!noti.is_read">
+                                    <CircleCheckFilled />
+                                </el-icon>
                                 
-                                <el-icon style="color:  #FACCCC;" @click="deleteNoti"><CircleCloseFilled /></el-icon>
+                                <el-icon class="noti-icon-delete"
+                                    style="color:  #FACCCC;" @click="deleteNoti" v-if="isHovered[index]">
+                                    <CircleCloseFilled />
+                                </el-icon>
                             </div>
                         </div>
                         
                        
                         </n-thing>
                     </n-list-item>
-                    <n-list-item  @mouseover="setHover(true)" @mouseleave="setHover(false)">
-                        <n-thing title="task" content-style="margin-top: 10px;">  
-                        <template #description>
+                   
+                 </n-list>
+                </div>
+                <div v-if="value==='NotiNotRead'">
+                    <n-list hoverable clickable class="noti-list"  v-for="(noti,index) in this.notifications" :key="index">
+                    <n-list-item   @mouseenter="setHover(index, true)" @mouseleave="setHover(index, false)">
+                        <n-thing title="您有一条新消息" content-style="margin-top: 10px;">  
+                        <!-- <template #description>
                             <n-space size="small" style="margin-top: 4px">
                                 <n-tag :bordered="false" type="info" size="small">
-                                团队
+                                    {{ noti.sender }}
                             </n-tag>
                             </n-space>
-                        </template>
+                        </template> -->
                         <div class="noti-list-item">
                             <div class="noti-list-content">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                            </div>
-                            <div class="icon-choose">
-                                <el-icon style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti"><CircleCheckFilled /></el-icon>
+                                <div class="noti-avator">
+                                    <el-avatar :size="30" :src="circleUrl" />
+                                </div>
+                                <div class="noti-content">
+                                    <div class="noti-msg">{{ noti.sender }} {{ noti.content }}</div>
+                                    <div class="noti-time">{{ formattedTime(noti.send_time) }}</div>
+                                </div>
+                            </div> 
+                            <div class="icon-choose" :class="{'hovered': isHovered}">
+                                <template v-if="!noti.is_read&!isHovered[index]">
+                                    <!-- 未读消息的图标 -->
+                                    <!-- 显示数字标识未读消息数量 -->
+                                    <div class="unread-badge">1</div>
+                                    <CircleCheckFilled />
+
+                                </template>
+                                <el-icon class="noti-icon-check"
+                                    style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti(noti.msg_id)" v-if="isHovered[index]&!noti.is_read">
+                                    <CircleCheckFilled />
+                                </el-icon>
                                 
-                                <el-icon style="color:  #FACCCC;" @click="deleteNoti"><CircleCloseFilled /></el-icon>
+                                <el-icon class="noti-icon-delete"
+                                    style="color:  #FACCCC;" @click="deleteNoti" v-if="isHovered[index]">
+                                    <CircleCloseFilled />
+                                </el-icon>
                             </div>
                         </div>
                         
                        
                         </n-thing>
                     </n-list-item>
-                    <n-list-item  @mouseover="setHover(true)" @mouseleave="setHover(false)">
-                        <n-thing title="task" content-style="margin-top: 10px;">  
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                                <n-tag :bordered="false" type="info" size="small">
-                                团队
-                            </n-tag>
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-list-content">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                            </div>
-                            <div class="icon-choose">
-                                <el-icon style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti"><CircleCheckFilled /></el-icon>
-                                
-                                <el-icon style="color:  #FACCCC;" @click="deleteNoti"><CircleCloseFilled /></el-icon>
-                            </div>
-                        </div>
-                        
-                       
-                        </n-thing>
-                    </n-list-item>
-                    <n-list-item  @mouseover="setHover(true)" @mouseleave="setHover(false)">
-                        <n-thing title="task" content-style="margin-top: 10px;">  
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                                <n-tag :bordered="false" type="info" size="small">
-                                团队
-                            </n-tag>
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-list-content">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                            </div>
-                            <div class="icon-choose">
-                                <el-icon style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti"><CircleCheckFilled /></el-icon>
-                                
-                                <el-icon style="color:  #FACCCC;" @click="deleteNoti"><CircleCloseFilled /></el-icon>
-                            </div>
-                        </div>
-                        
-                       
-                        </n-thing>
-                    </n-list-item>
-                    <n-list-item  @mouseover="setHover(true)" @mouseleave="setHover(false)">
-                        <n-thing title="task" content-style="margin-top: 10px;">  
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                                <n-tag :bordered="false" type="info" size="small">
-                                团队
-                            </n-tag>
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-list-content">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                            </div>
-                            <div class="icon-choose">
-                                <el-icon style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti"><CircleCheckFilled /></el-icon>
-                                
-                                <el-icon style="color:  #FACCCC;" @click="deleteNoti"><CircleCloseFilled /></el-icon>
-                            </div>
-                        </div>
-                        
-                       
-                        </n-thing>
-                    </n-list-item>
-                    <n-list-item  @mouseover="setHover(true)" @mouseleave="setHover(false)">
-                        <n-thing title="task" content-style="margin-top: 10px;">  
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                                <n-tag :bordered="false" type="info" size="small">
-                                团队
-                            </n-tag>
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-list-content">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                            </div>
-                            <div class="icon-choose">
-                                <el-icon style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti"><CircleCheckFilled /></el-icon>
-                                
-                                <el-icon style="color:  #FACCCC;" @click="deleteNoti"><CircleCloseFilled /></el-icon>
-                            </div>
-                        </div>
-                        
-                       
-                        </n-thing>
-                    </n-list-item>
-                    <n-list-item  @mouseover="setHover(true)" @mouseleave="setHover(false)">
-                        <n-thing title="task" content-style="margin-top: 10px;">  
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                                <n-tag :bordered="false" type="info" size="small">
-                                团队
-                            </n-tag>
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-list-content">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                            </div>
-                            <div class="icon-choose">
-                                <el-icon style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti"><CircleCheckFilled /></el-icon>
-                                
-                                <el-icon style="color:  #FACCCC;" @click="deleteNoti"><CircleCloseFilled /></el-icon>
-                            </div>
-                        </div>
-                        
-                       
-                        </n-thing>
-                    </n-list-item>
-                    <n-list-item  @mouseover="setHover(true)" @mouseleave="setHover(false)">
-                        <n-thing title="task" content-style="margin-top: 10px;">  
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                                <n-tag :bordered="false" type="info" size="small">
-                                团队
-                            </n-tag>
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-list-content">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                            </div>
-                            <div class="icon-choose">
-                                <el-icon style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti"><CircleCheckFilled /></el-icon>
-                                
-                                <el-icon style="color:  #FACCCC;" @click="deleteNoti"><CircleCloseFilled /></el-icon>
-                            </div>
-                        </div>
-                        
-                       
-                        </n-thing>
-                    </n-list-item>
-                    <n-list-item  @mouseover="setHover(true)" @mouseleave="setHover(false)">
-                        <n-thing title="task" content-style="margin-top: 10px;">  
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                                <n-tag :bordered="false" type="info" size="small">
-                                团队
-                            </n-tag>
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-list-content">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                            </div>
-                            <div class="icon-choose">
-                                <el-icon style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti"><CircleCheckFilled /></el-icon>
-                                
-                                <el-icon style="color:  #FACCCC;" @click="deleteNoti"><CircleCloseFilled /></el-icon>
-                            </div>
-                        </div>
-                        
-                       
-                        </n-thing>
-                    </n-list-item>
-                    <n-list-item>
-                        <n-thing title="Task" content-style="margin-top: 10px;">
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                            <n-tag :bordered="false" type="info" size="small" background-color="#A1EBDE  ">
-                                团队
-                            </n-tag>
-                            
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                           
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                           
-                        </div>
-                        </n-thing>
-                    </n-list-item>
-                    <!-- <n-list-item>
-                        <n-thing title="Task" content-style="margin-top: 10px;">
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                            <n-tag :bordered="false" type="info" size="small" background-color="#A1EBDE  ">
-                                团队
-                            </n-tag>
-                            
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                           
-                        </div>
-                        </n-thing>
-                    </n-list-item>
-                    <n-list-item>
-                        <n-thing title="Task" content-style="margin-top: 10px;">
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                            <n-tag :bordered="false" type="info" size="small" background-color="#A1EBDE  ">
-                                团队
-                            </n-tag>
-                            
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                           
-                        </div>
-                        </n-thing>
-                    </n-list-item>
-                    <n-list-item>
-                        <n-thing title="Task" content-style="margin-top: 10px;">
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                            <n-tag :bordered="false" type="info" size="small" background-color="#A1EBDE  ">
-                                团队
-                            </n-tag>
-                            
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                           
-                        </div>
-                        </n-thing>
-                    </n-list-item>
-                    <n-list-item>
-                        <n-thing title="Task" content-style="margin-top: 10px;">
-                        <template #description>
-                            <n-space size="small" style="margin-top: 4px">
-                            <n-tag :bordered="false" type="info" size="small" background-color="#A1EBDE  ">
-                                团队
-                            </n-tag>
-                            
-                            </n-space>
-                        </template>
-                        <div class="noti-list-item">
-                            <div class="noti-avator">
-                                <el-avatar :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="noti-content">
-                                <div class="noti-msg">lalalalala</div>
-                                <div class="noti-time">xx-xx</div>
-                            </div>
-                           
-                        </div>
-                        </n-thing>
-                    </n-list-item> -->
-                </n-list>
+                   
+                 </n-list>
+                </div>
             
             <!-- </div>
         </transition>
@@ -413,16 +130,23 @@
 </n-scrollbar>
 </template>
 <script>
+
 import { defineComponent } from 'vue'
 import { NList,NListItem,NThing,NSpace,NTag } from 'naive-ui'
 import { CheckmarkCircle } from "@vicons/ionicons5";
+import axios from 'axios'
+// import { post } from '@/utils/'
+
 export default defineComponent({
     props:{
         // showList: Boolean, // 控制列表的显示状态
     },
     data() {
         return {
-        isHovered: false,
+        isHovered: [],
+        notifications:[],
+        notiNotRead:[],
+        notiHasRead:[],
         value:"AllNoti",
         circleUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
         showList:true,
@@ -443,16 +167,31 @@ export default defineComponent({
         };
     },
     components:{
-        NList,NListItem,NThing,NSpace,NTag,
+        NList,NListItem,NThing,NSpace,NTag
+    },
+    mounted(){
+        this.fetchNotifications();
     },
     methods: {
         // toggleList() {
         // this.showList = !this.showList; // 切换列表显示状态
         // },
-        setHover(value) {
-            this.isHovered = value;
+        
+        setHover(index, value) {
+            // 使用 Vue.set 方法来确保响应式更新
+            this.isHovered[index]= value;
         },
-        checkNoti(){
+        checkNoti(id){
+            axios.put('message/operate',{"msg_id":id})
+            .then((response)=>{
+                console.log(response)
+                if(response.data.code!=200){
+                    alert(response.data.messages);
+                }
+                else(
+                    console.log("消息已读")
+                )
+            })
 
         },
         deleteNoti(){
@@ -463,7 +202,54 @@ export default defineComponent({
         },
         allNotiDeleted(){
             
-        }
+        },
+        async fetchNotifications() {
+            axios.post('/message/all',{})
+            .then((response)=>{
+                console.log(response)
+                console.log(response.data.messages);
+                if(response.data.code!=200){
+                    console.log(response.data.messages);
+                    // alert(response.data.msg);
+                }
+                else{
+                    response.data.messages.forEach((msg,index) => {
+                        this.notifications[index]=msg;
+                        this.isHovered[index]=false;
+                        
+                    });
+                }
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+            
+    },
+    
+         formattedTime(dateTimeStr) {
+            const dateTime = new Date(dateTimeStr);
+            const now = new Date();
+
+            const isSameDate =
+                now.getDate() === dateTime.getDate() &&
+                now.getMonth() === dateTime.getMonth() &&
+                now.getFullYear() === dateTime.getFullYear();
+
+            if (isSameDate) {
+                // 如果日期是今天，只格式化成今天的时:分
+                const hours = dateTime.getHours().toString().padStart(2, '0');
+                const minutes = dateTime.getMinutes().toString().padStart(2, '0');
+                return `今天 ${hours}:${minutes}`;
+            } else {
+                // 否则，格式化成 月-日 时:分
+                const month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
+                const day = dateTime.getDate().toString().padStart(2, '0');
+                const hours = dateTime.getHours().toString().padStart(2, '0');
+                const minutes = dateTime.getMinutes().toString().padStart(2, '0');
+                return `${month}-${day} ${hours}:${minutes}`;
+            }
+        },
+       
     },
     setup(){
         return {
@@ -473,7 +259,30 @@ export default defineComponent({
 })
 </script>
 <style scoped>
-
+.icon-choose {
+  display: flex;
+  align-items: center;
+  transition: all 0.3s;
+}
+.unread-badge {
+  /* 未读消息数量的样式 */
+  background-color: #559aefde; /* 修改为你希望的颜色 */
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* position: absolute;
+  top: -8px;
+  right: -8px; */
+}
+.hovered {
+  /* 鼠标悬停时的样式 */
+  /* background-color: #f0f0f0; 修改为你希望的背景颜色 */
+}
 .noti-list-item {
     display: flex;
     justify-content: space-between; /* 将项目放在容器中，首尾对齐 */
@@ -482,6 +291,7 @@ export default defineComponent({
 }
 .noti-list-content{
     display:flex;
+    
 }
 .noti-column{
     width:30%;
@@ -533,6 +343,9 @@ export default defineComponent({
 }
 .noti-content{
     margin-left:10px;
+    display: flex;
+    flex-direction: column;
+    /* display:flex; */
 }
 .noti-allChecked{
     justify-content: flex-end;
@@ -551,5 +364,20 @@ export default defineComponent({
   color: var(--el-color-primary);
   display: flex;
   align-items: center;
+}
+.noti-msg{
+    font-size: 18px;
+    font-weight:300;
+    align-self: flex-start;
+}
+.noti-time{
+    align-self: flex-start;
+}
+.noti-icon-check:hover{
+    font-size:25px;
+}
+
+.noti-icon-delete:hover{
+    font-size:25px;
 }
 </style>

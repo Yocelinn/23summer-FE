@@ -66,7 +66,8 @@ export default defineComponent({
           .chat-text {
             float: right;
             max-width: 90%;
-            padding: 20px;
+            padding: 15px;
+            font-size: 18px;
             border-radius: 20px 5px 20px 20px;
             background-color:rgba(#9E9CF4 ,0.9);
             color: #fff;

@@ -41,7 +41,8 @@ export default defineComponent({
           align-items: flex-start;
           .chat-text {
             max-width: 90%;
-            padding: 20px;
+            padding: 15px;
+            font-size: 18px;
             border-radius: 5px 20px 20px 20px;
             background-color: rgba(#FACCCC ,0.9)  ;
             color: #fff;

@@ -175,6 +175,7 @@ export default {
                 type: 'success',
               });
               this.$store.commit('login', r.data);
+              window.localStorage.setItem('token', this.$store.state.user.token)
               console.log(this.$store.state.user);
               console.log(this.$store.state.user.token);
               this.$router.push('/home');

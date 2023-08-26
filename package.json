@@ -15,6 +15,7 @@
     "core-js": "^3.8.3",
     "devui-theme": "^0.0.7",
     "element-plus": "^2.3.9",
+    "moment": "^2.29.4",
     "vue": "^3.2.13",
     "vue-devui": "^1.5.12",
     "vue-draggable-resizable": "^2.3.0",
