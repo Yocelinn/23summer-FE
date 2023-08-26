@@ -15,7 +15,15 @@
                     </el-input>
             </div>
             <div class="item bell">
-                <el-icon size="20"><Bell /></el-icon>
+                <el-icon size="20" @click="toggleNotiList" ><Bell /></el-icon>
+            </div>
+           
+            <div class="noti-column"  :class="{ 'slide-out': showNotiList }">
+                <transition name="slide">
+                    <div v-if="showNotiList" class="noti-list-wrapper" >
+                        <Notification/>
+                    </div>
+                </transition>
             </div>
             <div class="item avatar">
                 <el-popover
@@ -66,7 +74,7 @@
 <script>
 
 import { Search } from '@element-plus/icons-vue'
-
+import Notification from './NotificationView.vue'
 export default {
     setup() {
         return {
@@ -75,8 +83,17 @@ export default {
     },
     data() {
         return {
-            input2: ''
+            input2: '',
+            showNotiList:false,
         }
+    },
+    components:{
+        Notification
+    },
+    methods:{
+        toggleNotiList() {
+        this.showNotiList = !this.showNotiList; // 切换列表显示状态
+        },
     }
 }
 </script>
@@ -86,6 +103,8 @@ export default {
     width: 40px
 }
 .header-container {
+    height:10vh;
+    line-height:50px;
     display: flex;
     justify-content: space-between;
     padding-bottom: 10px;
@@ -102,7 +121,7 @@ export default {
 
 }
 .bell {
-    line-height: 40px;
+    line-height: 60px;
     align-items: center;
     justify-content: center;
 }
@@ -111,4 +130,36 @@ export default {
     align-items: center;
     justify-content: center;
 }
+.noti-list-wrapper {
+  
+  position: fixed;
+  top: 10%;
+  right: 0;
+  width: 30%; /* 列表宽度占满父容器，可以根据需要进行调整 */
+  height: 90%;
+  background-color: #fff;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+  overflow-y: auto; /* 添加纵向滚动条，如果内容过多时可滚动 */
+}
+.noti-column{
+    /* width:30%; */
+    overflow-x: hidden;
+  position: relative;
+  transition: width 0.5s; /* 添加宽度过渡效果 */
+  z-index: 0;
+}
+.noti-column.slide-enter-active,
+.noti-column.slide-leave-active {
+  transition: transform 0.5s, width 0.5s; /* 添加 transform 和宽度过渡效果 */
+}
+
+.noti-column.slide-enter,
+.noti-column.slide-leave-to {
+  transform: translateX(-100%); /* 初始时内容在左侧 */
+}
+
+.noti-column.slide-out.slide-leave-active {
+  transform: translateX(0); /* 向右滑出时恢复初始位置 */
+}
+
 </style>

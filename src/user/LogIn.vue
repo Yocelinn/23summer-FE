@@ -161,7 +161,7 @@ export default {
       this.$refs['loginEmailForm'].validate(
         async (isValid) => {
           if (isValid) {
-            const r = await post('/login/', this.loginEmailForm);
+            const r = await post('/user/login', this.loginEmailForm);
             this.loading = false;
             if (isError(r)) {
               if (r.data) {
@@ -174,6 +174,10 @@ export default {
                 message: '欢迎回到!',
                 type: 'success',
               });
+              this.$store.commit('login', r.data);
+              window.localStorage.setItem('token', this.$store.state.user.token)
+              console.log(this.$store.state.user);
+              console.log(this.$store.state.user.token);
               this.$router.push('/home');
             }
           } else {
