@@ -20,8 +20,8 @@ axios.defaults.baseURL='http://81.70.184.77:8000'
 axios.interceptors.request.use(
     config => {
      config.headers.Authorization = window.localStorage.getItem('token')
-     console.log(localStorage.getItem('token'))
-     console.log(config)
+    //  console.log(localStorage.getItem('token'))
+    //  console.log(config)
  return config 
 })
  
