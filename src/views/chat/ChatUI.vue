@@ -10,7 +10,7 @@
                 v-model:value="selectedValue"
                 filterable
                 placeholder="搜索"  
-                :options="select_options"
+                :options="friend_options"
                 />
                 <PersonCard/>
             </div>
@@ -22,7 +22,7 @@
                     <ChatMe/>
                 </div>
                 <div class="chat-window-text">
-                    <n-mention type="textarea" :options="select_options" v-model:value="text_content" 
+                    <n-mention type="textarea" :options="friend_options" v-model:value="text_content" 
                     class="chat-window-textarea" @keydown.enter.prevent="sendMessage"/>
                 </div>
             </div>
@@ -41,24 +41,28 @@ import ChatFriend from "@/components/chat/ChatFriend.vue"
     components:{
         PersonCard,NSelect,NMention,ChatMe,ChatFriend
     },
+    mounted(){
+        this.getFriendList();
+    },
     setup(){
         return{
             selectedValue: ref(null),
             selectedValues: ref(null),
-            select_options:[
-                {
-                    label: '同事1号',
-                    value: '同事1号'
-                },
-                {
-                    label: '可爱的2号',
-                    value: '可爱的2号'
-                },
-                {
-                    label: "猜猜我是几号",
-                    value: '猜猜我是几号'
-                },
-            ]
+            // friend_list:[],
+            // friend_options:[
+                // {
+                //     label: '同事1号',
+                //     value: '同事1号'
+                // },
+                // {
+                //     label: '可爱的2号',
+                //     value: '可爱的2号'
+                // },
+                // {
+                //     label: "猜猜我是几号",
+                //     value: '猜猜我是几号'
+                // },
+            // ]
         }
     },
     methods:{
@@ -68,11 +72,17 @@ import ChatFriend from "@/components/chat/ChatFriend.vue"
         sendMessage(){
            
             console.log(this.text_content)
+        },
+        getFriendList(){
+            // axios.post('/team/seemember',{})
         }
     },
     data(){
         return{
-            text_content:''
+            text_content:'',
+            friend_list:[],
+            friend_options:[]
+
         }
     }
   })

@@ -5,7 +5,15 @@ const routes = [
   {
     path: '/',
     name: 'home',
+    redirect:'/home',
     children: [
+      {
+        path:'home',
+        component:() => import('@/views/HomeView.vue'),
+        meta: {
+          title: '首页',
+        },
+      },
       {
         path: 'signup',
         component: () => import('@/user/SignUp.vue'),
