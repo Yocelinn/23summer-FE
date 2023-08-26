@@ -11,6 +11,9 @@ import * as icons from '@element-plus/icons'
 import App from './App.vue'
 import axios from 'axios';
 
+import VueDragResizeRotate from "@gausszhou/vue3-drag-resize-rotate";
+import "@gausszhou/vue3-drag-resize-rotate/lib/bundle.esm.css";
+
 axios.defaults.baseURL='http://81.70.184.77:8000'
 axios.interceptors.request.use(
     config => {
@@ -31,4 +34,7 @@ app.use(store)
 app.use(router)
 app.use(ElementPlus)
 app.use(DevUI)
+
+app.use(VueDragResizeRotate)
+
 app.mount('#app')
