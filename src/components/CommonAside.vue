@@ -7,25 +7,28 @@
         class="el-menu-vertical-demo"
         default-active="2"
         text-color="#fff"
+        @open="handleOpen"
+        @close="handleClose"
       >
-      <h3>
-          文档管理
-      </h3>
-          <span>
-            <router-link to="/documentadmin">
-              <el-button type="info" :icon="ArrowLeft">返回项目</el-button>
-            </router-link>
-          </span>
-        <el-menu-item index="1" disabled>
+        <h2>文档管理</h2>
+        <router-link to="/documentadmin">
+          <el-menu-item index="3">
           <el-icon><document /></el-icon>
-          <span>Navigator Three</span>
+          <span>返回项目</span>
         </el-menu-item>
-        <el-menu-item index="2">
+        </router-link>
+        <router-link to="/documentadmin">
+          <el-menu-item index="4">
           <el-icon><setting /></el-icon>
-          <router-link to="/documentadd">
-                <el-link :underline="false" style="color: white">新建文档</el-link>
-          </router-link>
-        </el-menu-item>
+          <span>原型设计</span>
+          </el-menu-item>
+        </router-link>
+        <router-link to="/documentadd">
+          <el-menu-item index="4">
+          <el-icon><Edit /></el-icon>
+          <span>文档编辑</span>
+          </el-menu-item>
+        </router-link>
       </el-menu>
     </el-col>
   </el-row>
@@ -46,12 +49,13 @@ import {
   height: 100vh;
 }
 
-.el-menu h3{
+.el-menu h2{
   color: #fff;
   text-align: center;
   line-height: 48px;
-  font-size: 16px;
+  font-size: 22px;
   font-weight: 400;
+  padding-top: 20px;
 }
 
 .el-button {
@@ -60,5 +64,15 @@ color: #FFF
 
 .e-link span {
 color: #fff
+}
+
+
+.edit {
+  margin-top: 20px;
+}
+
+.el-menu-item span {
+  font-size: 16px;
+  margin-left: 6px;
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup>
 import { get, post, isError } from '@/utils/request.js'
 import { ElNotification, ElMessage } from 'element-plus'
+import moment from 'moment'
 </script>
 
 <template>
@@ -36,6 +37,20 @@ import { ElNotification, ElMessage } from 'element-plus'
                 <el-input v-model="signupForm.email" type="email"
                   placeholder="注册后不可修改" />
               </el-form-item>
+              <el-form-item label="验证码" prop="code" required>
+              <el-row style="width: 100%;">
+                <el-col style="padding-right: 10px;" :span="14">
+                  <el-input v-model="signupForm.code" type="text"
+                    placeholder="请填写邮箱验证码" />
+                </el-col>
+                <el-col style="padding-left: 10px;" :span="10">
+                  <el-button class="send-button" type="primary" @click="sendCode"
+                    :key="currentTime" :disabled="sending">
+                    {{ getSeconds() ? getSeconds() + ' 秒后可重发' : '发送验证码' }}
+                  </el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
               <el-form-item label="姓名" prop="name" required>
                 <el-input v-model="signupForm.name" type="text"
                   placeholder="实名认证后不可修改" />
@@ -70,6 +85,7 @@ export default {
         password: '',
         confirm_password: '',
         email: '',
+        email_code: '',
         name: '',
       },
       rules: {
@@ -185,7 +201,7 @@ export default {
       this.$refs['signupForm'].validate(
         async (isValid) => {
           if (isValid) {
-            const r = await post('/register/', this.signupForm);
+            const r = await post('/user/register', this.signupForm);
             this.loading = false;
             if (isError(r)) {
               if (r.data) {
@@ -193,12 +209,31 @@ export default {
               }
               this.$refs['signupForm'].validate((isValid) => {});
             } else {
+              if(r.data.code==200)
+              {
               ElNotification({
                 title: '注册成功',
                 message: '欢迎加入！',
                 type: 'success',
               });
               this.$router.push('/login');
+              }
+              else if(r.data.code==10001)
+              {
+                ElNotification({
+                title: '注册失败',
+                message: '用户已存在！',
+                type: 'existed',
+              });
+              }
+              else if(r.data.code==10003)
+              {
+                ElNotification({
+                title: '注册失败',
+                message: '不合法的邮箱！',
+                type: 'emailfail',
+              });
+              }
             }
           } else {
             this.loading = false;
@@ -209,6 +244,50 @@ export default {
 
     resetForm() {
       this.$refs['signupForm'].resetFields();
+    },
+
+    refreshCurrentTime() {
+      this.currentTime = moment().valueOf();
+    },
+
+    getSeconds() {
+      if (this.lastSendTime == undefined) {
+        return 0;
+      }
+      let s = moment.duration(moment(this.lastSendTime).diff(moment())).asSeconds();
+      s = Math.max(s + 60, 0);
+      if (s == 0 && this.eventId) {
+        clearInterval(this.eventId);
+        this.sending = false;
+      }
+      return Math.ceil(s);
+    },
+
+    sendCode() {
+      this.sending = true;
+      this.$refs['signupForm'].validateField('email',
+        async (isValid) => {
+          if (isValid) {
+            const r = await get('/email/', this.signupForm);
+            if (isError(r)) {
+              if (r.data) {
+                this.errors.email = r.data.email;
+              }
+              this.$refs['signupForm'].validateField('email', (isValid) => {});
+              this.sending = false;
+            } else {
+              ElMessage({
+                type: 'success',
+                message: '验证码已发送至邮箱，60 秒后可重新发送验证码。',
+              });
+              this.lastSendTime = moment();
+              this.eventId = setInterval(this.refreshCurrentTime, 200);
+            }
+          } else {
+            this.sending = false;
+          }
+        }
+      );
     },
   },
 };
