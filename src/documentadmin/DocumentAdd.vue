@@ -72,7 +72,7 @@ export default {
 data(){
   return{
     code: '',
-    editorContent:'123456',
+    editorContent:'请于此处开始编辑',
     message: '',
     docs: [],
     count:'',

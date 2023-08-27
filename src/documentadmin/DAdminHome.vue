@@ -113,6 +113,7 @@ export default {
   },
     setup() {
     const docs = ref([]);
+    const staff = ref([]);
     // const docs = [
     // {
     //     "doc_id":1,
