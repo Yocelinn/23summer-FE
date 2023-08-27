@@ -22,37 +22,28 @@
             <el-card class="box-card"
               style="position: absolute;height:800px;width:200px;background-color: rgba(255, 255, 255, 0.85);left:20px">
               <div slot="header" class="clearfix">
-                <h3>文件操作区</h3>
+                <h3>文档操作区</h3>
               </div>
               <div>
-                <el-input v-model="input1" placeholder="请输入文档名称" style="position: absolute;left: 20px;top:125px;width:158px"></el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:165px;"
-                  @click="createtext">创建新文档</el-button>
-                <el-input v-model="input2" placeholder="请输入文档id" style="position: absolute;left: 20px;top:225px;width:158px">
+                <el-button type="info" style="position: absolute;left: 20px;top:85px;"
+                  @click="docsedit">保存文档</el-button>
+                <el-input v-model="doc_name1" placeholder="请输入文档名称" style="position: absolute;left: 20px;top:165px;width:158px"></el-input>
+                <el-button type="info" style="position: absolute;left: 20px;top:200px;"
+                  @click="docscreate">创建新文档</el-button>
+                <el-input v-model="doc_id1" placeholder="请输入文档id" style="position: absolute;left: 20px;top:265px;width:158px">
                 </el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:265px;"
-                  @click="find1">查找文档</el-button>
-                <el-input v-model="input3" placeholder="请输入文档id" style="position: absolute;left: 20px;top:325px;width:158px">
+                <el-button type="info" style="position: absolute;left: 20px;top:300px;"
+                  @click="docsserach">编辑指定文档</el-button>
+                <el-input v-model="doc_id2" placeholder="请输入文档id" style="position: absolute;left: 20px;top:365px;width:158px">
                 </el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:365px;"
-                  @click="delete1">删除文档</el-button>
+                <el-button type="info" style="position: absolute;left: 20px;top:400px;"
+                  @click="docsdelete">删除文档</el-button>
               </div>
             </el-card>
         </div>
-        <div class="edit_container" style="width: 800px;left:420px; height: 800px; top:160px">
+        <div class="edit_container" style="width: 1200px;left:420px; height: 800px; top:160px">
           <QuillEditor id="editorId" ref="myQuillEditor" v-model:content="editorContent" contentType="html"
-            @update:content="onContentChange" :options="options" style="width: 800px;left:420px; height: 800px; top:160px"/>
-        </div>
-        <div class="documentlist">
-          <el-table :data="this.textdata" height="450" border stripe
-            style="position:absolute;width: 320px;left:1250px;top:240px" @cell-click="find">
-            <el-table-column prop="file_name" label="文档名" width="140">
-            </el-table-column>
-            <el-table-column prop="last_modify_time" label="最后编辑时间" width="140">
-            </el-table-column>
-            <el-table-column prop="fileID" label="文档id" width="140">
-            </el-table-column>
-          </el-table>
+            @updateContent="update" :options="options" style="width: 800px;left:420px; top:160px" height: 800/>
         </div>
         </div>
       </el-container>
@@ -71,6 +62,8 @@ import {
   Search,
   Star,
 } from '@element-plus/icons-vue'
+import axios from 'axios';
+import { ref } from 'vue';
 export default {
   components:{
     CommonAside,
@@ -78,15 +71,79 @@ export default {
 },
 data(){
   return{
-    editorContent:'123456'
+    code: '',
+    editorContent:'123456',
+    message: '',
+    docs: [],
+    count:'',
+    doc_id:'10',
+    doc_id1:'',
+    doc_id2:'',
+    project_id:'1',
+    doc_name1:'',
   };
 },
-  methods: {
+ methods:{
+  docsedit(){
+    axios.post('/doc/edit',{
+      "doc_id": this.doc_id,
+      "content": this.editorContent,
+    })
+    .then((response)=>{
+      console.log(response.data.doc_id);
+      console.log(this.editorContent);
+    })
   },
+  update(newValue){
+    console.log('test')
+    console.log(newValue)
+    this.editorContent=newValue;
+  },
+  docscreate(){
+    axios.post('/doc/create',{
+      "doc_name": this.doc_name1,
+      "project_id": this.project_id,
+    })
+    .then((response)=>{
+      console.log(this.doc_name1);
+      console.log(response.data.message);
+      console.log(response.data.doc_id);
+      console.log(response.data.doc_project);
+    }
+    )
+  },
+  docsdelete(){
+    axios.post('/doc/delete',
+    {
+      "doc_id": this.doc_id2,
+    })
+    .then((response)=>{
+      console.log(this.doc_id2)
+      console.log(response.data.message);
+    }
+    )
+  },
+  docsserach(){
+    axios.post('/doc/doc_search',
+    {
+      "project_id":Number(this.project_id),
+      "doc_id": this.doc_id1,
+    })
+    .then((response)=>{
+      console.log(this.doc_id1);
+      console.log(this.project_id);
+      console.log(response.data.code);
+      console.log(response.data.message);
+    }
+    )
+  },
+ }
 }
 </script>
 
 <style>
+
+
 .bgbox {
   display: block;
   opacity: 1;
@@ -118,5 +175,9 @@ data(){
   margin-left: 10px;
   color: #fff;
   margin-top: 5px;
+}
+
+.ql-editor {
+  min-height: 760px;
 }
 </style>

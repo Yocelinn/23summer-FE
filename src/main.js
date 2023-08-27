@@ -36,4 +36,4 @@ app.use(router)
 app.use(ElementPlus)
 app.component('quill-editor', QuillEditor)
 app.mount('#app')
-app.component('d-splitter-pane', splitPane);
+window.$store = store;

@@ -11,13 +11,13 @@
         @close="handleClose"
       >
         <h2>文档管理</h2>
-        <router-link to="/documentadmin">
+        <router-link to="/person">
           <el-menu-item index="3">
           <el-icon><document /></el-icon>
           <span>返回项目</span>
         </el-menu-item>
         </router-link>
-        <router-link to="/documentadmin">
+        <router-link to="/prototype">
           <el-menu-item index="4">
           <el-icon><setting /></el-icon>
           <span>原型设计</span>
