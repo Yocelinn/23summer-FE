@@ -37,7 +37,7 @@
                             v-model="passwordO"
                             type="password"
                             placeholder="Please input password"
-                            show-password
+                            show-password="false"
                             clearable
                             class="tl-input2"
                             @input="updatePasswordO"
@@ -50,7 +50,7 @@
                             v-model="passwordN"
                             type="password"
                             placeholder="Please input password"
-                            show-password
+                            show-password="false"
                             clearable
                             class="tl-input3"
                             @input="updatePasswordN"
@@ -314,7 +314,7 @@ import {ElMessage} from "element-plus";
 import router from "@/router";
 import { useStore } from 'vuex';
 
-// const API_URL = '/'; // 新增这一行，定义API_URL
+// const API_URL = 'http://81.70.184.77:8000/'; // 新增这一行，定义API_URL
 
 export default defineComponent( {
     name: 'TeamList',
@@ -339,9 +339,9 @@ export default defineComponent( {
         const passwordN = ref(""); // Initialize
         const fetchProjectList = inject('fetchProjectList');
         const callFetchProjectList = () => {
-            // if (fetchProjectList) {
-            //         fetchProjectList();
-            // }
+            if (fetchProjectList) {
+                fetchProjectList();
+            }
         };
         const data = reactive({
             name: 'Tom',
@@ -360,22 +360,6 @@ export default defineComponent( {
         //     },
         //     {
         //         "team_id": 3,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 4,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 4,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 4,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 4,
         //         "team_name": "testTeam1"
         //     },
         //     {
@@ -421,9 +405,9 @@ export default defineComponent( {
             }
             visible.value = false;
             // 发送POST请求
-            axios.post('/team/create',{
+            axios.post('http://81.70.184.77:8000/team/create',{
                 teamName: valueBasic1.value // 使用输入框的值作为参数
-            })
+            }, )
                 .then((response) => {
                     // 处理响应
                     if (response.data.code === 200) {
@@ -453,22 +437,10 @@ export default defineComponent( {
         };
 
         const fetchTeamList = () => {
-            axios.get('/team/all') // 从后端获取团队列表数据
+            axios.get('http://81.70.184.77:8000/team/all', ) // 从后端获取团队列表数据
                 .then((response) => {
-                    console.log(response.data.res);
                     if (response.data.code === 200) {
                         tableData.value = response.data.res; // 将获取的数据赋值给tableData
-                        console.log('success');
-                        if (tableData.value !== null) {
-                            if (tableData.value.length > 0) {
-                                curTeamId.value = tableData.value[0].team_id;
-                            }
-
-                        }
-                        else {
-                            curTeamId.value = -1;
-                        }
-                        console.log(curTeamId)
                     }
                 })
                 .catch((error) => {
@@ -478,14 +450,20 @@ export default defineComponent( {
                     })
                     console.error('GET request error:', error);
                 });
-            console.log(tableData.value);
         };
 
-        // const initCurTeam = () => {
-        //     console.log('长度', tableData.value.length);
-        // };
+        const initCurTeam = () => {
+            if (tableData.value !== null) {
+                if (tableData.value.length > 0) {
+                    curTeamId.value = tableData.value[0].id;
+                }
+                else {
+                    curTeamId.value = -1;
+                }
+            }
+        };
         const fetchSelfInform = () => {
-            axios.get('/user/myself')
+            axios.get('http://81.70.184.77:8000/user/myself', )
                 .then((response) => {
                     if (response.data.code === 200) {
                         message({
@@ -517,10 +495,10 @@ export default defineComponent( {
         };
 
         const updateSelfInform = () => {
-            axios.put('/user/myself/', {
+            axios.put('http://81.70.184.77:8000/user/myself/', {
                 nickname: curNitName.value,
                 description: curDescription.value
-            })
+            }, )
                 .then((response2) => {
                     if (response2.data.code === 200) {
                         message({
@@ -550,7 +528,7 @@ export default defineComponent( {
         };
 
         const updatePassword = () => {
-            axios.post('/user/changepassword', {
+            axios.post('http://81.70.184.77:8000/user/changepassword', {
                 old_password: passwordO.value,
                 new_password: passwordN.value
             })
@@ -586,12 +564,17 @@ export default defineComponent( {
             curTeamId.value = team_id;
             callFetchProjectList();
             console.log(curTeamId.value);
-        };
+        }
 
-        onMounted(async () => {
-            await fetchTeamList(); // 组件挂载后获取团队列表数据
+        onMounted(() => {
+            fetchTeamList(); // 组件挂载后获取团队列表数据
+            if (tableData.value !== null) {
+                if (tableData.value.length > 0)
+                    curTeamId.value = tableData.value[0].id;
+            }
             fetchSelfInform();
-            // initCurTeam();
+            initCurTeam();
+            //
         });
 
         return {

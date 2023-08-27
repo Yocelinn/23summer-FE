@@ -1,3 +1,8 @@
+<script setup>
+import { get, post, isError } from '@/utils/request.js'
+import { ElNotification } from 'element-plus'
+</script>
+
 <template>
   <div class="container main-container">
     <el-row class="card-wrapper">
@@ -6,7 +11,7 @@
           <template #header>
             <div class="header">
               <div class="header-welcome">
-                欢迎回来！
+                欢迎回到绿色心情！
               </div>
               <div class="header-title">
                 <h1>登录</h1>
@@ -44,10 +49,6 @@
 </template>
 
 <script>
-import { isError } from '@/utils/request.js'
-import { ElNotification } from 'element-plus'
-import axios from "axios";
-
 export default {
   name: 'LogIn',
 
@@ -160,56 +161,32 @@ export default {
       this.$refs['loginEmailForm'].validate(
         async (isValid) => {
           if (isValid) {
-            const r = await axios.post('/user/login', this.loginEmailForm);
+            const r = await post('/login/', this.loginEmailForm);
             this.loading = false;
             if (isError(r)) {
               if (r.data) {
                 this.errors = r.data;
               }
-              this.$refs['loginEmailForm'].validate(() => {});
-            } else if(!isError(r)){
-              if(r.data.code==200)
-              {
+              this.$refs['loginEmailForm'].validate((isValid) => {});
+            } else {
               ElNotification({
                 title: '登录成功',
                 message: '欢迎回到!',
                 type: 'success',
               });
               this.$store.commit('login', r.data);
-              //这里打印 this指向的是你现在这个组件对象
-              //你在控制台直接执行this是不可以的
-              // 其实你在其他页面里面写 this.$store.state.user 一样可以访问到
-              // 只不过是你在控制台里面的this指向问题
-              // 你的store在main.js中注册之后  你所有的组件通过this.$store都是可以访问到的
-              // 我刚刚通过 window.$store=store 的方式将这个对象暴露到windows对象上了
-              // 所以现在在控制台里面可以获取到数据
-              // 知识点：作用域
+              window.localStorage.setItem('token', this.$store.state.user.token)
               console.log(this.$store.state.user);
-              window.sessionStorage.setItem('token',this.$store.state.user.token)
-              this.$router.push('/person');
-              }
-              else if(r.data.code==10101)
-              {
-                ElNotification({
-                title: '登录失败',
-                message: '用户不存在或密码错误！!',
-                type: 'unexist',
-              });
-              }
-              else{
-                ElNotification({
-                title: '登录失败',
-                message: '其他错误',
-                type: 'other',
-              });
+              console.log(this.$store.state.user.token);
+              this.$router.push('/home');
             }
           } else {
             this.loading = false;
           }
         }
-        });
+      );
     },
-  },
+  }
 };
 </script>
 

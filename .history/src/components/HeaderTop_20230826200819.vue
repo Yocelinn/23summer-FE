@@ -15,15 +15,7 @@
                     </el-input>
             </div>
             <div class="item bell">
-                <el-icon size="20" @click="toggleNotiList" ><Bell /></el-icon>
-            </div>
-           
-            <div class="noti-column"  :class="{ 'slide-out': showNotiList }">
-                <transition name="slide">
-                    <div v-if="showNotiList" class="noti-list-wrapper" >
-                        <Notification/>
-                    </div>
-                </transition>
+                <el-icon size="20"><Bell /></el-icon>
             </div>
             <div class="item avatar">
                 <el-popover
@@ -74,7 +66,7 @@
 <script>
 
 import { Search } from '@element-plus/icons-vue'
-// import Notification from './NotificationView.vue'
+
 export default {
     setup() {
         return {
@@ -119,7 +111,7 @@ export default {
 
 }
 .bell {
-    line-height: 60px;
+    line-height: 40px;
     align-items: center;
     justify-content: center;
 }
@@ -144,7 +136,7 @@ export default {
     overflow-x: hidden;
   position: relative;
   transition: width 0.5s; /* 添加宽度过渡效果 */
-  z-index: 1000;
+  z-index: 0;
 }
 .noti-column.slide-enter-active,
 .noti-column.slide-leave-active {

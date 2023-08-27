@@ -366,22 +366,6 @@ export default defineComponent( {
         //         "team_id": 4,
         //         "team_name": "testTeam1"
         //     },
-        //     {
-        //         "team_id": 4,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 4,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 4,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 4,
-        //         "team_name": "testTeam1"
-        //     },
         // ]
 
 

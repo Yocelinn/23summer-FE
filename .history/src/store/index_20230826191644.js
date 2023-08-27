@@ -28,4 +28,5 @@ export default createStore({
       state.user.token = data.token;
     },
   },
+
 })

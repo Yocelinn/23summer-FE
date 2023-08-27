@@ -7,17 +7,27 @@ export default createStore({
     curTeamId: {},
     curProjectId: {},
   },
+<<<<<<< HEAD
+=======
   actions: {
     updateUser({ commit }, data) {
       commit('updateUser', data);
     }
   },
+>>>>>>> Terry_x
   mutations: {
     login(state, user) {
       state.user = user;
       state.isLoggedIn = true;
     },
     logout(state) {
+<<<<<<< HEAD
+      state.user = undefined;
+      state.isLoggedIn = false;
+    },
+  },
+})
+=======
       state.user = {};
       state.isLoggedIn = false
     },
@@ -29,3 +39,4 @@ export default createStore({
     },
   },
 })
+>>>>>>> Terry_x

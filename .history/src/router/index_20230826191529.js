@@ -1,17 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 
-
 const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/home',
     children: [
-      {
-        path: 'home',
-        component: () => import('@/views/HomeView.vue')
-      },
       {
         path: 'signup',
         component: () => import('@/user/SignUp.vue'),
@@ -32,20 +26,6 @@ const routes = [
         meta: {
           title: '文档管理',
         },
-      },
-      {
-        path: 'documentadd',
-        component: () => import('@/documentadmin/DocumentAdd.vue'),
-        meta: {
-          title: '新增文档',
-        },
-      },
-      {
-        path: 'prototype',
-        component: () => import('@/views/prototype/PrototypeView.vue'),
-        meta: {
-          title: '原型设计',
-        }
       },
     ]
   },
