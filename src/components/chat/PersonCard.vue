@@ -3,8 +3,8 @@
     <div class="info">
           <HeadPortrait ></HeadPortrait>
           <div class="info-detail">
-            <div class="name">这里是名字</div>
-            <div class="detail">这里是简介</div>
+            <div class="name">{{ personInfo.nickname }}</div>
+            <div class="detail">{{personInfo.email}}</div>
           </div>
 
     </div>
@@ -16,7 +16,10 @@ import HeadPortrait from "./HeadPortrait.vue";
 
 export default {
   props: {
-    // personInfo:{},
+    personInfo: {
+      default: {
+      },
+    },
     pcCurrent: {
       default: ''
     }

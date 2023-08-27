@@ -74,7 +74,7 @@
 <script>
 
 import { Search } from '@element-plus/icons-vue'
-// import Notification from './NotificationView.vue'
+import Notification from './NotificationView.vue'
 export default {
     setup() {
         return {
@@ -91,6 +91,9 @@ export default {
         toggleNotiList() {
         this.showNotiList = !this.showNotiList; // 切换列表显示状态
         },
+    },
+    components:{
+        Notification
     }
 }
 </script>
@@ -100,7 +103,7 @@ export default {
     width: 40px
 }
 .header-container {
-    height:10vh;
+    height:7vh;
     line-height:50px;
     display: flex;
     justify-content: space-between;

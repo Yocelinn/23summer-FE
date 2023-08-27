@@ -26,6 +26,7 @@ export default createStore({
       state.user.name = data.name;
       state.user.nickname = data.nickname;
       state.user.token = data.token;
+      state.user.id=data.id;
     },
   },
 })

@@ -49,7 +49,7 @@
                             <!-- 未读消息的图标 -->
                             <!-- 显示数字标识未读消息数量 -->
                             <div class="unread-badge">1</div>
-                            <CircleCheckFilled />
+                            <!-- <CircleCheckFilled /> -->
 
                         </template>
                         <el-icon class="noti-icon-check"
