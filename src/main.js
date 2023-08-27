@@ -16,6 +16,10 @@ import Modal from 'vue-devui/modal'
 import 'vue-devui/modal/style.css'
 import Input from 'vue-devui/input'
 import 'vue-devui/input/style.css'
+import Table from 'vue-devui/table'
+import 'vue-devui/table/style.css'
+import Card from 'vue-devui/card'
+import 'vue-devui/card/style.css'
 // import Ripple from 'vue-devui/ripple'
 // import 'vue-devui/ripple/style.css'
 
@@ -57,6 +61,8 @@ app.use(Button)
 app.use(Splitter)
 app.use(Modal)
 app.use(Input)
+app.use(Table)
+app.use(Card)
 // app.use(Ripple)
 app.config.globalProperties.$message = ElMessage;
 // app.use(DevUI)

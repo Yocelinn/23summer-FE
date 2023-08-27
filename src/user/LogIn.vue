@@ -175,6 +175,7 @@ export default {
                 message: '欢迎回到!',
                 type: 'success',
               });
+              window.sessionStorage.setItem('curTeamId', -1);
               this.$store.commit('login', r.data);
               //这里打印 this指向的是你现在这个组件对象
               //你在控制台直接执行this是不可以的

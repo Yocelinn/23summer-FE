@@ -5,57 +5,74 @@
                 <template #header>
                     <d-modal-header>
                         <!--                <d-icon name="like"></d-icon>-->
-                        <span>修改团队信息</span>
+                        <span>修改项目信息</span>
                     </d-modal-header>
                 </template>
 
                 <!--                <div class="text">昵称：</div>-->
-                <div class="tl-div-input">
+                <div class="cp-div-input">
                     <el-input
-                            v-model="curTName"
-                            placeholder=团队名称
+                            v-model="curNitName"
+                            placeholder=我的昵称
                             clearable
-                            class="tl-input1"
-                            @input="updateCurTName"
+                            class="cp-input1"
+                            @input="updateCurNitName"
                     />
                 </div>
 
                 <!--                <div class="text">描述：</div>-->
-                <div class="tl-div-input">
+                <div class="cp-div-input">
                     <el-input
                             v-model="curDescription"
                             placeholder="描述"
                             clearable
-                            class="tl-input4"
+                            class="cp-input4"
                             @input="updateCurDescription"
                     />
                 </div>
 
+                <!--                <div class="text">旧密码：</div>-->
+                <div class= "cp-div-input">
+                    <el-input
+                            v-model="passwordO"
+                            type="password"
+                            placeholder="Please input password"
+                            show-password="false"
+                            clearable
+                            class="cp-input2"
+                            @input="updatePasswordO"
+                    />
+                </div>
+
+                <!--                <div class="text">新密码：</div>-->
+                <div class="cp-div-input">
+                    <el-input
+                            v-model="passwordN"
+                            type="password"
+                            placeholder="Please input password"
+                            show-password="false"
+                            clearable
+                            class="cp-input3"
+                            @input="updatePasswordN"
+                    />
+                </div>
+
                 <template #footer>
-                    <d-modal-footer class="tl-button-container" style="text-align: right; padding-right: 20px;">
-                        <d-button class="custom-button-i" @click="updateName">修改名称</d-button>
-                        <d-button class="custom-button-i" @click="updateDes">修改描述</d-button>
+                    <d-modal-footer class="cp-button-container" style="text-align: right; padding-right: 20px;">
+                        <d-button class="custom-button-i" @click="updateSelfInform">修改信息</d-button>
+                        <d-button class="custom-button-i" @click="updatePassword">修改密码</d-button>
                         <d-button class="custom-button" @click="updateVisable=false">取消</d-button>
                     </d-modal-footer>
                 </template>
             </d-modal>
 
-            <el-descriptions class="main-descriptions" title="团队信息" column="2">
-                <el-descriptions-item label="团队名称：">
-                    {{tName}}
-                </el-descriptions-item>
-                <el-descriptions-item label="权限：">
-                    <div :key="roleNum">
-                        <el-tag class="ml" :class="getTagClass(roleNum)">
-                            {{role}}
-                        </el-tag>
-                    </div>
-                </el-descriptions-item>
-                <el-descriptions-item label="团队描述：">
-                    {{description}}
+            <el-descriptions class="main-descriptions" title="个人信息">
+                <el-descriptions-item label="昵称：">{{nitName}}</el-descriptions-item>
+                <el-descriptions-item>
+                    <el-button class="custom-save-button-cp" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
                 </el-descriptions-item>
                 <el-descriptions-item>
-                    <el-button class="custom-save-button-tl" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
+                    <el-button class="custom-save-button-cp" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
                 </el-descriptions-item>
             </el-descriptions>
         </div>
@@ -63,19 +80,32 @@
             <el-card class="box-card" >
                 <template #header>
                     <div class="card-header">
-                        <span class="text"><b>协作者</b></span>
-                        <el-button class="custom-button" @click="handleClick">进入团队</el-button>
+                        <span class="text"><b>选择团队</b></span>
+                        <el-button class="custom-button" @click="handleClick">创建团队</el-button>
+                        <d-modal v-model="visible">
+                            <template #header>
+                                <d-modal-header>
+                                    <!--                <d-icon name="like"></d-icon>-->
+                                    <span>创建团队</span>
+                                </d-modal-header>
+                            </template>
+                            <div class="text"><b>团队名称：</b></div>
+                            <d-input class="custom-input" v-model="valueBasic1" clearable @clear="handleClear" placeholder="你的新团队名称"></d-input>
+                            <template #footer>
+                                <d-modal-footer style="text-align: right; padding-right: 20px;">
+                                    <d-button class="custom-button" @click="hidden">取消</d-button>
+                                    <d-button class="custom-button-i" @click="newTeam">确认</d-button>
+                                </d-modal-footer>
+                            </template>
+                        </d-modal>
                     </div>
                 </template>
-                <el-table class="tl-card-table" :data="CPData" style="width: 100%" flex="1" :show-header="true">
-                    <el-table-column label="姓名" fit="true" align="center">
+                <el-table class="cp-card-table" :data="tableData" style="width: 100%" flex="1" :show-header="false">
+                    <el-table-column label="Name" fit="true" align="center">
                         <template #default="scope">
-                            {{scope.row.name}}
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="邮箱" fit="true" align="center">
-                        <template #default="scope">
-                            {{scope.row.email}}
+                            <d-button class="custom-button-w"  v-ripple="{ duration: 300 }" @click="chooseCurTeam(scope.row.team_id)">
+                                {{scope.row.team_name}}
+                            </d-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -84,37 +114,37 @@
     </div>
 </template>
 
-<style scoped>
-.tl-button-container {
+<style>
+.cp-button-container {
     display: flex;
     justify-content: flex-end;
     /*padding-right: 20px; !* 调整按钮与容器边缘的间距 *!*/
     max-width: 100%;
 }
 
-.tl-input1 {
+.cp-input1 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
-.tl-input2 {
+.cp-input2 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
-.tl-input3 {
+.cp-input3 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
-.tl-input4 {
+.cp-input4 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
 
-.tl-card-table {
-    height: 230px;
+.cp-card-table {
+    height: 450px;
     overflow: auto;
 }
 
@@ -188,14 +218,14 @@
     line-height: 40px; /* 使文本垂直居中 */
 }
 
-.custom-save-button-tl {
+.custom-save-button-cp {
     background-color: white;
     border-color: #9E9CF4;
     color: #9E9CF4;
 }
 
-.custom-save-button-tl:hover,
-.custom-save-button-tl:focus {
+.custom-save-button-cp:hover,
+.custom-save-button-cp:focus {
     background-color: white;
     border-color: #7E7CCB;
     color: #7E7CCB;
@@ -203,7 +233,7 @@
     transition: background-color 0.3s, color 0.3s;
 }
 
-.custom-save-button-tl:active {
+.custom-save-button-cp:active {
     background-color: #9E9CF4;
     border-color: white;
     color: white;
@@ -275,47 +305,47 @@
 </style>
 
 <script>
-import { ref, defineComponent, onMounted } from 'vue';
+import { ref, defineComponent, reactive, onMounted, inject } from 'vue';
 import axios from "axios";
 import {ElMessage} from "element-plus";
 import router from "@/router";
-import { useStore, mapState } from 'vuex';
-// const API_URL = '/'; // 新增这一行，定义API_URL
+import { useStore } from 'vuex';
+
+// const API_URL = 'http://81.70.184.77:8000/'; // 新增这一行，定义API_URL
 
 export default defineComponent( {
-    name: 'TeamList',
-    computed: {
-        ...mapState(['projectData']),
-        // 其他 computed properties
-    },
+    name: 'ChooseProject',
     setup() {
         const store = useStore();
         const user = store.state.user;
-        const curTeamId = window.sessionStorage.getItem('curTeamId');
-        // const curTeamId = store.state.curTeamId;
-        const roleNum = ref(0);
+        const curTeamId = store.state.curTeamId;
+        const input = ref('');
         const message = ElMessage;
+        const visible = ref(false);
         const valueBasic1 = ref('');
-        const role = ref('');
-        const tName = ref(''); // Initialize with an empty value
-        const curTName = ref('')
+        const name = ref('');
+        const uid = ref('');
+        const nitName = ref(''); // Initialize with an empty value
+        const curNitName = ref('')
+        const email = ref('');
+        const password = ref(""); // Initialize with
         const description = ref(""); // Initialize with
         const curDescription = ref(""); // Initialize with
         const updateVisable = ref(false);
-
-        function getTagClass(roleNum) {
-            if (roleNum.value === 1/* some condition */) {
-                return 'el-tag--success';
-            } else if (roleNum.value === 2/* some other condition */) {
-                return 'el-tag--warning';
-            } else if (roleNum.value === 0) {
-                return 'el-tag--default';
-            } else {
-                return 'el-tag--info';
+        const passwordO = ref(""); // Initialize with
+        const passwordN = ref(""); // Initialize
+        const fetchProjectList = inject('fetchProjectList');
+        const callFetchProjectList = () => {
+            if (fetchProjectList) {
+                fetchProjectList();
             }
-        }
-
-        const CPData = ref([]);
+        };
+        const data = reactive({
+            name: 'Tom',
+            age: 20,
+            address: 'Chengdu',
+        });
+        const tableData = ref([]);
         // const tableData = [
         //     {
         //         "team_id": 1,
@@ -339,49 +369,109 @@ export default defineComponent( {
         const updateCurDescription = (newValue) => {
             curDescription.value = newValue;
         }
-        const updateCurTName = (newValue) => {
-            curTName.value = newValue;
+        const updatePasswordO = (newValue) => {
+            passwordO.value = newValue;
+        }
+        const updatePasswordN = (newValue) => {
+            passwordN.value = newValue;
+        }
+        const updateCurNitName = (newValue) => {
+            curNitName.value = newValue;
+        };
+
+
+        const handleClear = () => {
+            console.log('clear');
+            valueBasic1.value = '';
         };
 
         const handleClick = () => {
-            router.push('/teamCenter');
+            visible.value = true;
+        };
+        const hidden = () => {
+            visible.value = false;
+        };
+        const newTeam = () => {
+            if(valueBasic1.value.length > 20) {
+                message({
+                    message:"团队名称需少于20个字符",
+                    type: 'error'
+                })
+                handleClear();
+                return;
+            }
+            visible.value = false;
+            // 发送POST请求
+            axios.post('/team/create',{
+                teamName: valueBasic1.value // 使用输入框的值作为参数
+            })
+                .then((response) => {
+                    // 处理响应
+                    if (response.data.code === 200) {
+                        message({
+                            message: response.data.message,
+                            type:'success'
+                        })
+                        fetchTeamList();
+                        router.push('/teamCenter'); // 原型是设计的url是prototype
+                    }
+                    else {
+                        message({
+                            message: '新建团队失败，请重试',
+                            type:'error'
+                        })
+                        console.log('一次新建', response.data);
+                    }
+                })
+                .catch(error => {
+                    message({
+                        message:"新建团队其他错误，请重试",
+                        type:'error'
+                    })
+                    // 处理错误
+                    console.error('POST request error:', error);
+                });
         };
 
-        const fetchCPList = () => {
-            axios.post('/team/seemember', {
-                team_id: curTeamId
-            }) // 从后端获取团队列表数据
+        const fetchTeamList = () => {
+            axios.get('/team/all') // 从后端获取团队列表数据
                 .then((response) => {
-                    console.log(response.data.res);
                     if (response.data.code === 200) {
-                        CPData.value = response.data.res; // 将获取的数据赋值给tableData
-                        console.log('success');
-                        console.log(CPData.value);
+                        tableData.value = response.data.res; // 将获取的数据赋值给tableData
                     }
                 })
                 .catch((error) => {
                     message({
-                        message:"获取协作者信息失败，请刷新重试",
+                        message:"获取团队信息失败，请刷新重试",
                         type:'error'
                     })
                     console.error('GET request error:', error);
                 });
-            console.log(CPData.value);
         };
 
+        const initCurTeam = () => {
+            if (tableData.value !== null) {
+                if (tableData.value.length > 0) {
+                    curTeamId = tableData.value[0].id;
+                }
+                else {
+                    curTeamId = -1;
+                }
+            }
+        };
         const fetchSelfInform = () => {
-            axios.post('/team/myself/', {
-                team_id: curTeamId
-            })
+            axios.get('/user/myself')
                 .then((response) => {
                     if (response.data.code === 200) {
                         message({
                             message: response.data.message,
                             type:'success'
                         })
-                        tName.value = window.sessionStorage.getItem('curProjectName');
-                        roleNum.value = response.data.perm;
-                        description.value = window.sessionStorage.getItem('curProjectDes');
+                        uid.value = response.data.user_id;
+                        nitName.value = response.data.nickname;
+                        name.value = response.data.name;
+                        email.value = response.data.email;
+                        description.value = response.data.description;
                     }
                     else {
                         message({
@@ -401,9 +491,10 @@ export default defineComponent( {
                 })
         };
 
-        const updateName = () => {
-            axios.put('/project/rename', {
-                new_name: curTName.value,
+        const updateSelfInform = () => {
+            axios.put('/user/myself/', {
+                nickname: curNitName.value,
+                description: curDescription.value
             })
                 .then((response2) => {
                     if (response2.data.code === 200) {
@@ -423,7 +514,7 @@ export default defineComponent( {
                 })
                 .catch((error2) => {
                     message({
-                        message:"修改名称错误，请重试",
+                        message:"修改普通信息错误，请重试",
                         type:'error'
                     })
                     // 处理错误
@@ -433,7 +524,7 @@ export default defineComponent( {
             fetchSelfInform();
         };
 
-        const updateDes = () => {
+        const updatePassword = () => {
             axios.post('/user/changepassword', {
                 old_password: passwordO.value,
                 new_password: passwordN.value
@@ -466,30 +557,55 @@ export default defineComponent( {
             fetchSelfInform();
         };
 
-        onMounted(async () => {
+        const chooseCurTeam = (team_id) => {
+            curTeamId = team_id;
+            callFetchProjectList();
+            console.log(curTeamId);
+        }
+
+        onMounted(() => {
+            fetchTeamList(); // 组件挂载后获取团队列表数据
+            if (tableData.value !== null) {
+                if (tableData.value.length > 0)
+                    curTeamId = tableData.value[0].id;
+            }
             fetchSelfInform();
-            await fetchCPList(); // 组件挂载后获取团队列表数据
+            initCurTeam();
+            //
         });
 
         return {
             user,
             curTeamId,
-            roleNum,
+            visible,
             valueBasic1,
-            CPData,
-            role,
-            tName,
-            curTName,
+            data,
+            tableData,
+            input,
+            name,
+            uid,
+            nitName,
+            curNitName,
+            email,
+            password,
             description,
             curDescription,
             updateVisable,
-            getTagClass,
-            updateName,
-            updateDes,
-            updateCurTName,
+            passwordO,
+            passwordN,
+            callFetchProjectList,
+            updateSelfInform,
+            updatePassword,
             updateCurDescription,
+            updatePasswordO,
+            updatePasswordN,
+            updateCurNitName,
+            handleClear,
             handleClick,
-            fetchCPList,
+            hidden,
+            newTeam,
+            chooseCurTeam,
+            fetchTeamList,
             fetchSelfInform,
         };
     },

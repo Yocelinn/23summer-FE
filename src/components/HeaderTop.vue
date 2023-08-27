@@ -74,11 +74,11 @@
 <script>
 
 import { Search } from '@element-plus/icons-vue'
-// import Notification from './NotificationView.vue'
+import Notification from './NotificationView.vue'
 export default {
     setup() {
         return {
-            Search
+            Search,
         }
     },
     data() {
@@ -91,6 +91,9 @@ export default {
         toggleNotiList() {
         this.showNotiList = !this.showNotiList; // 切换列表显示状态
         },
+    },
+    components: {
+        Notification
     }
 }
 </script>

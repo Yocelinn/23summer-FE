@@ -27,14 +27,14 @@ const routes = [
         },
       },
       {
-        path: 'documentadmin',
+        path: '/documentadmin',
         component: () => import('@/documentadmin/DAdminHome.vue'),
         meta: {
           title: '文档管理',
         },
       },
       {
-        path: 'documentadd',
+        path: '/documentadd',
         component: () => import('@/documentadmin/DocumentAdd.vue'),
         meta: {
           title: '新增文档',

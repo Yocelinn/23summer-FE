@@ -146,6 +146,10 @@ export default {
 </script>
 
 <style>
+body {
+  margin: 0;
+}
+
 .bgbox {
   display: block;
   opacity: 1;

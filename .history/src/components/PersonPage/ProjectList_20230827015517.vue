@@ -31,14 +31,14 @@
                         clearable
                         class="pl-input-d"
                 />
-                <!--                @input="cNewPjName"-->
+<!--                @input="cNewPjName"-->
                 <el-input
                         v-model="newPjDes"
                         placeholder=项目描述
                         clearable
                         class="pl-input-d"
                 />
-                <!--                @input="cNewPjDes"-->
+<!--                @input="cNewPjDes"-->
             </div>
 
             <template #footer>
@@ -103,33 +103,22 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, provide } from 'vue';
 import { ElMessage } from 'element-plus';
 import axios from "axios";
 import router from "@/router";
-import {mapState, useStore, mapActions } from 'vuex';
+import { useStore } from 'vuex';
 // import message from "@element-plus/icons/lib/Message";
 
 export default {
     name: 'ProjectList',
-    computed: {
-        ...mapState(['projectData']),
-        // 其他 computed properties
-    },
-
     setup() {
         const store = useStore();
         const user = store.state.user;
-        // const curTeamId = store.state.curTeamId;
-        // const curTeamId = toRef(store.state, 'curTeamId');
-        const curTeamId = window.sessionStorage.getItem('curTeamId');
-        const curProjectId = ref('');
+        const curTeamId = store.state.curTeamId;
+        const curProjectId = store.state.curProjectId;
         const plNewPjVisable = ref(false);
-        // const projectData = store.state.projectData;
-        const projectData = computed(() => {
-            return store.state.projectData;
-        });
-        // const projectData = ref([]);
+        const projectData = ref([]);
         // const projectData = [
         //     {
         //         project_id: 1,
@@ -188,21 +177,9 @@ export default {
         // ];
         const newPjName = ref('');
         const newPjDes = ref('');
-        const { fetchProjectList } = mapActions(['fetchProjectList']);
-        // const { createNewProject } = mapActions(['createNewProject']);
-        const callFetchInProjectList = async () => {
-            console.log('PL', window.sessionStorage.getItem('curTeamId'));
-            store.dispatch('fetchProjectList', window.sessionStorage.getItem('curTeamId'));
-            console.log('PL检查', projectData);
-        };
-        // const callCreatNewProject = async () => {
-        //     const NewPjName = newPjName.value;
-        //     const NewPjDes = newPjDes.value;
-        //     await store.dispatch('createNewProject', { curTeamId, NewPjName, NewPjDes });
-        //     plNewPjVisable.value = false;
-        // }
+
         const createNewProject = () => {
-            if (window.sessionStorage.getItem('curTeamId').value === -1) {
+            if (curTeamId === -1) {
                 ElMessage({
                     message: '当前未选择团队',
                     type:'error'
@@ -210,14 +187,13 @@ export default {
                 plNewPjVisable.value = false;
             }
             else {
-                console.log(' 团队', window.sessionStorage.getItem('curTeamId'), store.state.isLoggedIn);
+                console.log(' 团队', curTeamId, store.state.isLoggedIn);
                 axios.post('/project/create', {
-                    team_id: window.sessionStorage.getItem('curTeamId'),
+                    team_id: curTeamId,
                     projectName: newPjName.value,
                     projectDescription: newPjDes.value
                 })
                     .then((response) => {
-                        console.log(response.config.data);
                         if (response.data.code === 200) {
                             ElMessage({
                                 message: '新建成功',
@@ -226,9 +202,6 @@ export default {
                             console.log(response.data);
                             plNewPjVisable.value = false;
 // 未完成                            curProjectId.value = response.data.id;
-                            window.sessionStorage.setItem('curProjectId', response.data.project_id);
-                            window.sessionStorage.setItem('curProjectName', newPjName.value);
-                            window.sessionStorage.setItem('curProjectDes', newPjDes.value);
                             router.push('/prototype');
                         }
                         else {
@@ -253,17 +226,14 @@ export default {
 
         const handleEdit = (index, data) => {
             curProjectId.value = data.project_id;
-            // store.commit('setCurProjectId', data.project_id);
-            window.sessionStorage.setItem('curProjectId', data.project_id);
-            window.sessionStorage.setItem('curProjectName', data.projectName);
-            window.sessionStorage.setItem('curProjectDes', data.projectDescription);
-
             router.push('/person/protectCenter');
         }
 
         const handleDelete = (index, data) => {
             axios.post('/project/delete', {
                 project_id: data.project_id
+            }, {
+                headers: { Authorization: user.token }
             })
                 .then((response) => {
                     if (response.data.code === 200) {
@@ -272,7 +242,7 @@ export default {
                             type: 'success'
                         });
                         console.log(response.data);
-                        callFetchInProjectList();
+                        fetchProjectList();
                     }
                     else {
                         ElMessage ({
@@ -291,48 +261,43 @@ export default {
                 });
         }
 
-        // const fetchProjectList = () => {
-        //     console.log('获取数据fetchProjectList' + curTeamId);
-        //     // console.log(curTeamId.value);
-        //     // console.log(curTeamId.value.value);
-        //     axios.post('/project/info', {
-        //         // team_id: curTeamId.value
-        //         team_id: curTeamId
-        //     })
-        //         .then((response) => {
-        //             console.log('Request Data:', response.config.data);
-        //             if (response.data.code === 200) {
-        //                 ElMessage( {
-        //                     message: '已获取团队项目',
-        //                     type: 'success'
-        //                 });
-        //                 console.log(response);
-        //                 projectData.value = response.data.projects;
-        //             }
-        //             else {
-        //                 ElMessage( {
-        //                     message: response.data.error + '请重试',
-        //                     type: 'error'
-        //                 });
-        //                 console.log(response);
-        //                 // console.log(curTeamId.value);
-        //             }
-        //         })
-        //         .catch((error) => {
-        //             ElMessage( {
-        //                 message: '获取团队项目失败，请重试',
-        //                 type: 'error'
-        //             });
-        //             console.log('POST request error:', error);
-        //             // console.log('未知错误', curTeamId.value);
-        //         });
-        // };
+        const fetchProjectList = () => {
+            axios.post('/project/info', {
+                team_id: curTeamId
+            }, {
+                headers: { Authorization: user.token }
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        ElMessage( {
+                            message: '已获取团队项目',
+                            type: 'success'
+                        });
+                        console.log(response);
+                        projectData.value = response.data.projects;
+                    }
+                    else {
+                        ElMessage( {
+                            message: response.data.error + '请重试',
+                            type: 'error'
+                        });
+                        console.log(response);
+                        console.log(curTeamId);
+                    }
+                })
+                .catch((error) => {
+                    ElMessage( {
+                        message: '获取团队项目失败，请重试',
+                        type: 'error'
+                    });
+                    console.log('POST request error:', error);
+                });
+        };
 
-        // provide('fetchProjectList', fetchProjectList);
-        // provide('test', 0);
+        provide('fetchProjectList', fetchProjectList);
 
         onMounted(() => {
-            callFetchInProjectList();
+            fetchProjectList();
         });
 
         return {
@@ -346,8 +311,6 @@ export default {
 
             createNewProject,
             fetchProjectList,
-            callFetchInProjectList,
-            // callCreatNewProject,
             handleEdit,
             handleDelete
         };
@@ -355,7 +318,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .pl-button-d-c:hover,
 .pl-button-d-c:focus {
     border-style: solid;
