@@ -32,12 +32,13 @@
     </div>
 </template>
 <script>
-  import PersonCard from "@/components/chat/PersonCard.vue";
-  import { defineComponent,ref } from "vue";
-import { NSelect,NMention } from "naive-ui";
-import ChatMe from "@/components/chat/ChatMe.vue"
-import ChatFriend from "@/components/chat/ChatFriend.vue"
-  export default defineComponent ({
+    import PersonCard from "@/components/chat/PersonCard.vue";
+    import { defineComponent,ref } from "vue";
+    import { NSelect,NMention } from "naive-ui";
+    import ChatMe from "@/components/chat/ChatMe.vue"
+    import ChatFriend from "@/components/chat/ChatFriend.vue"
+    import axios from 'axios'
+    export default defineComponent ({
     components:{
         PersonCard,NSelect,NMention,ChatMe,ChatFriend
     },
@@ -74,7 +75,17 @@ import ChatFriend from "@/components/chat/ChatFriend.vue"
             console.log(this.text_content)
         },
         getFriendList(){
-            // axios.post('/team/seemember',{})
+            axios.post('/team/seemember',{})
+            .then((response)=>{
+                console.log(response)
+                if(response.data.code!=200){
+                    console.log(response.data.messages);
+                    // alert(response.data.msg);
+                }
+                else{
+                    
+                }
+            })
         }
     },
     data(){

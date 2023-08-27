@@ -186,6 +186,7 @@ export default {
               // 所以现在在控制台里面可以获取到数据
               // 知识点：作用域
               console.log(this.$store.state.user);
+              window.sessionStorage.setItem('token',this.$store.state.user.token)
               this.$router.push('/person');
               }
               else if(r.data.code==10101)

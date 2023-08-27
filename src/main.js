@@ -19,7 +19,7 @@ import "@gausszhou/vue3-drag-resize-rotate/lib/bundle.esm.css";
 axios.defaults.baseURL='http://81.70.184.77:8000'
 axios.interceptors.request.use(
     config => {
-     config.headers.Authorization = window.localStorage.getItem('token')
+     config.headers.Authorization = window.sessionStorage.getItem('token')
     //  console.log(localStorage.getItem('token'))
     //  console.log(config)
  return config 
