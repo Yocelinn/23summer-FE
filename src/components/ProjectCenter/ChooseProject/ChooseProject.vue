@@ -405,11 +405,8 @@ export default defineComponent( {
                 })
         };
 
-        const clearInput1 = () => {
-            // curTName.value = ''; // 清空输入框内容
-        };
-
-        const clearInput2 = () => {
+        const clearInput = () => {
+            curTName.value = ''; // 清空输入框内容
             curDescription.value = ''; // 清空输入框内容
         };
 
@@ -447,7 +444,7 @@ export default defineComponent( {
             updateVisable.value = false;
             fetchSelfInform();
             console.log(tName.value);
-            clearInput1();
+            clearInput();
         };
 
         const updateDes = () => {
@@ -482,7 +479,7 @@ export default defineComponent( {
                 })
             updateVisable.value = false;
             fetchSelfInform();
-            clearInput2();
+            clearInput();
         };
 
         onMounted(async () => {
