@@ -1,11 +1,8 @@
 <template>
   <div>
     <header-top></header-top>
+    <router-view/>
   </div>
-  <nav>
-
-  </nav>
-  <router-view/>
 </template>
 
 <script>

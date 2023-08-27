@@ -13,7 +13,7 @@
                             collapseDirection="after"
                             :size="size"
                             :minSize="minSize"
-                            :collapsible="true"
+                            :collapsible="false"
                             @sizeChange="sizeChange"
                             @collapsedChange="collapsedChange"
                     >
