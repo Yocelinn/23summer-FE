@@ -64,12 +64,22 @@ export default defineComponent({
                 now.getMonth() === dateTime.getMonth() &&
                 now.getFullYear() === dateTime.getFullYear();
 
+            const isYesterday =
+                now.getDate() - 1 === dateTime.getDate() &&
+                now.getMonth() === dateTime.getMonth() &&
+                now.getFullYear() === dateTime.getFullYear();
             if (isSameDate) {
                 // 如果日期是今天，只格式化成今天的时:分
                 const hours = dateTime.getHours().toString().padStart(2, '0');
                 const minutes = dateTime.getMinutes().toString().padStart(2, '0');
                 return `今天 ${hours}:${minutes}`;
-            } else {
+            } 
+            else if (isYesterday) {
+            // 如果日期是昨天，显示 "昨天" 和时:分
+                const hours = dateTime.getHours().toString().padStart(2, '0');
+                const minutes = dateTime.getMinutes().toString().padStart(2, '0');
+                return `昨天 ${hours}:${minutes}`;
+              } else {
                 // 否则，格式化成 月-日 时:分
                 const month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
                 const day = dateTime.getDate().toString().padStart(2, '0');

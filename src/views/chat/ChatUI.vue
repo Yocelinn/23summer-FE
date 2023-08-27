@@ -31,9 +31,12 @@
                 </div>
                 <div class="chat-window-text">
                     <!-- <Editor/> -->
-                    <n-mention type="textarea" :options="friend_options" v-model:value="text_content" 
+                    <n-mention v-if="isPerm" type="textarea" :options="manager_friend_options" :render-label="renderLabel" v-model:value="text_content" 
+                    class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendMessage()"/>
+                    <n-mention v-else type="textarea" :options="manager_friend_options" v-model:value="text_content" 
                     class="chat-window-textarea" @keydown.enter.prevent="sendMessage()"/>
-                </div>
+                    <!-- <button class="send-button" @click="sendMessage">发送</button> -->
+                </div> 
             </div>
               
             
@@ -42,7 +45,7 @@
 </template>
 <script>
     import PersonCard from "@/components/chat/PersonCard.vue";
-    import { defineComponent,ref } from "vue";
+    import { defineComponent,ref,h } from "vue";
     import { NSelect,NMention } from "naive-ui";
     import ChatMe from "@/components/chat/ChatMe.vue"
     import ChatFriend from "@/components/chat/ChatFriend.vue"
@@ -89,6 +92,7 @@
         const text_content=ref("");
         const friend_list=ref([]);
         const friend_options=ref([]);
+        const manager_friend_options=ref([{ value: "所有人", label: "所有人" }])
         // const records=ref([])
         
         function getFriendList(){
@@ -102,10 +106,20 @@
                 }
                 else{
                     friend_list.value=response.data.res;
+                    // const foundFriend = friend_list.value.find(friend => friend.user_id === this.user.user_id);
+                    // console.log(foundFriend)
+                    // if (foundFriend && foundFriend.perm !== 1) {
+                    //     this.isPerm = true;
+                    // }
                     friend_options.value = response.data.res.map(item => ({
                         value: item.nickname,  // 假设 id 为 value
-                        label: item.nickname  // 假设 name 为 label
+                        label: item.user_id  // 假设 name 为 label
                     }));
+                    manager_friend_options.value.push(
+                        ...response.data.res.map(item => ({
+                            value: item.nickname,
+                            label: item.user_id
+                        })));
                 }
             })
         }
@@ -122,15 +136,42 @@
             text_content,
             friend_list,
             friend_options,
+            manager_friend_options,
+            renderLabel: (option) => h( 'span',[
+                option.value
+            ]),
             // records,
-
             getFriendList,
 
         }
     },    
     methods:{
+    //     handleInput() {
+    //   // 监听输入事件，处理 @ 的逻辑，添加或删除被 @ 的成员
+    //     const atIndex = this.text_content.lastIndexOf("@");
+    //     if (atIndex !== -1) {
+    //         const searchText = this.text_content.slice(atIndex + 1);
+    //         // 在这里根据输入的 searchText 进行成员匹配和展示
+    //         // 当用户选择成员后，可以添加到 mentionedMembers 列表
+    //         // 当用户删除 @ 成员时，也要从 mentionedMembers 中删除
+    //     }
+    //     },
         choose_friend(){
 
+        },
+        atFriend(option){
+            this.selectedMentionValue=option.label;
+            // this.text_content=this.text_content+option.label+' '
+            // console.log(this.selectedValue);
+            if(this.selectedMentionValue==='所有人'){
+                this.mentionedMembers=this.friend_list;
+            }
+            else{
+                if (!this.mentionedMembers.includes(this.selectedMentionValue)) {
+                    this.mentionedMembers.push(this.selectedMentionValue);
+                }
+            }
+            console.log(this.mentionedMembers)
         },
         getAllRecord(){
             // chat=chat/all'+curTeamId
@@ -160,7 +201,9 @@
         scrollBottom() {
             this.$nextTick(() => {
             const scrollDom = this.$refs.chatContent;
-            animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight);
+            if (scrollDom) {
+                animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight);
+            }
         });
         },
         receiveMessage(data){
@@ -202,9 +245,7 @@
                         if(response.data.code!=200){
                             console.log(response.data.message)
                         }
-                        else{
-                          
-                            
+                        else{ 
                             // document.querySelector('#chat-message-submit').onclick = function(e) 
                             // { 
                             // const messageInputDom = document.querySelector('#chat-message-input'); 
@@ -216,6 +257,7 @@
                                 'message': this.text_content,
                                 'time': response.data.send_time
                             })); 
+                            this.sendNotiToMembers(this.mentionedMembers);
                             // this.scrollBottom();
                             this.text_content="";
                         }
@@ -224,14 +266,30 @@
                 else{
                     alert("发送消息不能为空！")
                 }
-            
-            }
+            },
+        sendNotiToMembers(members){
+            members.forEach((member)=>{
+                const NotiContent = {
+                            rec_id: member, // 假设 member 中包含接收者的 id
+                            content:"@了你" // 通知内容可以根据需求自定义
+                        }
+                axios.post('message/create',NotiContent)
+                .then((response)=>{
+                   
+                        console.log(response.data.message)
+                   
+                })
+            })
+        }
     },
     data(){
         return{
             curTeamId:1,
             user:'',
-            records:[]
+            records:[],
+            isPerm:true,
+            mentionedMembers: [], // 被 @ 的成员列表
+            selectedMentionValue:'',
         }
     }
   })
@@ -292,8 +350,19 @@
   /* background-color: #f0f0f0; */
   padding: 10px;
   height:15%;
+  resize: none; /* 禁止文本框的尺寸调整 */
 
-
+}
+.send-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #007bff; /* 设置按钮背景颜色 */
+  color: #fff; /* 设置按钮文字颜色 */
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
 }
 .chat-friend-selector{
     width:80%;
