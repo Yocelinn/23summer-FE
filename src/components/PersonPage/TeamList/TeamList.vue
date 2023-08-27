@@ -451,11 +451,14 @@ export default defineComponent( {
                         tableData.value = response.data.res; // 将获取的数据赋值给tableData
                         console.log('success');
                         console.log(tableData.value);
+                        console.log('检查点1', Number(window.sessionStorage.getItem('curTeamId')));
                         if (tableData.value !== null) {
                             if (tableData.value.length > 0 && Number(window.sessionStorage.getItem('curTeamId')) === -1) {
                                 // store.commit('setCurTeamId', tableData.value[0].team_id);
                                 window.sessionStorage.setItem('curTeamId', tableData.value[0].team_id);
                                 window.sessionStorage.setItem('curTeamName', tableData.value[0].team_name);
+                                console.log('检查点2', Number(window.sessionStorage.getItem('curTeamId')));
+                                callFetchInProjectList();
                             }
                         }
                         else {
@@ -473,7 +476,8 @@ export default defineComponent( {
                     console.error('GET request error:', error);
                 });
             console.log(tableData.value);
-            callFetchInProjectList();
+            console.log('检查点3', Number(window.sessionStorage.getItem('curTeamId')));
+            // callFetchInProjectList();
         };
 
         // const initCurTeam = () => {

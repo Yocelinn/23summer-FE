@@ -190,7 +190,7 @@ export default {
         const newPjDes = ref('');
         const { fetchProjectList } = mapActions(['fetchProjectList']);
         // const { createNewProject } = mapActions(['createNewProject']);
-        const callFetchInProjectList = async () => {
+        const callFetchInProjectList = () => {
             console.log('PL', window.sessionStorage.getItem('curTeamId'));
             store.dispatch('fetchProjectList', window.sessionStorage.getItem('curTeamId'));
             console.log('PL检查', projectData);
@@ -332,7 +332,7 @@ export default {
         // provide('test', 0);
 
         onMounted(() => {
-            callFetchInProjectList();
+            // callFetchInProjectList();
         });
 
         return {
