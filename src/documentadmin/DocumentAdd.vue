@@ -18,7 +18,7 @@
         <el-header>
         </el-header>
         <div>
-          <div style="position: absolute;width:200px;top:125px">
+          <div style="position: absolute;width:200px;top:160px">
             <el-card class="box-card"
               style="position: absolute;height:800px;width:200px;background-color: rgba(255, 255, 255, 0.85);left:20px">
               <div slot="header" class="clearfix">
@@ -39,17 +39,9 @@
               </div>
             </el-card>
         </div>
-        <div class="edit_container" style="width: 800px;left:420px; height: 755px; top:125px">
-          <quill-editor
-            v-model="content"
-            ref="myQuillEditor"
-            :options="editorOption"
-            @blur="onEditorBlur($event)"
-            @focus="onEditorFocus($event)"
-            @change="onEditorChange($event)"
-            @ready="onEditorReady($event)"
-            >
-          </quill-editor>
+        <div class="edit_container" style="width: 800px;left:420px; height: 800px; top:160px">
+          <QuillEditor id="editorId" ref="myQuillEditor" v-model:content="editorContent" contentType="html"
+            @update:content="onContentChange" :options="options" style="width: 800px;left:420px; height: 800px; top:160px"/>
         </div>
         <div class="documentlist">
           <el-table :data="this.textdata" height="450" border stripe
@@ -70,21 +62,7 @@
 
 <script>//调用编辑器\
 import CommonAside from '@/components/CommonAside.vue';
-const editorOption =([
-    ['bold', 'italic', 'underline', 'strike'], // 加粗 斜体 下划线 删除线
-    ["blockquote", "code-block"], // 引用
-    [{ list: 'ordered' }, { list: 'bullet' }], // 有序、无序列表
-    [{ script: "sub" }, { script: "super" }], // 上标/下标
-    [{ indent: '-1' }, { indent: '+1' }], // 缩进
-    [{ direction: 'rtl' }], // 文本方向
-    [{ size: ['small', false, 'large', 'huge'] }], // 字体大小
-    [{ header: [1, 2, 3, 4, 5, 6, false] }], // 标题
-    [{ color: [] }, { background: [] }], // 字体颜色、字体背景颜色
-    [{ font: [] }], // 字体种类
-    [{ align: [] }], // 对齐方式
-    ['clean'], // 清除文本格式
-    ['link', 'image', 'video'] // 链接、图片、视频
-])
+import QuillEditor from '../components/Editor/index.vue';
 import {
   Check,
   Delete,
@@ -96,51 +74,14 @@ import {
 export default {
   components:{
     CommonAside,
-  },
-  data() {
-    return {
-      username: '',
-      userhead: '',
-      real_name: '',
-      email: '',
-      phone: '',
-      profile: '',
-      username1: '',
-      imageUrl1: '',
-      password: '',
-      content: '请于此处开始编辑……',
-      str: '',
-      editorOption: {},
-      inside: '<h2> \t<strong><em>请于此开始编辑文档</em></strong></h2>',
-      textname: '',
-      input: '',
-      textdata: [
-      ],
-      input1: '',
-      input2: '',
-      input3: '',
-      //把这个页面加入项目中时，注意，跳转到这个页面的时候，now_id为当前文章id,projectid为当前项目id,teamid为当前队伍id,fatherid为其父文件夹id（可以用session之类的传入,这里需要稍微改一下（由于我这边看不到团队的那个组件，于是就没改__by zbh）
-      now_id: 0,
-      projectid: sessionStorage.getItem('ProjectID'),
-      teamid: sessionStorage.getItem('TeamID'),
-      fatherid: sessionStorage.getItem('project_root_fileID'),
-    }
-  },
+    QuillEditor,
+},
+data(){
+  return{
+    editorContent:'123456'
+  };
+},
   methods: {
-    onEditorReady(editor) { // 准备编辑器
-
-    },
-    onEditorBlur() { }, // 失去焦点事件
-    onEditorFocus() { }, // 获得焦点事件
-    onEditorChange() {
-      console.log(this.content);
-    }, // 内容改变事件
-    // 转码
-    escapeStringHTML(str) {
-      str = str.replace(/&lt;/g, '<');
-      str = str.replace(/&gt;/g, '>');
-      return str;
-    },
   },
 }
 </script>

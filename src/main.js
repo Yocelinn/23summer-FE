@@ -23,6 +23,8 @@ import '@devui-design/icons/icomoon/devui-icon.css';
 import { ThemeServiceInit, infinityTheme } from 'devui-theme';
 import * as icons from '@element-plus/icons'
 import App from './App.vue'
+import splitPane from 'vue-splitpane'
+// axios 不需要use 到时候直接用
 import axios from 'axios';
 
 
@@ -65,4 +67,6 @@ app.component('quill-editor', QuillEditor)
 app.use(VueDragResizeRotate)
 
 app.mount('#app')
+app.component('d-splitter-pane', splitPane);
+
 window.$store = store;
