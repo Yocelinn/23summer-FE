@@ -63,7 +63,7 @@
             <el-card class="box-card" >
                 <template #header>
                     <div class="card-header">
-                        <span class="text"><b>协作者</b></span>
+                        <span class="text"><b>项目列表</b></span>
                         <el-button class="custom-button" @click="handleClick">进入团队</el-button>
                     </div>
                 </template>
@@ -408,7 +408,7 @@ export default defineComponent( {
         const updateDes = () => {
             axios.post('/project/change_description', {
                 new_description: curDescription.value,
-                prj_id: Number(window.sessionStorage.getItem('curProjectId'))
+                project_id: Number(window.sessionStorage.getItem('curProjectId'))
             })
                 .then((response) => {
                     if (response.data.code === 200) {
