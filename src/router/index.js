@@ -20,7 +20,7 @@ const routes = [
         },
       },
       {
-        path: 'login',
+        path: '/login',
         component: () => import('@/user/LogIn.vue'),
         meta: {
           title: '登录',

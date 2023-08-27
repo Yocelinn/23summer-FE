@@ -64,18 +64,15 @@
                 <template #header>
                     <div class="card-header">
                         <span class="text"><b>项目列表</b></span>
-                        <el-button class="custom-button" @click="handleClick">进入团队</el-button>
+<!--                        <el-button class="custom-button" @click="handleClick">进入团队</el-button>-->
                     </div>
                 </template>
-                <el-table class="tl-card-table" :data="CPData" style="width: 100%" flex="1" :show-header="true">
+                <el-table class="tl-card-table" :data="CPData" style="width: 100%" flex="1" :show-header="false">
                     <el-table-column label="姓名" fit="true" align="center">
                         <template #default="scope">
-                            {{scope.row.name}}
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="邮箱" fit="true" align="center">
-                        <template #default="scope">
-                            {{scope.row.email}}
+                            <d-button class="custom-button-w"  v-ripple="{ duration: 300 }" @click="chooseCurProject(scope.row)">
+                                {{scope.row.projectName}}
+                            </d-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -85,6 +82,35 @@
 </template>
 
 <style scoped>
+
+.custom-button-w {
+    cursor: pointer;
+    user-select: none; /* 禁止选中文字 */
+}
+
+.custom-button-w:focus {
+    outline: none; /* 去掉按钮的焦点样式 */
+    color: #9E9CF4;
+}
+
+.custom-button-w:active {
+    background-color: rgba(158, 156, 244, 0.32); /* 点击时的背景色 */
+    color: #9E9CF4;
+}
+
+.custom-button-w:hover {
+    color: #9E9CF4; /* 修改悬停状态下的文字颜色 */
+}
+
+.custom-button-w {
+    color: #9E9CF4;
+    width: 100%; /* 设置按钮宽度 */
+    padding: -5px;
+    margin: -5px;
+    height: 40px; /* 调整为您希望的行高度值 */
+    line-height: 40px; /* 使文本垂直居中 */
+}
+
 
 .tl-button-container {
     display: flex;
@@ -225,11 +251,11 @@
 </style>
 
 <script>
-import { ref, defineComponent, onMounted } from 'vue';
+import {ref, defineComponent, onMounted, computed} from 'vue';
 import axios from "axios";
 import {ElMessage} from "element-plus";
 import router from "@/router";
-import { useStore, mapState } from 'vuex';
+import {useStore, mapState, mapActions} from 'vuex';
 // const API_URL = '/'; // 新增这一行，定义API_URL
 
 export default defineComponent( {
@@ -271,7 +297,11 @@ export default defineComponent( {
             }
         }
 
-        const CPData = ref([]);
+        // const CPData = ref([]);
+        const CPData = computed(() => {
+            return store.state.projectData;
+        });
+
         // const tableData = [
         //     {
         //         "team_id": 1,
@@ -291,6 +321,21 @@ export default defineComponent( {
         //     },
         // ]
 
+        const { fetchProjectList } = mapActions(['fetchProjectList']);
+        // const { createNewProject } = mapActions(['createNewProject']);
+        const callFetchInProjectList = () => {
+            console.log('PL', window.sessionStorage.getItem('curTeamId'));
+            store.dispatch('fetchProjectList', window.sessionStorage.getItem('curTeamId'));
+            console.log('PL检查', CPData);
+        };
+
+
+        const chooseCurProject = (data) => {
+            window.sessionStorage.setItem('curProjectId', data.project_id);
+            window.sessionStorage.setItem('curProjectName', data.projectName);
+            window.sessionStorage.setItem('curProjectDes', data.projectDescription);
+            callFetchInProjectList();
+        }
 
         const updateCurDescription = (newValue) => {
             curDescription.value = newValue;
@@ -457,6 +502,8 @@ export default defineComponent( {
             description,
             curDescription,
             updateVisable,
+            fetchProjectList,
+            chooseCurProject,
             getTagClass,
             updateName,
             updateDes,

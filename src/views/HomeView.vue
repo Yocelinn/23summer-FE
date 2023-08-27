@@ -5,7 +5,7 @@
         <div class="home-left" v-if="showLeft">
           <span class="title">管理平台</span>
           <div class="button-container">
-            <button class="open">开始使用</button>
+            <button class="open" @click="jump2l">开始使用</button>
           </div>
         </div>
       </transition>
@@ -21,6 +21,8 @@
 <script>
 // @ is an alias to /src
 
+import router from "@/router";
+
 export default {
   name: 'HomeView',
 
@@ -34,8 +36,13 @@ export default {
     // 触发渐入效果
     this.showLeft = true;
     this.showImg = true;
+  },
+  methods: {
+    jump2l: function() {
+      router.push('/login');
+    }
   }
-}
+};
 </script>
 
 <style scoped>

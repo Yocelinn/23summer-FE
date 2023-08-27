@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+<template>
+
+</template>
+
+<script>
+export default {
+    name: "ShowProject"
+=======
 <template class="above">
     <d-row class="body">
         <div class="sh-card-container">
@@ -30,10 +39,13 @@ export default {
             jumpToW
         }
     }
+>>>>>>> main
 }
 </script>
 
 <style scoped>
+<<<<<<< HEAD
+=======
 .above {
     width: calc(100vh - 20px);
 }
@@ -62,5 +74,6 @@ export default {
     flex: 1;
     margin: 10px;
 }
+>>>>>>> main
 
 </style>
