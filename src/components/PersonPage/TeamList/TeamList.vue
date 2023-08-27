@@ -549,7 +549,7 @@ export default defineComponent( {
         };
 
         const updatePassword = () => {
-            axios.post('/user/changepassword', {
+            axios.post('/user/changepassword/', {
                 old_password: passwordO.value,
                 new_password: passwordN.value
             })

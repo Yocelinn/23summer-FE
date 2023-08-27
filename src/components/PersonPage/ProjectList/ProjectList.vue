@@ -249,6 +249,7 @@ export default {
                         plNewPjVisable.value = false;
                     });
             }
+            callFetchInProjectList();
         };
 
         const handleEdit = (index, data) => {

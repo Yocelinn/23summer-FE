@@ -9,11 +9,11 @@ const routes = [
     redirect: '/home',
     children: [
       {
-        path: 'home',
+        path: '/home',
         component: () => import('@/views/HomeView.vue')
       },
       {
-        path: 'signup',
+        path: '/signup',
         component: () => import('@/user/SignUp.vue'),
         meta: {
           title: '注册',
@@ -41,7 +41,7 @@ const routes = [
         },
       },
       {
-        path: 'prototype',
+        path: '/prototype',
         component: () => import('@/views/prototype/PrototypeView.vue'),
         meta: {
           title: '原型设计',
