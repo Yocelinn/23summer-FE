@@ -125,7 +125,7 @@
     display: flex;
     justify-content: center; /* Align the button to the bottom of the container */
     align-items: center; /* Align the button to the right of the container */
-    padding: 20px; /* Add some padding for spacing */
+    /*padding: 20px; !* Add some padding for spacing *!*/
     width: 95%;
     flex-direction: column;
 }
@@ -201,20 +201,16 @@
 
 .flex-container {
     display: flex;
-    /*height: calc(100vh - 85px);*/
-    height: calc(93vh - 16px);
+    height: calc(100vh - 85px);
     flex-direction: column;
-    align-items: center; /* 垂直居中 */
-    justify-content: flex-start; /* 水平居中 */
+    align-items: center;
 }
 
 .flex-descriptions {
-    /*flex: 1;*/
+    flex: 1;
     width: 100%;
-    /*max-height: 30%;*/
-    height: auto;
-    display: flex;
-    flex-direction: column;
+    max-height: 30%;
+    padding: 15px;
 }
 
 .card-container {
@@ -224,8 +220,8 @@
     display: flex;
     flex-direction: column;
     align-items: center; /* 垂直居中 */
-    justify-content: center; /* 水平居中 */
-    height: calc(80% - 50px);
+    justify-content: flex-start; /* 水平居中 */
+    /*height: calc(80% - 50px);*/
     /*height: 45%;*/
 }
 

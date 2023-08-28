@@ -1,71 +1,6 @@
 <template>
     <div class="flex-container">
         <div class="flex-descriptions">
-<!--            <d-modal v-model="updateVisable">-->
-<!--                <template #header>-->
-<!--                    <d-modal-header>-->
-<!--                        &lt;!&ndash;                <d-icon name="like"></d-icon>&ndash;&gt;-->
-<!--                        <span>修改个人信息</span>-->
-<!--                    </d-modal-header>-->
-<!--                </template>-->
-
-<!--                &lt;!&ndash;                <div class="text">昵称：</div>&ndash;&gt;-->
-<!--                <div class="tl-div-input">-->
-<!--                    <el-input-->
-<!--                            v-model="curNitName"-->
-<!--                            placeholder=我的昵称-->
-<!--                            clearable-->
-<!--                            class="tl-input1"-->
-<!--                            @input="updateCurNitName"-->
-<!--                    />-->
-<!--                </div>-->
-
-<!--                &lt;!&ndash;                <div class="text">描述：</div>&ndash;&gt;-->
-<!--                <div class="tl-div-input">-->
-<!--                    <el-input-->
-<!--                            v-model="curDescription"-->
-<!--                            placeholder="描述"-->
-<!--                            clearable-->
-<!--                            class="tl-input4"-->
-<!--                            @input="updateCurDescription"-->
-<!--                    />-->
-<!--                </div>-->
-
-<!--                &lt;!&ndash;                <div class="text">旧密码：</div>&ndash;&gt;-->
-<!--                <div class="tl-div-input">-->
-<!--                    <el-input-->
-<!--                            v-model="passwordO"-->
-<!--                            type="password"-->
-<!--                            placeholder="Please input password"-->
-<!--                            show-password-->
-<!--                            clearable-->
-<!--                            class="tl-input2"-->
-<!--                            @input="updatePasswordO"-->
-<!--                    />-->
-<!--                </div>-->
-
-<!--                &lt;!&ndash;                <div class="text">新密码：</div>&ndash;&gt;-->
-<!--                <div class="tl-div-input">-->
-<!--                    <el-input-->
-<!--                            v-model="passwordN"-->
-<!--                            type="password"-->
-<!--                            placeholder="Please input password"-->
-<!--                            show-password-->
-<!--                            clearable-->
-<!--                            class="tl-input3"-->
-<!--                            @input="updatePasswordN"-->
-<!--                    />-->
-<!--                </div>-->
-
-<!--                <template #footer>-->
-<!--                    <d-modal-footer class="tl-button-container" style="text-align: right; padding-right: 20px;">-->
-<!--                        <d-button class="custom-button-i" @click="updateSelfInform">修改信息</d-button>-->
-<!--                        <d-button class="custom-button-i" @click="updatePassword">修改密码</d-button>-->
-<!--                        <d-button class="custom-button" @click="updateVisable=false">取消</d-button>-->
-<!--                    </d-modal-footer>-->
-<!--                </template>-->
-<!--            </d-modal>-->
-
             <el-descriptions class="main-descriptions" title="团队信息" column="2">
                 <el-descriptions-item label="团队名称：">{{tName}}</el-descriptions-item>
                 <el-descriptions-item label="用户身份：">
@@ -115,7 +50,7 @@
             </el-card>
         </div>
         <div class="in-button-container">
-            <el-button class="in-custom-button" @click="inClick">回到项目</el-button>
+            <el-button class="in-custom-button" @click="inClick">回到主页</el-button>
         </div>
     </div>
 </template>
@@ -127,7 +62,7 @@
     display: flex;
     justify-content: center; /* Align the button to the bottom of the container */
     align-items: center; /* Align the button to the right of the container */
-    padding: 20px; /* Add some padding for spacing */
+    /*padding: 20px; !* Add some padding for spacing *!*/
     width: 95%;
     flex-direction: column;
 }
@@ -183,7 +118,7 @@
 .flex-descriptions {
     flex: 1;
     width: 100%;
-    max-height: 30%;
+    eight: 30%;
     padding: 15px;
 }
 
