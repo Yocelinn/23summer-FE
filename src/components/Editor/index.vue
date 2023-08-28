@@ -45,14 +45,14 @@ const props = defineProps({
 })
 console.log(props.content)
 
-// const editorContent = computed({
-//     get: () => props.content,
-//     set: (val) => {
-//         //   emit('update:content', val)
-//         console.log(val)
+const editorContent = computed({
+    get: () => props.content,
+    set: (val) => {
+        //   emit('update:content', val)
+        console.log(val)
 
-//     }
-// });
+    }
+});
 const myQuillEditor = ref(null)
 const uploadUrl = ref('/sysFiles/upload') // 上传的图片服务器地址
 //   const uploadUrl = ref(import.meta.env.VITE_BASEURL + '/sysFiles/upload') // 上传的图片服务器地址
