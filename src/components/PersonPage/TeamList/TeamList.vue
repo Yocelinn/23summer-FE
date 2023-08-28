@@ -542,6 +542,7 @@ export default defineComponent( {
                             message: response.data.message,
                             type:'success'
                         })
+                        window.sessionStorage.setItem('userId', response.data.user_id);
                         uid.value = response.data.user_id;
                         nitName.value = response.data.nickname;
                         name.value = response.data.name;

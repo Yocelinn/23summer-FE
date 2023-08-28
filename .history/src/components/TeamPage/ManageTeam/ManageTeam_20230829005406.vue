@@ -8,11 +8,11 @@
             <!--                -->
             <!--            </span>-->
             <!--            <el-divider class="custom-divider" direction="vertical" />-->
-            <span :key="roleCheckAdd">
+            <span :key="roleCheck">
                 <d-button
                         class="newProject-pl"
                         @click="plNewPjVisable=true"
-                        :disabled="roleCheckAdd"
+                        :disabled="roleCheck"
 
                 >
                     邀请队员
@@ -85,35 +85,27 @@
             </el-table-column>
             <el-table-column label="身份">
                 <template #default="scope">
-                    <div style="display: flex; align-items: center" :key="roleCheckUpdate(scope)">
+                    <div style="display: flex; align-items: center" :key="roleNumber">
                         <span>
-                            <d-button class="role-button"
-                                      @click="handleUpdata(scope.$index, scope.row)"
-                                      :disabled="roleCheckUpdate(scope)"
-                                      variant="text"
-                            >
-                                <el-tag class="ml" :type="getTagClass(scope.row.perm)">
-                                    {{ getScopeRole(scope.row) }}
-                                </el-tag>
-                           </d-button>
+                            <el-tag class="ml" :type="getTagClass(scope.row.perm)">
+                                {{ getScopeRole(scope.row) }}
+                            </el-tag>
                         </span>
                     </div>
                 </template>
             </el-table-column>
             <el-table-column label="操作">
                 <template #default="scope">
-                    <div :key="roleCheckDelete(scope)">
-                        <span>
-                            <d-button
-                                    class="delete"
-                                    size="small"
-                                    type="danger"
-                                    @click="handleDelete(scope.$index, scope.row)"
-                                    :disabled="roleCheckDelete(scope)"
-                            >
-                                删除队员
-                            </d-button>
-                        </span>
+                    <div :key="roleCheck">
+                        <d-button
+                                class="delete"
+                                size="small"
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row)"
+                                :disabled="roleCheck"
+                        >
+                            删除队员
+                        </d-button>
                     </div>
                 </template>
             </el-table-column>
@@ -208,85 +200,31 @@ export default {
             }
         }
 
-        const roleCheckAdd = computed(() => {
+        const roleCheck = () => {
             return !(roleNumber.value === 2 || roleNumber.value === 1);
-        });
-
-        const roleCheckDeleteHelper = (scope) => {
-            return !(scope.row.perm === 0)
         }
 
-        const roleCheckDelete = computed(() => {
-            return (scope) => roleCheckDeleteHelper(scope);
+        const clickRole = computed(() => {
+            const number = Number(window.sessionStorage.getItem('curRoleNum'));
+            console.log("接近真相", number);
+            return (number <= 0);
         });
 
-        const roleCheckUpdateHelper = (scope) => {
-            if (roleNumber.value === 2) {
-                return (scope.row.perm === 2);
-            }
-            else if (roleNumber.value === 1) {
-                return (!(scope.row.perm === 0));
-            }
-            else {
-                return true;
-            }
-        };
-
-        const roleCheckUpdate = computed(() => {
-            return (scope) => roleCheckUpdateHelper(scope);
-        });
-
-
-        const handleUpdata = (index, data) => {
-            const hold = ref('');
-            hold.value = data.perm;
-            if (roleNumber.value === 2) {
-                if (hold.value === 1) {
-                    hold.value = 0;
-                }
-                else {
-                    hold.value = 1;
-                }
-            }
-            else {
-                hold.value = 1;
-            }
-            axios.put('team/member', {
-                team_id: Number(window.sessionStorage.getItem('curTeamId')),
-                user_id: data.user_id,
-                perm: hold.value
-            })
-                .then((response) => {
-                    if (response.data.code === 200) {
-                        ElMessage({
-                            message: response.data.message,
-                            type: 'success'
-                        });
-                        updateTable(index, hold.value);
-                    }
-                    else {
-                        ElMessage({
-                            message: response.data.error,
-                            type: 'error'
-                        });
-                        console.log(response.config.data);
-                    }
-                })
-                .catch((error) => {
-                    ElMessage({
-                        message: "修改权限失败，请重试",
-                        type: 'error'
-                    });
-                    console.log(error.config);
-                })
-        }
 
         const { fetchTeammateList } = mapActions(['fetchProjectList']);
         const callFetchTeammateList = () => {
             console.log('MT', window.sessionStorage.getItem('curTeamId'));
             store.dispatch('fetchTeammateList', window.sessionStorage.getItem('curTeamId'));
             console.log('MT', window.sessionStorage.getItem('curRoleNum'));
+            console.log('MT', clickRole);
         };
+
+        // const callCreatNewProject = async () => {
+        //     const NewPjName = newPjName.value;
+        //     const NewPjDes = newPjDes.value;
+        //     await store.dispatch('createNewProject', { curTeamId, NewPjName, NewPjDes });
+        //     plNewPjVisable.value = false;
+        // }
 
         const addNewTeammate = () => {
             console.log("检查email", newPjName.value);
@@ -355,18 +293,30 @@ export default {
             plNewPjVisable.value = false;
         };
 
+
+        // const handleEdit = (index, data) => {
+        //     curProjectId.value = data.project_id;
+        //     // store.commit('setCurProjectId', data.project_id);
+        //     window.sessionStorage.setItem('curProjectId', data.project_id);
+        //     window.sessionStorage.setItem('curProjectName', data.projectName);
+        //     window.sessionStorage.setItem('curProjectDes', data.projectDescription);
+        //
+        //     router.push('/person/protectCenter');
+        // }
+
         const resetTeammateRoleNum = (index, roleNum) => {
             store.state.personData.value[index].perm = roleNum;
         }
 
         const updateTable = (index, roleNum) => {
             // 无排序时选用，免去刷新数组
-            // resetTeammateRoleNum(index, roleNum);
+            resetTeammateRoleNum(index, roleNum);
             // 有排序时选用，维护排序
             callFetchTeammateList();
         };
 
         const handleDelete = (index, data) => {
+            console.log('查看权限', clickRole);
             axios.post('/team/delete', {
                 team_id: window.sessionStorage.getItem('curTeamId'),
                 user_id: data.user_id
@@ -397,9 +347,50 @@ export default {
                 });
         }
 
+        // const fetchProjectList = () => {
+        //     console.log('获取数据fetchProjectList' + curTeamId);
+        //     // console.log(curTeamId.value);
+        //     // console.log(curTeamId.value.value);
+        //     axios.post('/project/info', {
+        //         // team_id: curTeamId.value
+        //         team_id: curTeamId
+        //     })
+        //         .then((response) => {
+        //             console.log('Request Data:', response.config.data);
+        //             if (response.data.code === 200) {
+        //                 ElMessage( {
+        //                     message: '已获取团队项目',
+        //                     type: 'success'
+        //                 });
+        //                 console.log(response);
+        //                 projectData.value = response.data.projects;
+        //             }
+        //             else {
+        //                 ElMessage( {
+        //                     message: response.data.error + '请重试',
+        //                     type: 'error'
+        //                 });
+        //                 console.log(response);
+        //                 // console.log(curTeamId.value);
+        //             }
+        //         })
+        //         .catch((error) => {
+        //             ElMessage( {
+        //                 message: '获取团队项目失败，请重试',
+        //                 type: 'error'
+        //             });
+        //             console.log('POST request error:', error);
+        //             // console.log('未知错误', curTeamId.value);
+        //         });
+        // };
+
+        // provide('fetchProjectList', fetchProjectList);
+        // provide('test', 0);
+
         onMounted(() => {
             // callFetchInProjectList();
             callFetchTeammateList();
+            console.log('检查权限', clickRole);
         });
 
         return {
@@ -410,23 +401,21 @@ export default {
             projectData,
             newPjName,
             newPjDes,
+            clickRole,
             optionsRole,
-            roleCheckAdd,
-            roleCheckDelete,
-            roleCheckUpdate,
 
+            roleCheck,
             addNewTeammate,
             fetchProjectList,
             callFetchInProjectList,
+            // callCreatNewProject,
+            // handleEdit,
             updateTable,
             handleDelete,
             fetchTeammateList,
             callFetchTeammateList,
             getScopeRole,
-            getTagClass,
-            roleCheckUpdateHelper,
-            handleUpdata,
-            roleCheckDeleteHelper
+            getTagClass
         };
     },
 };

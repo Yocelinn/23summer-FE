@@ -1,17 +1,80 @@
 <template>
     <div class="flex-container">
         <div class="flex-descriptions">
-            <el-descriptions class="main-descriptions" title="团队信息" column="2">
-                <el-descriptions-item label="团队名称：">{{tName}}</el-descriptions-item>
-                <el-descriptions-item label="用户身份：">
-                    <div :key="roleNum">
-                        <el-tag class="ml" :type="getTagClass(roleNum)">
-                            {{role}}
-                        </el-tag>
-                    </div>
+            <d-modal v-model="updateVisable">
+                <template #header>
+                    <d-modal-header>
+                        <!--                <d-icon name="like"></d-icon>-->
+                        <span>修改个人信息</span>
+                    </d-modal-header>
+                </template>
+
+                <!--                <div class="text">昵称：</div>-->
+                <div class="tl-div-input">
+                    <el-input
+                            v-model="curNitName"
+                            placeholder=我的昵称
+                            clearable
+                            class="tl-input1"
+                            @input="updateCurNitName"
+                    />
+                </div>
+
+                <!--                <div class="text">描述：</div>-->
+                <div class="tl-div-input">
+                    <el-input
+                            v-model="curDescription"
+                            placeholder="描述"
+                            clearable
+                            class="tl-input4"
+                            @input="updateCurDescription"
+                    />
+                </div>
+
+                <!--                <div class="text">旧密码：</div>-->
+                <div class="tl-div-input">
+                    <el-input
+                            v-model="passwordO"
+                            type="password"
+                            placeholder="Please input password"
+                            show-password
+                            clearable
+                            class="tl-input2"
+                            @input="updatePasswordO"
+                    />
+                </div>
+
+                <!--                <div class="text">新密码：</div>-->
+                <div class="tl-div-input">
+                    <el-input
+                            v-model="passwordN"
+                            type="password"
+                            placeholder="Please input password"
+                            show-password
+                            clearable
+                            class="tl-input3"
+                            @input="updatePasswordN"
+                    />
+                </div>
+
+                <template #footer>
+                    <d-modal-footer class="tl-button-container" style="text-align: right; padding-right: 20px;">
+                        <d-button class="custom-button-i" @click="updateSelfInform">修改信息</d-button>
+                        <d-button class="custom-button-i" @click="updatePassword">修改密码</d-button>
+                        <d-button class="custom-button" @click="updateVisable=false">取消</d-button>
+                    </d-modal-footer>
+                </template>
+            </d-modal>
+
+            <el-descriptions class="main-descriptions" title="个人信息">
+                <el-descriptions-item label="昵称：">{{nitName}}</el-descriptions-item>
+                <el-descriptions-item label="邮箱：">{{email}}</el-descriptions-item>
+                <el-descriptions-item label="id：">{{uid}}</el-descriptions-item>
+                <el-descriptions-item label="姓名：">{{name}}</el-descriptions-item>
+                <el-descriptions-item label="描述：">{{description}}</el-descriptions-item>
+                <el-descriptions-item>
+                    <el-button class="custom-save-button-tl" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
                 </el-descriptions-item>
-                <el-descriptions-item label="团队人数：">{{ppNum}}</el-descriptions-item>
-                <el-descriptions-item label="项目数量：">{{pjNum}}</el-descriptions-item>
             </el-descriptions>
         </div>
         <div class="card-container">
@@ -50,7 +113,7 @@
             </el-card>
         </div>
         <div class="in-button-container">
-            <el-button class="in-custom-button" @click="inClick">回到主页</el-button>
+            <el-button class="in-custom-button" @click="inClick">进入团队</el-button>
         </div>
     </div>
 </template>
@@ -103,6 +166,34 @@
     justify-content: center;
 }
 
+.tl-button-container {
+    display: flex;
+    justify-content: flex-end;
+    /*padding-right: 20px; !* 调整按钮与容器边缘的间距 *!*/
+    max-width: 100%;
+}
+
+.tl-input1 {
+    max-width: 85%;
+    flex: 0 0 85%;
+    margin: 5px;
+}
+.tl-input2 {
+    max-width: 85%;
+    flex: 0 0 85%;
+    margin: 5px;
+}
+.tl-input3 {
+    max-width: 85%;
+    flex: 0 0 85%;
+    margin: 5px;
+}
+.tl-input4 {
+    max-width: 85%;
+    flex: 0 0 85%;
+    margin: 5px;
+}
+
 .tl-card-table {
     height: 330px;
     overflow: auto;
@@ -118,7 +209,7 @@
 .flex-descriptions {
     flex: 1;
     width: 100%;
-    eight: 30%;
+    max-height: 30%;
     padding: 15px;
 }
 
@@ -128,9 +219,10 @@
     padding: 0 10px; /* Add some padding to prevent contents from sticking to the edges */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    /*max-height: calc(70% - 50px);*/
+    align-items: center; /* 垂直居中 */
+    justify-content: flex-start; /* 水平居中 */
+    /*height: calc(80% - 50px);*/
+    /*height: 45%;*/
 }
 
 .card-header {
@@ -176,6 +268,27 @@
     margin: -5px;
     height: 40px; /* 调整为您希望的行高度值 */
     line-height: 40px; /* 使文本垂直居中 */
+}
+
+.custom-save-button-tl {
+    background-color: white;
+    border-color: #9E9CF4;
+    color: #9E9CF4;
+}
+
+.custom-save-button-tl:hover,
+.custom-save-button-tl:focus {
+    background-color: white;
+    border-color: #7E7CCB;
+    color: #7E7CCB;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.custom-save-button-tl:active {
+    background-color: #9E9CF4;
+    border-color: white;
+    color: white;
 }
 
 .text {
@@ -244,7 +357,7 @@
 </style>
 
 <script>
-import {ref, defineComponent, reactive, onMounted, computed} from 'vue';
+import { ref, defineComponent, reactive, onMounted, computed } from 'vue';
 import axios from "axios";
 import {ElMessage} from "element-plus";
 import router from "@/router";
@@ -255,67 +368,57 @@ export default defineComponent( {
     name: 'TeamList',
     computed: {
         ...mapState(['projectData']),
-        ...mapState(['personData']),
         // 其他 computed properties
     },
     setup() {
         const store = useStore();
         const user = store.state.user;
-        const curTeamId = window.sessionStorage.getItem('curTeamId');
+        // const curTeamId = toRef(store.state, 'curTeamId')
+        // const curTeamId = store.state.curTeamId;
+        const curTeamId = computed(() => {
+            return store.state.curTeamId;
+        });
+        const input = ref('');
         const message = ElMessage;
         const visible = ref(false);
         const valueBasic1 = ref('');
-        const tName = ref(''); // Initialize with an empty value
-        const role = ref('');
-        const roleNum = ref('');
-        const ppNum = computed(() => {
-            return store.state.personData.length;
-        });
-        const pjNum = computed(() => {
-            return store.state.projectData.length;
-        })
+        const name = ref('');
+        const uid = ref('');
+        const nitName = ref(''); // Initialize with an empty value
+        const curNitName = ref('')
+        const email = ref('');
+        const password = ref(""); // Initialize with
+        const description = ref(""); // Initialize with
+        const curDescription = ref(""); // Initialize with
+        const updateVisable = ref(false);
+        const passwordO = ref(""); // Initialize with
+        const passwordN = ref(""); // Initialize
         // const fetchProjectList = inject('FetchProjectList');
         const { fetchProjectList } = mapActions(['fetchProjectList']);
+        console.log(fetchProjectList);
         const callFetchInProjectList = () => {
-            console.log('TL', window.sessionStorage.getItem('curTeamId'));
-            store.dispatch('fetchProjectList', window.sessionStorage.getItem('curTeamId'));
+            console.log('TL', curTeamId, store.state.curTeamId);
+            store.dispatch('fetchProjectList', curTeamId);
         };
-
-        const { fetchTeammateList } = mapActions(['fetchProjectList']);
-        const callFetchTeammateList = () => {
-            console.log('TL', window.sessionStorage.getItem('curTeamId'));
-            store.dispatch('fetchTeammateList', window.sessionStorage.getItem('curTeamId'));
-            fetchSelfInform();
-        };
-
-        const inClick = () => {
-            router.push('/person');
-        }
-
         const data = reactive({
             name: 'Tom',
             age: 20,
             address: 'Chengdu',
         });
         const tableData = ref([]);
-        // const tableData = [
-        //     {
-        //         "team_id": 1,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 2,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 3,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 4,
-        //         "team_name": "testTeam1"
-        //     },
-        // ]
+
+        const updateCurDescription = (newValue) => {
+            curDescription.value = newValue;
+        }
+        const updatePasswordO = (newValue) => {
+            passwordO.value = newValue;
+        }
+        const updatePasswordN = (newValue) => {
+            passwordN.value = newValue;
+        }
+        const updateCurNitName = (newValue) => {
+            curNitName.value = newValue;
+        };
 
         const handleClear = () => {
             console.log('clear');
@@ -349,6 +452,8 @@ export default defineComponent( {
                             message: response.data.message,
                             type:'success'
                         })
+                        store.commit('setCurTeamId', response.data.team_id);
+                        store.commit('setCurTeamName', valueBasic1.value);
                         window.sessionStorage.setItem('curTeamId', response.data.team_id);
                         console.log('视察', window.sessionStorage.getItem('curTeamId'));
                         fetchTeamList();
@@ -380,22 +485,24 @@ export default defineComponent( {
                         tableData.value = response.data.res; // 将获取的数据赋值给tableData
                         console.log('success');
                         console.log(tableData.value);
-                        console.log('检查点1', Number(window.sessionStorage.getItem('curTeamId')));
+                        console.log('检查点1', curTeamId.value);
                         if (tableData.value !== null) {
                             if (tableData.value.length > 0 && Number(window.sessionStorage.getItem('curTeamId')) === -1) {
                                 // store.commit('setCurTeamId', tableData.value[0].team_id);
+                                store.commit('setCurTeamId', tableData.value[0].team_id);
+                                store.commit('setCurTeamName', tableData.value[0].team_name);
+                                console.log('突击检查', store.state.curTeamId, curTeamId);
                                 window.sessionStorage.setItem('curTeamId', tableData.value[0].team_id);
                                 window.sessionStorage.setItem('curTeamName', tableData.value[0].team_name);
-                                console.log('检查点2', Number(window.sessionStorage.getItem('curTeamId')));
-                                // callFetchInProjectList();
-                                callFetchTeammateList();
+                                console.log('检查点2', curTeamId.value);
+                                callFetchInProjectList();
                             }
                         }
                         else {
-                            // store.commit('setCurTeamId', -1);
+                            store.commit('setCurTeamId', -1);
                             window.sessionStorage.setItem('curTeamId', -1);
                         }
-                        console.log('查看', window.sessionStorage.getItem('curTeamId'))
+                        console.log('查看', curTeamId)
                     }
                 })
                 .catch((error) => {
@@ -405,31 +512,27 @@ export default defineComponent( {
                     })
                     console.error('GET request error:', error);
                 });
-            callFetchTeammateList();
             console.log(tableData.value);
-            console.log('检查点3', Number(window.sessionStorage.getItem('curTeamId')));
-            // callFetchInProjectList();
+            console.log('检查点3', curTeamId.value);
+            callFetchInProjectList();
         };
 
-        const fetchTName = () => {
-            tName.value = window.sessionStorage.getItem('curTeamName');
-        };
-
-        const fetchRoleNum = () => {
-            axios.post('/team/myself/', {
-                team_id: Number(window.sessionStorage.getItem('curTeamId'))
-            })
+        // const initCurTeam = () => {
+        //     console.log('长度', tableData.value.length);
+        // };
+        const fetchSelfInform = () => {
+            axios.get('/user/myself')
                 .then((response) => {
                     if (response.data.code === 200) {
                         message({
                             message: response.data.message,
                             type:'success'
                         })
-                        console.log(response.data);
-                        roleNum.value = response.data.perm;
-                        store.commit('setCurRoleNum', response.data.perm);
-                        window.sessionStorage.setItem('curRoleNum', response.data.perm);
-                        console.log()
+                        uid.value = response.data.user_id;
+                        nitName.value = response.data.nickname;
+                        name.value = response.data.name;
+                        email.value = response.data.email;
+                        description.value = response.data.description;
                     }
                     else {
                         message({
@@ -449,44 +552,98 @@ export default defineComponent( {
                 })
         };
 
-        const fetchSelfInform = () => {
-            fetchTName();
-            fetchRoleNum();
-        }
+        const updateSelfInform = () => {
+            axios.put('/user/myself/', {
+                nickname: curNitName.value,
+                description: curDescription.value
+            })
+                .then((response2) => {
+                    if (response2.data.code === 200) {
+                        message({
+                            message: response2.data.message,
+                            type:'success'
+                        })
+                        console.log(response2.data.message)
+                    }
+                    else {
+                        message({
+                            message: response2.data.error,
+                            type:'error'
+                        })
+                        console.log(response2.data.error)
+                    }
+                })
+                .catch((error2) => {
+                    message({
+                        message:"修改普通信息错误，请重试",
+                        type:'error'
+                    })
+                    // 处理错误
+                    console.error('POST request error:', error2);
+                })
+            updateVisable.value = false;
+            fetchSelfInform();
+        };
+
+        const updatePassword = () => {
+            axios.post('/user/changepassword/', {
+                old_password: passwordO.value,
+                new_password: passwordN.value
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        message({
+                            message: response.data.message,
+                            type:'success'
+                        })
+                        console.log(response.data.message);
+                    }
+                    else {
+                        message({
+                            message: response.data.error,
+                            type:'error'
+                        })
+                        console.log(response.data.error);
+                    }
+                })
+                .catch((error) => {
+                    message({
+                        message:"修改密码错误，请重试",
+                        type:'error'
+                    })
+                    // 处理错误
+                    console.error('POST request error:', error);
+                })
+            updateVisable.value = false;
+            fetchSelfInform();
+        };
 
         const chooseCurTeam = (team_id, team_name) => {
-            // curTeamId.value = team_id;
-            // store.commit('setCurTeamId', team_id);
+            curTeamId.value = team_id;
+            store.commit('setCurTeamId', team_id);
+            store.commit('setCurTeamName', team_name);
             window.sessionStorage.setItem('curTeamId', team_id);
             window.sessionStorage.setItem('curTeamName', team_name);
-            fetchSelfInform();
             callFetchInProjectList();
-            callFetchTeammateList();
             console.log(window.sessionStorage.getItem('curTeamId'));
         };
 
-        const getTagClass = (roleNum) => {
-            console.log("权限", roleNum);
-            if (roleNum === 1/* some condition */) {
-                role.value = '管理员';
-                return 'success';
-            } else if (roleNum === 2/* some other condition */) {
-                role.value = '创建者';
-                return 'warning';
-            } else if (roleNum === 0) {
-                console.log("进入")
-                role.value = '参与者';
-                return 'default';
-            } else {
-                role.value = '游客';
-                return 'info';
+        const inClick = () => {
+            if (curTeamId.value === -1) {
+                message({
+                    message: '未选择团队',
+                    type: 'error'
+                });
+            }
+            else {
+                router.push('/teamCenter');
             }
         }
 
         onMounted(async () => {
             console.log('m', fetchProjectList);
-            fetchSelfInform();
             await fetchTeamList(); // 组件挂载后获取团队列表数据
+            fetchSelfInform();
             // initCurTeam();
         });
 
@@ -497,25 +654,33 @@ export default defineComponent( {
             valueBasic1,
             data,
             tableData,
+            input,
+            name,
+            uid,
+            nitName,
+            curNitName,
+            email,
+            password,
+            description,
+            curDescription,
+            updateVisable,
+            passwordO,
+            passwordN,
             fetchProjectList,
-            tName,
-            role,
-            roleNum,
-            ppNum,
-            pjNum,
-            getTagClass,
             callFetchInProjectList,
+            updateSelfInform,
+            updatePassword,
+            updateCurDescription,
+            updatePasswordO,
+            updatePasswordN,
+            updateCurNitName,
             handleClear,
             handleClick,
             hidden,
             newTeam,
             chooseCurTeam,
             fetchTeamList,
-            fetchTName,
-            fetchRoleNum,
             fetchSelfInform,
-            fetchTeammateList,
-            callFetchTeammateList,
             inClick
         };
     },

@@ -8,6 +8,7 @@ export default createStore({
     user: {},
     // curTeamId: {},
     // curProjectId: {},
+    curRoleNum: {},
     projectData: [],
     personData: []
   },
@@ -93,6 +94,9 @@ export default createStore({
     },
     setPersonData(state, data) {
       state.personData = data;
+    },
+    setCurRoleNum(state, data) {
+      state.curRoleNum = data;
     }
   },
 })
