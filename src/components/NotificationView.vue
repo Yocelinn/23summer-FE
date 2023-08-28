@@ -31,9 +31,10 @@
             </el-dropdown>
         </div>
         <div v-if="value==='AllNoti'">
-            <n-list hoverable clickable class="noti-list"  v-for="(noti,index) in this.notifications" :key="index">
+            <n-list hoverable clickable class="noti-list"  v-for="(noti,index) in notifications" :key="index">
             <n-list-item   @mouseenter="setHover(index, true)" @mouseleave="setHover(index, false)">
-                <n-thing :title="noti.is_read ? '查看消息' : '您有一条新消息'" content-style="margin-top: 10px;">  
+                <n-thing :title="noti.is_read ? '查看消息' : '您有一条新消息'" content-style="margin-top: 10px;"
+                @click="enterChatRoom()">  
                 <div class="noti-list-item">
                     <div class="noti-list-content">
                         <div class="noti-avator">
@@ -45,15 +46,15 @@
                         </div>
                     </div> 
                     <div class="icon-choose" :class="{'hovered': isHovered_all}">
-                        <template v-if="!noti.is_read&!isHovered_all[index]">
+                        <template v-if="checkisShow[index]&& !isHovered_all[index]">
                             <!-- 未读消息的图标 -->
                             <!-- 显示数字标识未读消息数量 -->
                             <div class="unread-badge">1</div>
                             <!-- <CircleCheckFilled /> -->
 
                         </template>
-                        <el-icon class="noti-icon-check"
-                            style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti(noti.msg_id,index)" v-if="isHovered_all[index]&!noti.is_read">
+                        <el-icon  class="noti-icon-check"
+                            style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti(noti.msg_id,index)" v-if="isHovered_all[index]&&checkisShow[index]">
                             <CircleCheckFilled />
                         </el-icon>
                         
@@ -84,19 +85,19 @@
                             <div class="noti-time">{{ formattedTime(noti.send_time) }}</div>
                         </div>
                     </div> 
-                    <div class="icon-choose" :class="{'hovered': isHovered_all}">
-                        <template v-if="!isHovered_all[index]">
+                    <div class="icon-choose" :class="{'hovered': isHovered_not}">
+                        <template v-if="!isHovered_not[index]">
                             <div class="unread-badge">1</div>
-                            <CircleCheckFilled />
+                            <!-- <CircleCheckFilled /> -->
 
                         </template>
                         <el-icon class="noti-icon-check"
-                            style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti(noti.msg_id)" v-if="isHovered_all[index]">
+                            style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti(noti.msg_id)" v-if="isHovered_not[index]">
                             <CircleCheckFilled />
                         </el-icon>
                         
                         <el-icon class="noti-icon-delete"
-                            style="color:  #FACCCC;" @click="deleteNoti(noti.msg_id)" v-if="isHovered_all[index]">
+                            style="color:  #FACCCC;" @click="deleteNoti(noti.msg_id)" v-if="isHovered_not[index]">
                             <CircleCloseFilled />
                         </el-icon>
                     </div>
@@ -146,36 +147,52 @@ import { defineComponent ,ref,watchEffect} from 'vue'
 import { NList,NListItem,NThing,NSpace,NTag } from 'naive-ui'
 import { CheckmarkCircle } from "@vicons/ionicons5";
 import axios from 'axios'
+import { useRouter } from 'vue-router';
+
 // import { post } from '@/utils/'
 
 export default defineComponent({
     props:{
         // showList: Boolean, // 控制列表的显示状态
+
     },
     setup(){
        const notifications=ref([]);
+       const router = useRouter()
        const notiNotRead=ref([]);
        const notiHasRead=ref([]);
        const isHovered_all=ref([]);
+    //    const checkisShow=ref([]);
         watchEffect(() => {
         console.log(notifications.value)
         })
 
+        function enterChatRoom(){
+            // console.log('enterChatRoom')
+            router.push('/chat')
+        }
        function checkNoti(id,index){
             axios.put('message/operate',{"msg_id":id})
             .then((response)=>{
-                console.log(response)
+                // console.log(response)
                 if(response.data.code!=200){
-                    alert(response.data.messages);
+                    console.log(response.data.error);
                 }
                 else{
-                    console.log("消息已读");
-                    if(this.selectedValue==="AllNoti")
-                        this.fetchNotifications(); // 重新获取数据
-                    else if(this.selectedValue==="NotiNotRead"){
+                    // console.log("消息已读");
+                    // console.log("selectedValue:"+this.value)
+                    if(this.value==="AllNoti")
+                       {
+                        this.checkisShow[index]=false;
+                        
+                        this.fetchNotifications();
+                        // console.log("重新拉取")
+                        // console.log(this.checkisShow);
+                       }
+                    else if(this.value==="NotiNotRead"){
                         this.getNotiNotRead();
                     }
-                    else if(this.selectedValue==="NotiHasRead"){
+                    else if(this.value==="NotiHasRead"){
                         this.getNotiHasRead();
                     }
                     // if (typeof notifications.value[index].is_read === 'undefined') {
@@ -204,16 +221,18 @@ export default defineComponent({
             .then((response)=>{
                 console.log(response)
                 if(response.data.code!=200){
-                    alert(response.data.messages);
+                    console.log(response.data.error);
                 }
                 else{
                     // console.log(notifications)
-                    if(this.selectedValue==="AllNoti")
+
+                    console.log("selectedValue:"+this.value);
+                    if(this.value==="AllNoti")
                         this.fetchNotifications(); // 重新获取数据
-                    else if(this.selectedValue==="NotiNotRead"){
+                    else if(this.value==="NotiNotRead"){
                         this.getNotiNotRead();
                     }
-                    else if(this.selectedValue==="NotiHasRead"){
+                    else if(this.value==="NotiHasRead"){
                         this.getNotiHasRead();
                     }
                 }
@@ -228,14 +247,14 @@ export default defineComponent({
                 }
                 else{
                     // console.log("消息已读");
-                    if(this.selectedValue==="AllNoti"){
+                    if(this.value==="AllNoti"){
                         this.fetchNotifications(); // 重新获取数据
                         this.$forceUpdate();
                     }
-                    else if(this.selectedValue==="NotiNotRead"){
+                    else if(this.value==="NotiNotRead"){
                         this.getNotiNotRead();
                     }
-                    else if(this.selectedValue==="NotiHasRead"){
+                    else if(this.value==="NotiHasRead"){
                         this.getNotiHasRead();
                     }
                 }
@@ -250,30 +269,102 @@ export default defineComponent({
                 }
                 else{
                     // console.log("消息已读");
-                    if(this.selectedValue==="AllNoti")
+                    if(this.value==="AllNoti")
                         this.fetchNotifications(); // 重新获取数据
-                    else if(this.selectedValue==="NotiNotRead"){
+                    else if(this.value==="NotiNotRead"){
                         this.getNotiNotRead();
                     }
-                    else if(this.selectedValue==="NotiHasRead"){
+                    else if(this.value==="NotiHasRead"){
                         this.getNotiHasRead();
                     }
                 }
             })
         }
+        function fetchNotifications() {
+            axios.post('/message/all',{})
+            .then((response)=>{
+                // console.log(response)
+                if(response.data.code!=200){
+                    console.log(response.data.messages);
+                    // alert(response.data.msg);
+                }
+                else{
+                    this.notifications = response.data.messages;
+                    // console.log("获取notifications成功")
+                    // console.log(response.data.messages);
+                    // this.checkisShow=j
+                    this.checkisShow = this.notifications.map((message) => !message.is_read);
+
+                    // console.log(this.checkisShow);
+                    this.isHovered_all = response.data.messages.map(() => false);
+                    // response.data.messages.forEach((msg,index) => {
+                    //     this.notifications[index]=msg;
+                    //     this.isHovered_not.value = response.data.messages.map(() => false);
+                    //     this.isHovered_all[index]=false;
+                    // });
+                }
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+        }
+         function   getNotiNotRead() {
+                axios.post('/message/all',{"is_read":0})
+                .then((response)=>{
+                // console.log(response)
+                if(response.data.code!=200){
+                    console.log(response.data.messages);
+                    // alert(response.data.msg);
+                }
+                else{
+                    this.notiNotRead = response.data.messages;
+                    this.isHovered_all = response.data.messages.map(() => false);
+                    // response.data.messages.forEach((msg,index) => {
+                    //     this.notiNotRead[index]=msg;
+                        
+                    //     this.isHovered_not[index]=false;
+                    // });
+                }
+            })
+            .catch(error=>{
+                console.log(error);
+            })
+       }
+       function getNotiHasRead() {
+                    axios.post('/message/all',{"is_read":1})
+                    .then((response)=>{
+                    // console.log(response)
+                    if(response.data.code!=200){
+                        console.log(response.data.messages);
+                        // alert(response.data.msg);
+                    }
+                    else{
+                        response.data.messages.forEach((msg,index) => {
+                            this.notiHasRead[index]=msg;
+                            this.isHovered_read[index]=false;
+                        });
+                    }
+                })
+                .catch(error=>{
+                    console.log(error);
+                })
+        }
        return{
         notifications,notiNotRead,notiHasRead,isHovered_all,
+        // checkisShow,
         CheckmarkCircle,
-        checkNoti,deleteNoti,allNotiDeleted,allNotiFinished
+        checkNoti,deleteNoti,allNotiDeleted,allNotiFinished,
+        getNotiHasRead,getNotiNotRead,fetchNotifications,
+        enterChatRoom,router
        }
     },
     data() {
         return {
- 
+        
         isHovered_not:[],
         isHovered_read:[],
-        
-        selectedValue: null,
+        checkisShow:[],
+        // selectedValue: '',
         value:"AllNoti",
         circleUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
         showList:true,
@@ -306,22 +397,24 @@ export default defineComponent({
         // toggleList() {
         // this.showList = !this.showList; // 切换列表显示状态
         // },
+        
         handleNotiSelectChange(newValue){
-            this.selectedValue=newValue;
-            console.log(this.selectedValue);
-            if(this.selectedValue==="NotiNotRead"){
+            this.value=newValue;
+            console.log(this.value);
+            if(this.value==="NotiNotRead"){
                 this.getNotiNotRead();
             }
-            else if(this.selectedValue==="NotiHasRead"){
+            else if(this.value==="NotiHasRead"){
                 this.getNotiHasRead();
             }
-            else if(this.selectedValue==="AllNoti"){
+            else if(this.value==="AllNoti"){
                 this.fetchNotifications();
             }
         },
         setHover(index, value) {
             // 使用 Vue.set 方法来确保响应式更新
             this.isHovered_all[index]= value;
+
         },
         setHoverNot(index, value) {
             // 使用 Vue.set 方法来确保响应式更新
@@ -334,69 +427,7 @@ export default defineComponent({
        
        
        
-        fetchNotifications() {
-            axios.post('/message/all',{})
-            .then((response)=>{
-                console.log(response)
-                if(response.data.code!=200){
-                    console.log(response.data.messages);
-                    // alert(response.data.msg);
-                }
-                else{
-                    this.notifications = response.data.messages;
-                    this.isHovered_all = response.data.messages.map(() => false);
-                    // response.data.messages.forEach((msg,index) => {
-                    //     this.notifications[index]=msg;
-                    //     this.isHovered_not.value = response.data.messages.map(() => false);
-                    //     this.isHovered_all[index]=false;
-                    // });
-                }
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-        },
-            getNotiNotRead() {
-                axios.post('/message/all',{"is_read":0})
-                .then((response)=>{
-                console.log(response)
-                if(response.data.code!=200){
-                    console.log(response.data.messages);
-                    // alert(response.data.msg);
-                }
-                else{
-                    this.notiNotRead = response.data.messages;
-                    this.isHovered_all = response.data.messages.map(() => false);
-                    // response.data.messages.forEach((msg,index) => {
-                    //     this.notiNotRead[index]=msg;
-                        
-                    //     this.isHovered_not[index]=false;
-                    // });
-                }
-            })
-            .catch(error=>{
-                console.log(error);
-            })
-       },
-        getNotiHasRead() {
-                    axios.post('/message/all',{"is_read":1})
-                    .then((response)=>{
-                    console.log(response)
-                    if(response.data.code!=200){
-                        console.log(response.data.messages);
-                        // alert(response.data.msg);
-                    }
-                    else{
-                        response.data.messages.forEach((msg,index) => {
-                            this.notiHasRead[index]=msg;
-                            this.isHovered_read[index]=false;
-                        });
-                    }
-                })
-                .catch(error=>{
-                    console.log(error);
-                })
-        },
+       
          formattedTime(dateTimeStr) {
             const dateTime = new Date(dateTimeStr);
             const now = new Date();
@@ -459,6 +490,9 @@ export default defineComponent({
 .noti-list-content{
     display:flex;
     
+}
+.noti-list-content:hover{
+    cursor: pointer;
 }
 .noti-column{
     width:30%;
