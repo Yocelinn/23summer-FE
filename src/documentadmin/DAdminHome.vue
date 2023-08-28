@@ -31,7 +31,7 @@
             </el-col>
             <el-col :span="16">
               <el-card class="docslist" >
-              <el-table :data="docs" stripe style="left:40px width: 80%" height='670'>
+              <el-table :data="docs" stripe style="left:40px; width: 80%" height='670'>
                 <el-table-column fixed prop="doc_id" label="文档id" width="180" >
                 </el-table-column>
                 <el-table-column prop="doc_name" label="文档名" width="180">
