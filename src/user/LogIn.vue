@@ -177,8 +177,10 @@ export default {
               });
               window.sessionStorage.setItem('curTeamId', -1);
               this.$store.commit('login', r.data);
-              console.log(this.$store.state.user.token);
+              console.log(this.$store.state.user.nickname);
               window.sessionStorage.setItem('token',this.$store.state.user.token);
+              window.sessionStorage.setItem('userName',this.$store.state.user.name);
+              window.sessionStorage.setItem('userNickName',this.$store.state.user.nickname);
               this.$router.push('/person');
               }
               else if(r.data.code==10101)

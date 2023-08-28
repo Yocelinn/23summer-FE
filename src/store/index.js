@@ -74,6 +74,7 @@ export default createStore({
     logout(state) {
       state.user = {};
       state.isLoggedIn = false
+      window.sessionStorage.clear()
     },
     updateUser(state, data) {
       state.user.email = data.email;

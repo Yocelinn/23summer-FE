@@ -14,6 +14,9 @@
                     <el-icon><Search /></el-icon>
                     </el-input>
             </div>
+            <div class="item chat" @click="goTeamChat">
+                <el-icon size="20" ><ChatLineRound /></el-icon>
+            </div>
             <div class="item bell">
                 <el-icon size="20" @click="toggleNotiList" ><Bell /></el-icon>
             </div>
@@ -25,9 +28,10 @@
                     </div>
                 </transition>
             </div>
-            <div class="item avatar">
+            <div class="item avatar" >
                 <el-popover
                     :width="300"
+                    @show="readInfo"
                     popper-style="box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; "
                     >
                     <template #reference>
@@ -38,29 +42,32 @@
                         class="demo-rich-conent"
                         style="display: flex; gap: 16px; flex-direction: column"
                         >
-                            <el-avatar
-                                :size="60"
-                                src="../assets/home-left.png"
-                                style="margin-bottom: 8px"
-                            />
+                            <div>
+                                <el-avatar
+                                    :size="60"
+                                    src="https://avatars.githubusercontent.com/u/72015883?v=4"
+                                    style="margin-bottom: 5px"
+                                />
+                                <button @click="logout" class="logout">登出</button>
+                            </div>
                             <div>
                                 <p
                                 class="demo-rich-content__name"
-                                style="margin: 0; font-weight: 500"
+                                style="margin-buttom: 5px; font-weight: 500;font-size:large;"
                                 >
-                                Element Plus
+                                用户名： {{ userName }}
                                 </p>
                                 <p
                                 class="demo-rich-content__mention"
                                 style="margin: 0; font-size: 14px; color: var(--el-color-info)"
                                 >
-                                @element-plus
+                                用户昵称： {{ userNickName }}
                                 </p>
                             </div>
 
                             <p class="demo-rich-content__desc" style="margin: 0">
-                                所在企业：123456
-                                <button style="float: right;">进入企业</button>
+                                所选团队： {{ curTeamName }}
+                                <button style="float: right;" @click="goTeamPage()">进入团队</button>
                             </p>
                         </div>
                     </template>
@@ -75,26 +82,50 @@
 
 import { Search } from '@element-plus/icons-vue'
 import Notification from './NotificationView.vue'
+import router from "@/router"
+
 export default {
     setup() {
         return {
             Search,
         }
     },
+    components:{
+        Notification
+    },
     data() {
         return {
+            userName: '',
+            userNickName: '',
+            curTeamName: '',
+
             input2: '',
             showNotiList:false,
         }
+    },
+    mounted() {
     },
     methods:{
         toggleNotiList() {
         this.showNotiList = !this.showNotiList; // 切换列表显示状态
         },
+        readInfo(){
+            this.userName = window.sessionStorage.getItem('userName')
+            this.userNickName = window.sessionStorage.getItem('userNickName')
+            this.curTeamName = window.sessionStorage.getItem('curTeamName')
+        },
+        goTeamPage() {
+            router.push('/teamCenter')
+        },
+        goTeamChat() {
+            router.push('/chat')
+        },
+        logout() {          
+            this.$store.commit('logout');
+            router.push('/')
+            this.showNotiList = false
+        }
     },
-    components:{
-        Notification
-    }
 }
 </script>
 
@@ -104,10 +135,10 @@ export default {
 }
 .header-container {
     height:7vh;
-    line-height:50px;
+    line-height:40px;
     display: flex;
     justify-content: space-between;
-    padding-bottom: 10px;
+    align-items: center;
     height: 40px;
 }
 .left-container {
@@ -122,9 +153,26 @@ export default {
 
 }
 .bell {
-    line-height: 60px;
+    line-height: 50px;
     align-items: center;
     justify-content: center;
+}
+.chat {
+    line-height: 50px;
+    align-items: center;
+    justify-content: center;
+}
+.item:hover {
+    color: #9f5ee1;
+}
+.logout {
+    border: none;
+    background-color: #ccb7e3;
+    width: 60px;
+    height: 30px;
+    border-radius: 5px;
+    margin-top: 10px;
+    float: right;
 }
 .avatar {
     line-height: 40px;
