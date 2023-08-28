@@ -27,28 +27,6 @@
                 <h3>文档操作区</h3>
               </div>
               <div>
-<<<<<<< Updated upstream
-                <el-button type="info" style="position: absolute;left: 20px;top:85px;"
-                  @click="docsedit">保存文档</el-button>
-                <el-input v-model="doc_name1" placeholder="请输入文档名称" style="position: absolute;left: 20px;top:165px;width:158px"></el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:200px;"
-                  @click="docscreate">创建新文档</el-button>
-                <el-input v-model="doc_id1" placeholder="请输入文档id" style="position: absolute;left: 20px;top:265px;width:158px">
-                </el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:300px;"
-                  @click="docsserach">编辑指定文档</el-button>
-                <el-input v-model="doc_id2" placeholder="请输入文档id" style="position: absolute;left: 20px;top:365px;width:158px">
-                </el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:400px;"
-                  @click="docsdelete">删除文档</el-button>
-              </div>
-            </el-card>
-        </div>
-        <div class="edit_container" style="width: 1200px;left:420px; height: 800px; top:160px">
-          <QuillEditor id="editorId" ref="myQuillEditor" v-model:content="editorContent" contentType="html"
-            @updateContent="update" :options="options" style="width: 800px;left:420px; top:160px" height: 800/>
-        </div>
-=======
                 <el-button type="info" style="position: absolute;left: 20px;top:85px;" @click="docsedit">保存文档</el-button>
                 <el-input v-model="doc_name1" placeholder="请输入文档名称"
                   style="position: absolute;left: 20px;top:165px;width:158px"></el-input>
@@ -66,7 +44,6 @@
             <QuillEditor id="editorId" ref="myQuillEditor" :content="editorContent" contentType="html"
               @updateContent="update" :options="options" style="width: 800px;left:420px; top:160px" height: 800 />
           </div>
->>>>>>> Stashed changes
         </div>
       </el-container>
     </el-container>
@@ -86,72 +63,12 @@ import {
   Star,
 } from '@element-plus/icons-vue'
 import axios from 'axios';
-<<<<<<< Updated upstream
-import { ref } from 'vue';
-=======
 import { ref, onMounted, getCurrentInstance } from 'vue';
 import { ElNotification } from 'element-plus'
->>>>>>> Stashed changes
 export default {
   components: {
     CommonAside,
     QuillEditor,
-<<<<<<< Updated upstream
-},
-data(){
-  return{
-    code: '',
-    editorContent:'请于此处开始编辑',
-    message: '',
-    docs: [],
-    count:'',
-    doc_id:'10',
-    doc_id1:'',
-    doc_id2:'',
-    project_id:'1',
-    doc_name1:'',
-  };
-},
- methods:{
-  docsedit(){
-    axios.post('/doc/edit',{
-      "doc_id": this.doc_id,
-      "content": this.editorContent,
-    })
-    .then((response)=>{
-      console.log(response.data.doc_id);
-      console.log(this.editorContent);
-    })
-  },
-  update(newValue){
-    console.log('test')
-    console.log(newValue)
-    this.editorContent=newValue;
-  },
-  docscreate(){
-    axios.post('/doc/create',{
-      "doc_name": this.doc_name1,
-      "project_id": this.project_id,
-    })
-    .then((response)=>{
-      console.log(this.doc_name1);
-      console.log(response.data.message);
-      console.log(response.data.doc_id);
-      console.log(response.data.doc_project);
-    }
-    )
-  },
-  docsdelete(){
-    axios.post('/doc/delete',
-    {
-      "doc_id": this.doc_id2,
-    })
-    .then((response)=>{
-      console.log(this.doc_id2)
-      console.log(response.data.message);
-    }
-    )
-=======
   },
   data() {
     return {
@@ -250,7 +167,6 @@ data(){
         }
         )
     },
->>>>>>> Stashed changes
   },
   docsserach(){
     axios.post('/doc/doc_search',
@@ -267,15 +183,9 @@ data(){
     )
   },
  }
-}
 </script>
 
 <style>
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
 .bgbox {
   display: block;
   opacity: 1;

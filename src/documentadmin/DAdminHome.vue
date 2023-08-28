@@ -22,17 +22,10 @@
                 </div>
               </el-card>
               <el-card class="members">
-<<<<<<< Updated upstream
-                <el-table :data="tableData" stripe style="width: 100%" height='250'>
-                  <el-table-column prop="membername" label="成员名" width="180" />
-                  <el-table-column prop="jointime" label="加入时间" width="180" />
-                  <el-table-column prop="power" label="文档权限" />
-=======
                 <el-table :data="staff" stripe style="width: 100%" height='250'>
                   <el-table-column prop="nickname" label="成员昵称" width="180" />
                   <el-table-column prop="name" label="成员名" width="180" />
                   <el-table-column prop="email" label="邮箱" />
->>>>>>> Stashed changes
                 </el-table>
               </el-card>
             </el-col>
@@ -50,11 +43,7 @@
                 <el-table-column prop="option" label="选择" width="180">
                   <template #default="scope">
                     <router-link to="/documentadd">
-<<<<<<< Updated upstream
-                      <el-button link type="primary" size="small" @click="handleClick"
-=======
                       <el-button link type="primary" size="small" @click="docsedit(scope.row)"
->>>>>>> Stashed changes
                       >Edit</el-button
                     >
                     </router-link>
