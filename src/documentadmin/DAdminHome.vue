@@ -12,13 +12,13 @@
                 <div class="projectshow">
                   <img src="../assets/project.png" alt="">
                   <div class="projectinfo">
-                    <p class="projectname">项目名称</p>
+                    <p class="projectname">{{project_name}}</p>
                     <p class="projectteam">项目所属团体名称</p>
                   </div>
                 </div>
                 <div class="projectmessage">
-                  <p>项目创建时间：<span>1145-14</span></p>
-                  <p>项目简介:<span>鸭蛋莫鸭蛋</span></p>
+                  <p>项目创建时间：<span>{{created_time}}</span></p>
+                  <p>项目简介:<span>{{project_description}}</span></p>
                 </div>
               </el-card>
               <el-card class="members">
@@ -69,7 +69,7 @@ import { reactive, onMounted,ref} from "vue";
 export default {
   data() {
     return {
-    project_id:'1',
+    project_id:'1',    
     tableData: [
   {
     membername: '测试',
@@ -114,161 +114,10 @@ export default {
     setup() {
     const docs = ref([]);
     const staff = ref([]);
-    // const docs = [
-    // {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    //   {
-    //     "doc_id":1,
-    //     "doc_name":"testDoc",
-    //     "created_time":"2023-08-26T12:26:16.833Z",
-    //     "update_time":"2023-08-26T13:24:20.760Z",
-    //     "doc_team":1,
-    //     "doc_user":5
-    //   },
-    // ]
     const project_id ='1';
+    const created_time =ref('');
+    const project_description = ref('');
+    const project_name = ref('');
     const refresh =()=>{
     location.reload();
     }
@@ -288,14 +137,36 @@ export default {
       }
     })
   }
+    const getstafflist = () =>{
+      axios.post('/project/search',{
+        "project_id":project_id,
+      }
+      )
+      .then((response)=>{
+        console.log(response.data.project_name);
+        console.log(response.data.project_description);
+        console.log(response.data.created_time);
+        created_time.value=response.data.created_time;
+        project_description.value=response.data.project_description;
+        project_name.value=response.data.project_name;
+        console.log(created_time);
+        console.log(project_description);
+        console.log(project_name);
+      }
+      )
+    }
     onMounted(()=>{
     getdocslist()
+    getstafflist()
   })
 
 
   return {
     docs,
     refresh,
+    created_time,
+    project_description,
+    project_name,
   }
   }
 }
