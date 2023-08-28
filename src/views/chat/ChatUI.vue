@@ -110,7 +110,7 @@
         // const records=ref([])
         
         function getFriendList(){
-            console.log(this.curTeamId)
+            // console.log(this.curTeamId)
             axios.post('/team/seemember',{ "team_id":parseInt(this.curTeamId)})
             .then((response)=>{
                 // console.log(this.curTeamId)
@@ -281,8 +281,12 @@
                            
                             // this.scrollBottom();
                             // }
-                    axios.post('/chat/create',{"team_id": this.curTeamId, "content": this.text_content})
+                            // console.log
+                            // console.log("TeamId:"+this.curTeamId)
+                            // console.log("content"+this.text_content)
+                    axios.post('/chat/create',{"team_id": parseInt(this.curTeamId), "content": this.text_content})
                     .then((response)=>{
+                        console.log("发送消息")
                         console.log(response.data)
                         if(response.data.code!=200){
                             console.log(response.data.message)
@@ -305,8 +309,9 @@
                         }
                     })
                 }
+                
                 else{
-                    alert("发送消息不能为空！")
+                    console.log("发送消息不能为空！")
                 }
             },
         sendNotiToMembers(members){
@@ -320,6 +325,9 @@
                    
                         console.log(response.data.message)
                    
+                })
+                .catch(error=>{
+                    console.log(error);
                 })
             })
         }
