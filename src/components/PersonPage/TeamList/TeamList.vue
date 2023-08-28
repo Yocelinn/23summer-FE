@@ -112,10 +112,60 @@
                 </el-table>
             </el-card>
         </div>
+        <div class="in-button-container">
+            <el-button class="in-custom-button" @click="inClick">进入团队</el-button>
+        </div>
     </div>
 </template>
 
 <style scoped>
+
+.in-button-container {
+    flex: 1; /* This will make in-button-container occupy the remaining height */
+    display: flex;
+    justify-content: center; /* Align the button to the bottom of the container */
+    align-items: center; /* Align the button to the right of the container */
+    padding: 20px; /* Add some padding for spacing */
+    width: 95%;
+    flex-direction: column;
+}
+
+.in-custom-button:hover,
+.in-custom-button:focus {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #7E7CCB;
+    color: #7E7CCB;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #9E9CF4;
+    color: #9E9CF4;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button:active {
+    display: flex;
+    width: 85%;
+    background-color: #7E7CCB;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
 .tl-button-container {
     display: flex;
     justify-content: flex-end;
@@ -145,22 +195,26 @@
 }
 
 .tl-card-table {
-    height: 230px;
+    height: 330px;
     overflow: auto;
 }
 
 .flex-container {
     display: flex;
-    height: calc(100vh - 85px);
+    /*height: calc(100vh - 85px);*/
+    height: calc(93vh - 16px);
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* 垂直居中 */
+    justify-content: flex-start; /* 水平居中 */
 }
 
 .flex-descriptions {
-    flex: 1;
+    /*flex: 1;*/
     width: 100%;
-    max-height: 30%;
-    padding: 15px;
+    /*max-height: 30%;*/
+    height: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .card-container {
@@ -169,9 +223,10 @@
     padding: 0 10px; /* Add some padding to prevent contents from sticking to the edges */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    max-height: calc(70% - 50px);
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    height: calc(80% - 50px);
+    /*height: 45%;*/
 }
 
 .card-header {
@@ -186,7 +241,7 @@
 
 .box-card {
     width: 85%;
-    height: 75%;
+    height: 95%;
     align-items: center; /* 垂直居中 */
     justify-content: center; /* 水平居中 */
 }
@@ -477,7 +532,7 @@ export default defineComponent( {
                 });
             console.log(tableData.value);
             console.log('检查点3', Number(window.sessionStorage.getItem('curTeamId')));
-            // callFetchInProjectList();
+            callFetchInProjectList();
         };
 
         // const initCurTeam = () => {
@@ -590,6 +645,18 @@ export default defineComponent( {
             console.log(window.sessionStorage.getItem('curTeamId'));
         };
 
+        const inClick = () => {
+            if (Number(window.sessionStorage.getItem('curTeamId')) === -1) {
+                message({
+                    message: '未选择团队',
+                    type: 'error'
+                });
+            }
+            else {
+                router.push('/teamCenter');
+            }
+        }
+
         onMounted(async () => {
             console.log('m', fetchProjectList);
 
@@ -633,6 +700,7 @@ export default defineComponent( {
             chooseCurTeam,
             fetchTeamList,
             fetchSelfInform,
+            inClick
         };
     },
 });

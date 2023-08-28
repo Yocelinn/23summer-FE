@@ -119,7 +119,7 @@
 
 <style scoped>
 .tl-card-table {
-    height: 230px;
+    height: 330px;
     overflow: auto;
 }
 
@@ -145,7 +145,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    max-height: calc(70% - 50px);
+    /*max-height: calc(70% - 50px);*/
 }
 
 .card-header {
@@ -160,7 +160,7 @@
 
 .box-card {
     width: 85%;
-    height: 75%;
+    height: 95%;
     align-items: center; /* 垂直居中 */
     justify-content: center; /* 水平居中 */
 }
@@ -299,7 +299,7 @@ export default defineComponent( {
         const { fetchTeammateList } = mapActions(['fetchProjectList']);
         const callFetchTeammateList = () => {
             console.log('TL', window.sessionStorage.getItem('curTeamId'));
-            store.dispatch('fetchProjectList', window.sessionStorage.getItem('curTeamId'));
+            store.dispatch('fetchTeammateList', window.sessionStorage.getItem('curTeamId'));
         };
 
 
@@ -398,7 +398,7 @@ export default defineComponent( {
                                 window.sessionStorage.setItem('curTeamId', tableData.value[0].team_id);
                                 window.sessionStorage.setItem('curTeamName', tableData.value[0].team_name);
                                 console.log('检查点2', Number(window.sessionStorage.getItem('curTeamId')));
-                                callFetchInProjectList();
+                                // callFetchInProjectList();
                             }
                         }
                         else {
@@ -436,6 +436,7 @@ export default defineComponent( {
                         })
                         console.log(response.data);
                         roleNum.value = response.data.perm;
+                        window.sessionStorage.setItem('curRoleNum', response.data.perm);
                     }
                     else {
                         message({
@@ -461,11 +462,13 @@ export default defineComponent( {
         }
 
         const chooseCurTeam = (team_id, team_name) => {
-            curTeamId.value = team_id;
+            // curTeamId.value = team_id;
             // store.commit('setCurTeamId', team_id);
             window.sessionStorage.setItem('curTeamId', team_id);
             window.sessionStorage.setItem('curTeamName', team_name);
+            fetchSelfInform();
             callFetchInProjectList();
+            callFetchTeammateList();
             console.log(window.sessionStorage.getItem('curTeamId'));
         };
 

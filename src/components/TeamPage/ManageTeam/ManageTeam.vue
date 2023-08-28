@@ -9,7 +9,11 @@
             <!--            </span>-->
             <!--            <el-divider class="custom-divider" direction="vertical" />-->
             <span>
-                <d-button class="newProject-pl" @click="plNewPjVisable=true">
+                <d-button
+                        class="newProject-pl"
+                        @click="plNewPjVisable=true"
+                        :disabled="clickRole"
+                >
                     邀请队员
                 </d-button>
             </span>
@@ -19,31 +23,36 @@
             <template #header>
                 <d-modal-header>
                     <!--                <d-icon name="like"></d-icon>-->
-                    <span>新建项目</span>
+                    <span>邀请队员项目</span>
                 </d-modal-header>
             </template>
 
             <!--                <div class="text">昵称：</div>-->
             <div class="pl-div-input-d">
+                用户邮箱：
                 <el-input
                         v-model="newPjName"
-                        placeholder=新项目名称
+                        placeholder=用户邮箱
                         clearable
                         class="pl-input-d"
                 />
                 <!--                @input="cNewPjName"-->
-                <el-input
-                        v-model="newPjDes"
-                        placeholder=项目描述
-                        clearable
-                        class="pl-input-d"
-                />
-                <!--                @input="cNewPjDes"-->
+
+<!--                <el-input-->
+<!--                        v-model="newPjDes"-->
+<!--                        placeholder=权限-->
+<!--                        clearable-->
+<!--                        class="pl-input-d"-->
+<!--                />-->
+
+                <div class="mb-0">权限</div>
+                <d-select class="mb-2" v-model="newPjDes" :options="optionsRole"></d-select>
+
             </div>
 
             <template #footer>
                 <d-modal-footer class="pl-button-container-d" style="text-align: right; padding-right: 20px;">
-                    <d-button class="pl-button-d-i" @click="createNewProject">确认</d-button>
+                    <d-button class="pl-button-d-i" @click="addNewTeammate">确认</d-button>
                     <d-button class="pl-button-d-c" @click="plNewPjVisable=false">取消</d-button>
                 </d-modal-footer>
             </template>
@@ -51,7 +60,7 @@
 
     </div>
     <div class="table-container-pl">
-        <el-table class="table-pl" :data="projectData" style="width: 100%" stripe="true" fit="true">
+        <el-table class="table-pl" :data="personData" style="width: 100%" stripe="true" fit="true">
             <el-table-column label="姓名">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
@@ -76,7 +85,7 @@
             <el-table-column label="身份">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
-                        <span>{{ scope.row.updated_time }}</span>
+                        <span>{{ getScopeRole(scope.row) }}</span>
                     </div>
                 </template>
             </el-table-column>
@@ -87,6 +96,7 @@
                             size="small"
                             type="danger"
                             @click="handleDelete(scope.$index, scope.row)"
+                            :disabled="clickRole"
                     >
                         删除队员
                     </d-button>
@@ -97,11 +107,12 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import axios from "axios";
-import router from "@/router";
+// import router from "@/router";
 import {mapState, useStore, mapActions } from 'vuex';
+// import message from "@element-plus/icons/lib/Message";
 // import message from "@element-plus/icons/lib/Message";
 
 export default {
@@ -124,6 +135,10 @@ export default {
         const projectData = computed(() => {
             return store.state.projectData;
         });
+        const customOptions = ['管理员', '参与者'];
+        const items = customOptions.map((option, i) => `${option}`);
+        const optionsRole = reactive(items);
+
         // const projectData = ref([]);
         // const projectData = [
         //     {
@@ -191,11 +206,27 @@ export default {
             console.log('PL检查', projectData);
         };
 
+        const getScopeRole = (data) => {
+            if (data.perm === 2) {
+                return '创建者';
+            }
+            else if (data.perm === 1) {
+                return '管理员';
+            }
+            else if (data.perm === 0) {
+                return '参与者';
+            }
+            else {
+                return '游客';
+            }
+        }
 
         const { fetchTeammateList } = mapActions(['fetchProjectList']);
         const callFetchTeammateList = () => {
-            console.log('TL', window.sessionStorage.getItem('curTeamId'));
-            store.dispatch('fetchProjectList', window.sessionStorage.getItem('curTeamId'));
+            console.log('MT', window.sessionStorage.getItem('curTeamId'));
+            store.dispatch('fetchTeammateList', window.sessionStorage.getItem('curTeamId'));
+            console.log('MT', window.sessionStorage.getItem('curRoleNum'));
+            console.log('MT', clickRole);
         };
 
         // const callCreatNewProject = async () => {
@@ -204,69 +235,127 @@ export default {
         //     await store.dispatch('createNewProject', { curTeamId, NewPjName, NewPjDes });
         //     plNewPjVisable.value = false;
         // }
-        const createNewProject = () => {
+
+        const clickRole = computed(() => {
+            const number = Number(window.sessionStorage.getItem('curRoleNum'));
+            console.log("接近真相", number);
+            return (number <= 0);
+        });
+
+        const roleCheck = () => {
+            const roleNUm = window.sessionStorage.getItem('curRoleNum');
+            return !(roleNUm === 2 || roleNUm === 1);
+        }
+
+        const getRole = (roleNUm) => {
+            if (roleNUm === '创建者') {
+                return 2;
+            }
+            else if (roleNUm === '管理员') {
+                return 1;
+            }
+            else if (roleNUm === '参与者') {
+                return 0;
+            }
+            else {
+                return -1;
+            }
+        }
+
+        const addNewTeammate = () => {
+            console.log("检查email", newPjName.value);
+
             if (window.sessionStorage.getItem('curTeamId').value === -1) {
                 ElMessage({
                     message: '当前未选择团队',
                     type:'error'
                 });
-                plNewPjVisable.value = false;
             }
             else {
-                console.log(' 团队', window.sessionStorage.getItem('curTeamId'), store.state.isLoggedIn);
-                axios.post('/project/create', {
-                    team_id: window.sessionStorage.getItem('curTeamId'),
-                    projectName: newPjName.value,
-                    projectDescription: newPjDes.value
+                axios.post('user/search', {
+                    email: newPjName.value
                 })
                     .then((response) => {
-                        console.log(response.config.data);
                         if (response.data.code === 200) {
                             ElMessage({
-                                message: '新建成功',
-                                type:'success'
+                                message: response.data.message,
+                                type: 'success'
+                            });
+                            axios.post('/team/member', {
+                                team_id: window.sessionStorage.getItem('curTeamId'),
+                                user_id: response.data.user_id,
+                                perm: getRole(newPjDes.value)
                             })
-                            console.log(response.data);
-                            plNewPjVisable.value = false;
-// 未完成                            curProjectId.value = response.data.id;
-                            window.sessionStorage.setItem('curProjectId', response.data.project_id);
-                            window.sessionStorage.setItem('curProjectName', newPjName.value);
-                            window.sessionStorage.setItem('curProjectDes', newPjDes.value);
-                            router.push('/prototype');
+                                .then((response2) => {
+                                    if (response2.data.code === 200) {
+                                        ElMessage({
+                                            message: response2.data.message,
+                                            type: 'success'
+                                        });
+                                        callFetchTeammateList();
+                                    }
+                                    else {
+                                        ElMessage({
+                                            message: response2.data.error,
+                                            type: 'error'
+                                        });
+                                        console.log('邀请失败', response2.config.data);
+                                    }
+                                })
+                                .catch((error2) => {
+                                    ElMessage({
+                                        message: '邀请失败，请重试',
+                                        type: 'error'
+                                    });
+                                    console.log('POST request fail:', error2, error2.config.data);
+                                })
                         }
                         else {
                             ElMessage({
                                 message: response.data.error,
-                                type:'error'
+                                type: 'error'
                             });
-                            console.log('一次新建', response.data);
-                            plNewPjVisable.value = false;
+                            console.log('查询失败', response.config.data);
                         }
                     })
                     .catch((error) => {
-                        ElMessage ({
-                            message: '新建项目失败，请重试',
-                            type:'error'
-                        })
-                        console.log('POST request error:', error);
-                        plNewPjVisable.value = false;
+                        ElMessage({
+                            message: '查询用户失败，请重试',
+                            type: 'error'
+                        });
+                        console.log('POST request fail:', error.config.data);
                     });
             }
+            plNewPjVisable.value = false;
         };
 
-        const handleEdit = (index, data) => {
-            curProjectId.value = data.project_id;
-            // store.commit('setCurProjectId', data.project_id);
-            window.sessionStorage.setItem('curProjectId', data.project_id);
-            window.sessionStorage.setItem('curProjectName', data.projectName);
-            window.sessionStorage.setItem('curProjectDes', data.projectDescription);
 
-            router.push('/person/protectCenter');
+        // const handleEdit = (index, data) => {
+        //     curProjectId.value = data.project_id;
+        //     // store.commit('setCurProjectId', data.project_id);
+        //     window.sessionStorage.setItem('curProjectId', data.project_id);
+        //     window.sessionStorage.setItem('curProjectName', data.projectName);
+        //     window.sessionStorage.setItem('curProjectDes', data.projectDescription);
+        //
+        //     router.push('/person/protectCenter');
+        // }
+
+        const resetTeammateRoleNum = (index, roleNum) => {
+            store.state.personData.value[index].perm = roleNum;
         }
 
+        const updateTable = (index, roleNum) => {
+            // 无排序时选用，免去刷新数组
+            resetTeammateRoleNum(index, roleNum);
+            // 有排序时选用，维护排序
+            callFetchTeammateList();
+        };
+
         const handleDelete = (index, data) => {
-            axios.post('/project/delete', {
-                project_id: data.project_id
+            console.log('查看权限', clickRole);
+            axios.post('/team/delete', {
+                team_id: window.sessionStorage.getItem('curTeamId'),
+                user_id: data.user_id
             })
                 .then((response) => {
                     if (response.data.code === 200) {
@@ -275,7 +364,7 @@ export default {
                             type: 'success'
                         });
                         console.log(response.data);
-                        callFetchInProjectList();
+                        callFetchTeammateList();
                     }
                     else {
                         ElMessage ({
@@ -287,7 +376,7 @@ export default {
                 })
                 .catch((error) => {
                     ElMessage ({
-                        message: '删除项目失败，请重试',
+                        message: '删除队员失败，请重试',
                         type: 'error'
                     });
                     console.log('POST request error:', error);
@@ -336,6 +425,8 @@ export default {
 
         onMounted(() => {
             // callFetchInProjectList();
+            callFetchTeammateList();
+            console.log('检查权限', clickRole);
         });
 
         return {
@@ -346,21 +437,31 @@ export default {
             projectData,
             newPjName,
             newPjDes,
+            clickRole,
+            optionsRole,
 
-            createNewProject,
+            roleCheck,
+            addNewTeammate,
             fetchProjectList,
             callFetchInProjectList,
             // callCreatNewProject,
-            handleEdit,
+            // handleEdit,
+            updateTable,
             handleDelete,
             fetchTeammateList,
-            callFetchTeammateList
+            callFetchTeammateList,
+            getScopeRole
         };
     },
 };
 </script>
 
 <style scoped>
+.mb-2 {
+    width: 85%;
+    margin-left: 5px;
+}
+
 .pl-button-d-c:hover,
 .pl-button-d-c:focus {
     border-style: solid;

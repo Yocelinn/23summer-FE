@@ -20,6 +20,8 @@ import Table from 'vue-devui/table'
 import 'vue-devui/table/style.css'
 import Card from 'vue-devui/card'
 import 'vue-devui/card/style.css'
+import Select from 'vue-devui/select'
+import 'vue-devui/select/style.css'
 // import Ripple from 'vue-devui/ripple'
 // import 'vue-devui/ripple/style.css'
 
@@ -63,6 +65,7 @@ app.use(Modal)
 app.use(Input)
 app.use(Table)
 app.use(Card)
+app.use(Select)
 // app.use(Ripple)
 app.config.globalProperties.$message = ElMessage;
 // app.use(DevUI)

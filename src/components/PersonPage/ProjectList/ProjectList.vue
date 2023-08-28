@@ -1,7 +1,7 @@
 <template>
     <div class="flex-container-pl">
         <span>
-            <h2>所有项目</h2>
+            <div style="font-size: 22px">团队项目</div>
         </span>
         <div class="align-right-pl">
             <!--            <span>-->

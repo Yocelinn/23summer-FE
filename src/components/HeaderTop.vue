@@ -103,12 +103,11 @@ export default {
     width: 40px
 }
 .header-container {
-    height:10vh;
     line-height:50px;
     display: flex;
     justify-content: space-between;
-    padding-bottom: 10px;
-    height: 40px;
+    /*padding-bottom: 10px;*/
+    height: 7vh;
 }
 .left-container {
     margin-left: 20px;
