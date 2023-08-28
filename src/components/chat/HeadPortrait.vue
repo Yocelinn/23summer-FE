@@ -7,7 +7,7 @@
 <script>
 export default {
     props: {
-        imgUrl:{ default:require('@/assets/img/head_portrait.jpg')}
+        imgUrl:{ default:require('@/assets/img/avator_default.jpg')}
     }
 }
 </script>
@@ -27,7 +27,7 @@ export default {
         z-index: 1;
         display: block;
         border-radius: 50%;
-        background-color: rgb(144,225,80);
+        // background-color: rgb(144,225,80);
         position: absolute;
         right: 0;
     }
