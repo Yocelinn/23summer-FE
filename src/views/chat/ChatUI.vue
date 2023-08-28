@@ -10,17 +10,25 @@
                 v-model:value="selectedValue"
                 filterable
                 placeholder="搜索"  
-                :options="friend_options"
+                :options="select_options"
                 />
-                <el-scrollbar>
-                    <div v-for="(member,index) in friend_list" :key="index">
-                        <PersonCard :personInfo="member"/>
+                <!-- <el-scrollbar> -->
+                <div v-for="(member,index) in friend_list" :key="index" class="person-card">
+                    <!-- <PersonCard :personInfo="member"/> -->
+                    <div class="info">
+                        <HeadPortrait ></HeadPortrait>
+                        <div class="info-detail">
+                            <div class="name">{{ member.nickname }}</div>
+                            <div class="detail">{{member.email}}</div>
+                        </div>
+
                     </div>
-                </el-scrollbar>
+                </div>
+                <!-- </el-scrollbar> -->
                 
             </div>
             <div class="chat-window">
-                <div class="chat-window-header">这里是团队名({{ friend_list.length }})</div>
+                <div class="chat-window-header">{{this.curTeamName}}({{ friend_list.length }})</div>
                 <div class="chat-content" ref="chatContent">
                     <div class="chat-window-content" v-for="record in this.records" :key="record.chat_id">
                         <ChatFriend :chatInfo="record" v-if="record.sender_id!=this.user.user_id"/>
@@ -33,8 +41,8 @@
                     <!-- <Editor/> -->
                     <n-mention v-if="isPerm" type="textarea" :options="manager_friend_options" :render-label="renderLabel" v-model:value="text_content" 
                     class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendMessage()"/>
-                    <n-mention v-else type="textarea" :options="manager_friend_options" v-model:value="text_content" 
-                    class="chat-window-textarea" @keydown.enter.prevent="sendMessage()"/>
+                    <n-mention v-else type="textarea" :options="friend_options" :render-label="renderLabel" v-model:value="text_content" 
+                    class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendMessage()"/>
                     <!-- <button class="send-button" @click="sendMessage">发送</button> -->
                 </div> 
             </div>
@@ -45,6 +53,8 @@
 </template>
 <script>
     import PersonCard from "@/components/chat/PersonCard.vue";
+    import HeadPortrait from "@/components/chat/HeadPortrait.vue";
+
     import { defineComponent,ref,h } from "vue";
     import { NSelect,NMention } from "naive-ui";
     import ChatMe from "@/components/chat/ChatMe.vue"
@@ -55,12 +65,15 @@
     // import Editor from "@/components/chat/EditorArea.vue";
     export default defineComponent ({
     components:{
-        PersonCard,NSelect,NMention,ChatMe,ChatFriend
+       NSelect,NMention,ChatMe,ChatFriend,PersonCard,HeadPortrait
     },
     mounted(){
+        this.curTeamId=window.sessionStorage.getItem('curTeamId');
+        this.curTeamName=window.sessionStorage.getItem('curTeamName');
+        this.getUserInfo();
         this.getFriendList();
         this.getAllRecord();
-        this.getUserInfo();
+        
         const self = this;
         this.chatSocket = new WebSocket( 
             'ws://'
@@ -92,31 +105,51 @@
         const text_content=ref("");
         const friend_list=ref([]);
         const friend_options=ref([]);
+        const select_options=ref([]);
         const manager_friend_options=ref([{ value: "所有人", label: "所有人" }])
         // const records=ref([])
         
         function getFriendList(){
-            axios.post('/team/seemember',{ "team_id":this.curTeamId})
+            console.log(this.curTeamId)
+            axios.post('/team/seemember',{ "team_id":parseInt(this.curTeamId)})
             .then((response)=>{
                 // console.log(this.curTeamId)
                 console.log(response)
                 if(response.data.code!=200){
+                    // console.log("seemember wrong")
                     console.log(response.data.messages);
                     // alert(response.data.msg);
                 }
                 else{
                     friend_list.value=response.data.res;
+                    const foundMe = friend_list.value.find(friend => friend.user_id === this.user.user_id);
+                    // console.log(foundMe.perm)
+                    if(foundMe){
+                        if(foundMe.perm!=0){
+                            this.isPerm=true;
+                        }
+                    }
                     // const foundFriend = friend_list.value.find(friend => friend.user_id === this.user.user_id);
                     // console.log(foundFriend)
                     // if (foundFriend && foundFriend.perm !== 1) {
                     //     this.isPerm = true;
                     // }
-                    friend_options.value = response.data.res.map(item => ({
+                    select_options.value=response.data.res
+                    .filter(item => item.user_id !== this.user.user_id) 
+                    .map(item => ({
+                        value: item.user_id,  // 假设 id 为 value
+                        label: item.nickname  // 假设 name 为 label
+                    }));
+                    friend_options.value = response.data.res
+                    .filter(item => item.user_id !== this.user.user_id) 
+                    .map(item => ({
                         value: item.nickname,  // 假设 id 为 value
                         label: item.user_id  // 假设 name 为 label
                     }));
                     manager_friend_options.value.push(
-                        ...response.data.res.map(item => ({
+                        ...response.data.res
+                        .filter(item => item.user_id !== this.user.user_id) 
+                        .map(item => ({
                             value: item.nickname,
                             label: item.user_id
                         })));
@@ -136,6 +169,7 @@
             text_content,
             friend_list,
             friend_options,
+            select_options,
             manager_friend_options,
             renderLabel: (option) => h( 'span',[
                 option.value
@@ -144,8 +178,16 @@
             getFriendList,
 
         }
-    },    
+    },  
+    watch: {
+    pcCurrent: function() {
+      this.isActive()
+    }
+  },  
     methods:{
+        isActive() {
+      this.current = this.pcCurrent
+    },
     //     handleInput() {
     //   // 监听输入事件，处理 @ 的逻辑，添加或删除被 @ 的成员
     //     const atIndex = this.text_content.lastIndexOf("@");
@@ -164,7 +206,7 @@
             // this.text_content=this.text_content+option.label+' '
             // console.log(this.selectedValue);
             if(this.selectedMentionValue==='所有人'){
-                this.mentionedMembers=this.friend_list;
+                this.mentionedMembers=this.friend_list.filter(member => member.user_id !== this.user.user_id);
             }
             else{
                 if (!this.mentionedMembers.includes(this.selectedMentionValue)) {
@@ -284,10 +326,12 @@
     },
     data(){
         return{
-            curTeamId:1,
+            current:'',
+            curTeamId:'',
+            curTeamName:'',
             user:'',
             records:[],
-            isPerm:true,
+            isPerm:false,
             mentionedMembers: [], // 被 @ 的成员列表
             selectedMentionValue:'',
         }
@@ -296,6 +340,7 @@
 </script>
 
 <style lang="scss" scoped>
+
 .chat-wrapper{
     display: flex;
     width:100%;
@@ -313,6 +358,7 @@
     flex-direction: column; /* 垂直布局子元素 */
     /* background-color: #9d9cf435; */
     align-items: center; /* 垂直居中 */
+    overflow:auto
 }
 .chat-window {
     
@@ -322,7 +368,55 @@
   flex-direction: column; /* 垂直方向布局 */
   padding:10px;
 }
-
+.person-card {
+  width: 80%;
+  height: 80px;
+  border-radius: 10px;
+  background-color: #9d9cf4c4;
+  position: relative;
+  margin: 25px 0 ;
+  cursor: pointer;
+  .info {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 90%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+    display: flex;
+    .info-detail {
+      margin-top: 5px;
+      margin-left: 20px;
+      .name {
+        color: #fff;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin-bottom: 5px;
+      }
+      .detail {
+        color: #5c6675;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 12px;
+      }
+    }
+  }
+  &:hover {
+    background-color: #9E9CF4;
+    transition: 0.3s;
+    box-shadow: 0px 0px 10px 0px rgba(#9E9CF4,0.5);
+    // box-shadow:  0 5px 20px rgba(251, 152, 11, .5);
+    .info {
+      .info-detail {
+        .detail {
+          color: #fff;
+        }
+      }
+    }
+  }
+}
 .chat-window-header {
   background-color: rgba(#48464C,0.2);
   padding: 10px;
