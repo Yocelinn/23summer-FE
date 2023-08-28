@@ -40,7 +40,7 @@
                         >
                             <el-avatar
                                 :size="60"
-                                src="../assets/home-left.png"
+                                src="https://avatars.githubusercontent.com/u/72015883?v=4"
                                 style="margin-bottom: 8px"
                             />
                             <div>
@@ -100,11 +100,11 @@ export default {
     width: 40px
 }
 .header-container {
-    height:10vh;
-    line-height:50px;
+    height:7vh;
+    line-height:40px;
     display: flex;
     justify-content: space-between;
-    padding-bottom: 10px;
+    align-items: center;
     height: 40px;
 }
 .left-container {
@@ -119,7 +119,7 @@ export default {
 
 }
 .bell {
-    line-height: 60px;
+    line-height: 50px;
     align-items: center;
     justify-content: center;
 }
