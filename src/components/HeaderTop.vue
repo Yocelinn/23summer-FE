@@ -92,7 +92,7 @@ export default {
         this.showNotiList = !this.showNotiList; // 切换列表显示状态
         },
     },
-    components: {
+    components:{
         Notification
     }
 }
@@ -103,7 +103,7 @@ export default {
     width: 40px
 }
 .header-container {
-    height:10vh;
+    height:7vh;
     line-height:50px;
     display: flex;
     justify-content: space-between;
