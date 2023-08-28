@@ -13,7 +13,7 @@
 <script setup>
 import { QuillEditor, Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { getCurrentInstance, reactive, ref, toRaw, computed, onMounted, watch } from "vue";
+import { getCurrentInstance, reactive, ref, toRaw, computed, onMounted, watch, defineExpose } from "vue";
 // 引入插入图片标签自定义的类
 import './quill'
 
@@ -44,6 +44,13 @@ const props = defineProps({
     },
 })
 
+defineExpose({
+    changeContent: (newValue) => {
+        if (myQuillEditor.value)
+            myQuillEditor.value.setHTML(newValue);
+    }
+})
+
 const editContent = ref(props.content);
 
 const myQuillEditor = ref(null)
@@ -58,8 +65,7 @@ watch(props.content, (newVal, oldVal) => {
 const editorContent = computed({
     get: () => {
         // console.log(props.content,myQuillEditor);
-        if (myQuillEditor.value)
-            myQuillEditor.value.setHTML(props.content);
+
         return props.content;
     },
     set: (val) => {
