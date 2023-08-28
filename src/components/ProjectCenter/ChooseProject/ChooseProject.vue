@@ -132,7 +132,7 @@
 }
 
 .tl-card-table {
-    height: 230px;
+    height: 330px;
     overflow: auto;
 }
 
@@ -158,7 +158,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    max-height: calc(70% - 50px);
+    /*max-height: calc(70% - 50px);*/
 }
 
 .card-header {
@@ -173,7 +173,7 @@
 
 .box-card {
     width: 85%;
-    height: 75%;
+    height: 95%;
     align-items: center; /* 垂直居中 */
     justify-content: center; /* 水平居中 */
 }
