@@ -135,6 +135,7 @@ export default {
             message: '新建文档成功，现在可以开始编辑了',
             type: 'create',
           });
+          this.doc_name1='';
         }
         )
     },
@@ -146,6 +147,7 @@ export default {
         .then((response) => {
           console.log(this.doc_id2)
           console.log(response.data.message);
+          this.doc_id2='';
         }
         )
     },
@@ -164,6 +166,7 @@ export default {
           console.log(this.doc_id);
           this.editorContent = response.data.content;
           console.log(this.editorContent);
+          this.doc_id1='';
         }
         )
     },

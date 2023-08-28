@@ -48,6 +48,7 @@
 
 <script>
 import CommonAside from '@/components/CommonAside.vue';
+import axios from 'axios';
 export default {
   data() {
     return {
