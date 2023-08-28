@@ -114,10 +114,60 @@
                 </el-table>
             </el-card>
         </div>
+        <div class="in-button-container">
+            <el-button class="in-custom-button" @click="inClick">回到项目</el-button>
+        </div>
     </div>
 </template>
 
 <style scoped>
+
+.in-button-container {
+    flex: 1; /* This will make in-button-container occupy the remaining height */
+    display: flex;
+    justify-content: center; /* Align the button to the bottom of the container */
+    align-items: center; /* Align the button to the right of the container */
+    padding: 20px; /* Add some padding for spacing */
+    width: 95%;
+    flex-direction: column;
+}
+
+.in-custom-button:hover,
+.in-custom-button:focus {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #7E7CCB;
+    color: #7E7CCB;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #9E9CF4;
+    color: #9E9CF4;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button:active {
+    display: flex;
+    width: 85%;
+    background-color: #7E7CCB;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
 .tl-card-table {
     height: 330px;
     overflow: auto;
@@ -300,8 +350,12 @@ export default defineComponent( {
         const callFetchTeammateList = () => {
             console.log('TL', window.sessionStorage.getItem('curTeamId'));
             store.dispatch('fetchTeammateList', window.sessionStorage.getItem('curTeamId'));
+            fetchSelfInform();
         };
 
+        const inClick = () => {
+            router.push('/person');
+        }
 
         const data = reactive({
             name: 'Tom',
@@ -399,6 +453,7 @@ export default defineComponent( {
                                 window.sessionStorage.setItem('curTeamName', tableData.value[0].team_name);
                                 console.log('检查点2', Number(window.sessionStorage.getItem('curTeamId')));
                                 // callFetchInProjectList();
+                                callFetchTeammateList();
                             }
                         }
                         else {
@@ -415,6 +470,7 @@ export default defineComponent( {
                     })
                     console.error('GET request error:', error);
                 });
+            callFetchTeammateList();
             console.log(tableData.value);
             console.log('检查点3', Number(window.sessionStorage.getItem('curTeamId')));
             // callFetchInProjectList();
@@ -437,6 +493,7 @@ export default defineComponent( {
                         console.log(response.data);
                         roleNum.value = response.data.perm;
                         window.sessionStorage.setItem('curRoleNum', response.data.perm);
+                        console.log()
                     }
                     else {
                         message({
@@ -522,7 +579,8 @@ export default defineComponent( {
             fetchRoleNum,
             fetchSelfInform,
             fetchTeammateList,
-            callFetchTeammateList
+            callFetchTeammateList,
+            inClick
         };
     },
 });

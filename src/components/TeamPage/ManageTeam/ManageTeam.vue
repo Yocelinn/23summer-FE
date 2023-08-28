@@ -8,11 +8,12 @@
             <!--                -->
             <!--            </span>-->
             <!--            <el-divider class="custom-divider" direction="vertical" />-->
-            <span>
+            <span :key="clickRole">
                 <d-button
                         class="newProject-pl"
                         @click="plNewPjVisable=true"
                         :disabled="clickRole"
+
                 >
                     邀请队员
                 </d-button>
@@ -84,22 +85,28 @@
             </el-table-column>
             <el-table-column label="身份">
                 <template #default="scope">
-                    <div style="display: flex; align-items: center">
-                        <span>{{ getScopeRole(scope.row) }}</span>
+                    <div style="display: flex; align-items: center" :key="roleNum">
+                        <span>
+                            <el-tag class="ml" :type="getTagClass(scope.row.perm)">
+                                {{ getScopeRole(scope.row) }}
+                            </el-tag>
+                        </span>
                     </div>
                 </template>
             </el-table-column>
             <el-table-column label="操作">
                 <template #default="scope">
-                    <d-button
-                            class="delete"
-                            size="small"
-                            type="danger"
-                            @click="handleDelete(scope.$index, scope.row)"
-                            :disabled="clickRole"
-                    >
-                        删除队员
-                    </d-button>
+                    <div :key="clickRole">
+                        <d-button
+                                class="delete"
+                                size="small"
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row)"
+                                :disabled="clickRole"
+                        >
+                            删除队员
+                        </d-button>
+                    </div>
                 </template>
             </el-table-column>
         </el-table>
@@ -136,8 +143,23 @@ export default {
             return store.state.projectData;
         });
         const customOptions = ['管理员', '参与者'];
-        const items = customOptions.map((option, i) => `${option}`);
+        const items = customOptions.map((option) => `${option}`);
         const optionsRole = reactive(items);
+
+        const getTagClass = (roleNum) => {
+            console.log("权限", roleNum);
+            if (roleNum === 1/* some condition */) {
+                return 'success';
+            } else if (roleNum === 2/* some other condition */) {
+                return 'warning';
+            } else if (roleNum === 0) {
+                console.log("进入")
+                return 'default';
+            } else {
+                return 'info';
+            }
+        }
+
 
         // const projectData = ref([]);
         // const projectData = [
@@ -450,7 +472,8 @@ export default {
             handleDelete,
             fetchTeammateList,
             callFetchTeammateList,
-            getScopeRole
+            getScopeRole,
+            getTagClass
         };
     },
 };

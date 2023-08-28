@@ -14,6 +14,9 @@
                     <el-icon><Search /></el-icon>
                     </el-input>
             </div>
+            <div class="item chat" @click="goPerson">
+                <el-icon size="20" ><House /></el-icon>
+            </div>
             <div class="item chat" @click="goTeamChat">
                 <el-icon size="20" ><ChatLineRound /></el-icon>
             </div>
@@ -113,6 +116,9 @@ export default {
             this.userName = window.sessionStorage.getItem('userName')
             this.userNickName = window.sessionStorage.getItem('userNickName')
             this.curTeamName = window.sessionStorage.getItem('curTeamName')
+        },
+        goPerson() {
+            router.push('/person')
         },
         goTeamPage() {
             router.push('/teamCenter')
