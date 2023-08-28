@@ -24,7 +24,7 @@
           </el-menu-item>
         </router-link>
         <router-link to="/documentadd">
-          <el-menu-item index="4">
+          <el-menu-item index="4" @click="docsedit">
           <el-icon><Edit /></el-icon>
           <span>文档编辑</span>
           </el-menu-item>
@@ -34,7 +34,7 @@
   </el-row>
 </template>
 
-<script setup>
+<script>
 import {
   Document,
   ArrowLeft,
@@ -42,6 +42,14 @@ import {
   Location,
   Setting,
 } from '@element-plus/icons-vue'
+export default{
+  methods:{
+    docsedit(){
+      window.sessionStorage.setItem('curDocsId', '0');
+      this.$router.push('/documentadd');
+    }
+  }
+}
 </script>
 
 <style>

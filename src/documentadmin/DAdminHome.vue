@@ -13,7 +13,7 @@
                   <img src="../assets/project.png" alt="">
                   <div class="projectinfo">
                     <p class="projectname">{{project_name}}</p>
-                    <p class="projectteam">项目所属团体名称</p>
+                    <p class="projectteam">{{team_name}}</p>
                   </div>
                 </div>
                 <div class="projectmessage">
@@ -22,10 +22,17 @@
                 </div>
               </el-card>
               <el-card class="members">
+<<<<<<< Updated upstream
                 <el-table :data="tableData" stripe style="width: 100%" height='250'>
                   <el-table-column prop="membername" label="成员名" width="180" />
                   <el-table-column prop="jointime" label="加入时间" width="180" />
                   <el-table-column prop="power" label="文档权限" />
+=======
+                <el-table :data="staff" stripe style="width: 100%" height='250'>
+                  <el-table-column prop="nickname" label="成员昵称" width="180" />
+                  <el-table-column prop="name" label="成员名" width="180" />
+                  <el-table-column prop="email" label="邮箱" />
+>>>>>>> Stashed changes
                 </el-table>
               </el-card>
             </el-col>
@@ -43,7 +50,11 @@
                 <el-table-column prop="option" label="选择" width="180">
                   <template #default="scope">
                     <router-link to="/documentadd">
+<<<<<<< Updated upstream
                       <el-button link type="primary" size="small" @click="handleClick"
+=======
+                      <el-button link type="primary" size="small" @click="docsedit(scope.row)"
+>>>>>>> Stashed changes
                       >Edit</el-button
                     >
                     </router-link>
@@ -69,29 +80,25 @@ import { reactive, onMounted,ref} from "vue";
 export default {
   data() {
     return {
-    project_id:'1',    
-    tableData: [
-  {
-    membername: '测试',
-    jointime: '114-5-14',
-    power: '成员',
+    project_id:'1',   
+    }
   },
-  {
-    membername: '测试',
-    jointime: '114-5-14',
-    power: '成员',
-  },
-  {
-    membername: '测试',
-    jointime: '114-5-14',
-    power: '成员',
-  },
-  {
-    membername: '测试',
-    jointime: '114-5-14',
-    power: '成员',
-  },
-],
+  methods:{
+    docsdelete(row ){
+      axios.post('/doc/delete',
+    {
+      "doc_id": row.doc_id,
+    })
+    .then((response)=>{
+      console.log(row.doc_id);
+      console.log(response.data.message);
+      this.refresh();
+    }
+    )
+    },
+    docsedit(row){
+      window.sessionStorage.setItem('curDocsId', row.doc_id);
+      this.$router.push('/documentadd');
     }
   },
   methods:{
@@ -114,10 +121,12 @@ export default {
     setup() {
     const docs = ref([]);
     const staff = ref([]);
-    const project_id ='1';
+    const project_id = window.sessionStorage.getItem('curProjectId');;
     const created_time =ref('');
     const project_description = ref('');
     const project_name = ref('');
+    const team_id = ref('');
+    const team_name = ref('');
     const refresh =()=>{
     location.reload();
     }
@@ -137,7 +146,7 @@ export default {
       }
     })
   }
-    const getstafflist = () =>{
+    const getprojectmessage = () =>{
       axios.post('/project/search',{
         "project_id":project_id,
       }
@@ -149,24 +158,40 @@ export default {
         created_time.value=response.data.created_time;
         project_description.value=response.data.project_description;
         project_name.value=response.data.project_name;
-        console.log(created_time);
-        console.log(project_description);
-        console.log(project_name);
+        team_id.value=response.data.team_id; 
+        console.log("tid", team_id.value);
+
+        console.log("tid",team_id.value)
+          axios.post('/team/seemember',
+          {
+            "team_id":team_id.value,
+          }
+          )
+          .then((response)=>{
+        console.log(response.data);
+        console.log(team_id);
+        staff.value=response.data.res;
+        console.log(staff.value);
+      }
+      )
       }
       )
     }
     onMounted(()=>{
     getdocslist()
-    getstafflist()
+    getprojectmessage()
   })
 
 
   return {
     docs,
+    staff,
     refresh,
+    team_id,
     created_time,
     project_description,
     project_name,
+    team_name,
   }
   }
 }
