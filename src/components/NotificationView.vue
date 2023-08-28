@@ -49,7 +49,7 @@
                             <!-- 未读消息的图标 -->
                             <!-- 显示数字标识未读消息数量 -->
                             <div class="unread-badge">1</div>
-                            <CircleCheckFilled />
+                            <!-- <CircleCheckFilled /> -->
 
                         </template>
                         <el-icon class="noti-icon-check"
@@ -170,6 +170,14 @@ export default defineComponent({
                 }
                 else{
                     console.log("消息已读");
+                    if(this.selectedValue==="AllNoti")
+                        this.fetchNotifications(); // 重新获取数据
+                    else if(this.selectedValue==="NotiNotRead"){
+                        this.getNotiNotRead();
+                    }
+                    else if(this.selectedValue==="NotiHasRead"){
+                        this.getNotiHasRead();
+                    }
                     // if (typeof notifications.value[index].is_read === 'undefined') {
                     // notifications.value[index].is_read = true; // 或者你想要的默认值
                     // } else {
@@ -210,13 +218,53 @@ export default defineComponent({
                     }
                 }
             })
-
-
+        }
+        function allNotiFinished(){
+            axios.put('/message/operate_all',{})
+            .then((response)=>{
+                console.log(response)
+                if(response.data.code!=200){
+                    alert(response.data.messages);
+                }
+                else{
+                    // console.log("消息已读");
+                    if(this.selectedValue==="AllNoti"){
+                        this.fetchNotifications(); // 重新获取数据
+                        this.$forceUpdate();
+                    }
+                    else if(this.selectedValue==="NotiNotRead"){
+                        this.getNotiNotRead();
+                    }
+                    else if(this.selectedValue==="NotiHasRead"){
+                        this.getNotiHasRead();
+                    }
+                }
+            })
+        }
+        function allNotiDeleted(){
+            axios.delete('/message/operate_all',{})
+            .then((response)=>{
+                console.log(response)
+                if(response.data.code!=200){
+                    alert(response.data.messages);
+                }
+                else{
+                    // console.log("消息已读");
+                    if(this.selectedValue==="AllNoti")
+                        this.fetchNotifications(); // 重新获取数据
+                    else if(this.selectedValue==="NotiNotRead"){
+                        this.getNotiNotRead();
+                    }
+                    else if(this.selectedValue==="NotiHasRead"){
+                        this.getNotiHasRead();
+                    }
+                }
+            })
         }
        return{
         notifications,notiNotRead,notiHasRead,isHovered_all,
         CheckmarkCircle,
-        checkNoti,deleteNoti
+        checkNoti,deleteNoti,allNotiDeleted,allNotiFinished
        }
     },
     data() {
@@ -285,48 +333,7 @@ export default defineComponent({
         },
        
        
-        allNotiFinished(){
-            axios.put('/message/operate_all',{})
-            .then((response)=>{
-                console.log(response)
-                if(response.data.code!=200){
-                    alert(response.data.messages);
-                }
-                else{
-                    // console.log("消息已读");
-                    if(this.selectedValue==="AllNoti"){
-                        this.fetchNotifications(); // 重新获取数据
-                        this.$forceUpdate();
-                    }
-                    else if(this.selectedValue==="NotiNotRead"){
-                        this.getNotiNotRead();
-                    }
-                    else if(this.selectedValue==="NotiHasRead"){
-                        this.getNotiHasRead();
-                    }
-                }
-            })
-        },
-        allNotiDeleted(){
-            axios.delete('/message/operate_all',{})
-            .then((response)=>{
-                console.log(response)
-                if(response.data.code!=200){
-                    alert(response.data.messages);
-                }
-                else{
-                    // console.log("消息已读");
-                    if(this.selectedValue==="AllNoti")
-                        this.fetchNotifications(); // 重新获取数据
-                    else if(this.selectedValue==="NotiNotRead"){
-                        this.getNotiNotRead();
-                    }
-                    else if(this.selectedValue==="NotiHasRead"){
-                        this.getNotiHasRead();
-                    }
-                }
-            })
-        },
+       
         fetchNotifications() {
             axios.post('/message/all',{})
             .then((response)=>{

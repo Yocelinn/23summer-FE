@@ -4,7 +4,7 @@
         <i ref="uploadRef" class="Plus editor-img-uploader"></i>
     </el-upload>
     <div class="editor">
-        <QuillEditor id="editorId" ref="myQuillEditor" v-model:content="props.content" contentType="html"
+        <QuillEditor id="editorId" ref="myQuillEditor" v-model:content="editorContent" contentType="html"
             @update:content="onContentChange" :options="options" />
         <!-- <QuillEditor theme="snow" :content="props.content" contentType="html"/> -->
     </div>
@@ -13,7 +13,7 @@
 <script setup>
 import { QuillEditor, Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { getCurrentInstance, reactive, ref, toRaw, computed, onMounted } from "vue";
+import { getCurrentInstance, reactive, ref, toRaw, computed, onMounted, watch } from "vue";
 // 引入插入图片标签自定义的类
 import './quill'
 
@@ -43,17 +43,30 @@ const props = defineProps({
         default: 10,
     },
 })
-console.log(props.content)
 
-// const editorContent = computed({
-//     get: () => props.content,
-//     set: (val) => {
-//         //   emit('update:content', val)
-//         console.log(val)
+const editContent = ref(props.content);
 
-//     }
-// });
 const myQuillEditor = ref(null)
+watch(props.content, (newVal, oldVal) => {
+    console.log('监听引用类型数据dataList')
+    console.log('new', newVal)
+    console.log('old', oldVal)
+})
+
+
+
+const editorContent = computed({
+    get: () => {
+        // console.log(props.content,myQuillEditor);
+        if (myQuillEditor.value)
+            myQuillEditor.value.setHTML(props.content);
+        return props.content;
+    },
+    set: (val) => {
+        //   emit('update:content', val)
+        console.log(val)
+    }
+});
 const uploadUrl = ref('/sysFiles/upload') // 上传的图片服务器地址
 //   const uploadUrl = ref(import.meta.env.VITE_BASEURL + '/sysFiles/upload') // 上传的图片服务器地址
 const oldContent = ref('')
@@ -182,6 +195,7 @@ function handleBeforeUpload(file) {
 
 // 监听富文本内容变化，删除被服务器中被用户回车删除的图片
 function onContentChange(content) {
+    console.log(content)
     emit('updateContent', content)
     emit('handleRichTextContentChange', content)
 }
