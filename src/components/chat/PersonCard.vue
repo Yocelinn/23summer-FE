@@ -1,5 +1,5 @@
 <template>
-  <div class="person-card" >
+<div class="person-card">
     <div class="info">
           <HeadPortrait ></HeadPortrait>
           <div class="info-detail">
@@ -45,9 +45,9 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 .person-card {
-  width: 250px;
+  width: 80%;
   height: 80px;
   border-radius: 10px;
   background-color: #9d9cf4c4;
