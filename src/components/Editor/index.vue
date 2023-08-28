@@ -182,6 +182,7 @@ function handleBeforeUpload(file) {
 
 // 监听富文本内容变化，删除被服务器中被用户回车删除的图片
 function onContentChange(content) {
+    console.log(content)
     emit('updateContent', content)
     emit('handleRichTextContentChange', content)
 }

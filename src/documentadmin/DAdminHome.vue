@@ -12,13 +12,13 @@
                 <div class="projectshow">
                   <img src="../assets/project.png" alt="">
                   <div class="projectinfo">
-                    <p class="projectname">项目名称</p>
+                    <p class="projectname">{{project_name}}</p>
                     <p class="projectteam">项目所属团体名称</p>
                   </div>
                 </div>
                 <div class="projectmessage">
-                  <p>项目创建时间：<span>1145-14</span></p>
-                  <p>项目简介:<span>鸭蛋莫鸭蛋</span></p>
+                  <p>项目创建时间：<span>{{created_time}}</span></p>
+                  <p>项目简介:<span>{{project_description}}</span></p>
                 </div>
               </el-card>
               <el-card class="members">
@@ -51,33 +51,92 @@ import CommonAside from '@/components/CommonAside.vue';
 export default {
   data() {
     return {
-      tableData: [
-        {
-          membername: '测试',
-          jointime: '114-5-14',
-          power: '成员',
-        },
-        {
-          membername: '测试',
-          jointime: '114-5-14',
-          power: '成员',
-        },
-        {
-          membername: '测试',
-          jointime: '114-5-14',
-          power: '成员',
-        },
-        {
-          membername: '测试',
-          jointime: '114-5-14',
-          power: '成员',
-        },
-      ]
+    project_id:'1',    
+    tableData: [
+  {
+    membername: '测试',
+    jointime: '114-5-14',
+    power: '成员',
+  },
+  {
+    membername: '测试',
+    jointime: '114-5-14',
+    power: '成员',
+  },
+  {
+    membername: '测试',
+    jointime: '114-5-14',
+    power: '成员',
+  },
+  {
+    membername: '测试',
+    jointime: '114-5-14',
+    power: '成员',
+  },
+],
     }
   },
   components: {
     CommonAside
   },
+    setup() {
+    const docs = ref([]);
+    const staff = ref([]);
+    const project_id ='1';
+    const created_time =ref('');
+    const project_description = ref('');
+    const project_name = ref('');
+    const refresh =()=>{
+    location.reload();
+    }
+    const getdocslist = () =>{
+    axios.post('/doc/project_doc_list', {
+      "project_id": project_id,
+      "is_delete": 0
+    })
+    .then((response)=>{
+      console.log(response.data.docs);
+      if(response.data.code === 200)
+      {
+        console.log(response.data);
+        docs.value = response.data.docs;
+        console.log(docs.value);
+        console.log(docs);
+      }
+    })
+  }
+    const getstafflist = () =>{
+      axios.post('/project/search',{
+        "project_id":project_id,
+      }
+      )
+      .then((response)=>{
+        console.log(response.data.project_name);
+        console.log(response.data.project_description);
+        console.log(response.data.created_time);
+        created_time.value=response.data.created_time;
+        project_description.value=response.data.project_description;
+        project_name.value=response.data.project_name;
+        console.log(created_time);
+        console.log(project_description);
+        console.log(project_name);
+      }
+      )
+    }
+    onMounted(()=>{
+    getdocslist()
+    getstafflist()
+  })
+
+
+  return {
+    docs,
+    refresh,
+    created_time,
+    project_description,
+    project_name,
+  }
+  }
 }
 </script>
 
