@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import axios from "axios";
+import message from "@element-plus/icons/lib/Message";
 
 export default createStore({
   state: {
@@ -7,42 +8,13 @@ export default createStore({
     user: {},
     // curTeamId: {},
     // curProjectId: {},
-    projectData: []
+    projectData: [],
+    personData: []
   },
   actions: {
     updateUser({ commit }, data) {
       commit('updateUser', data);
     },
-    // async createNewProject({ state, commit }, { curTeamId, NewPjName, NewPjDes }) {
-    //   try {
-    //     const response = await axios.post('/project/create', {
-    //       team_id: curTeamId,
-    //       projectName: NewPjName,
-    //       projectDescription: NewPjDes,
-    //     });
-    //
-    //     if (response.data.code === 200) {
-    //       // commit('setCurProjectId', response.data.id); // 设置当前项目的 ID
-    //       ElMessage({
-    //         message: '新建成功',
-    //         type:'success'
-    //       })
-    //       window.sessionStorage.setItem('curProjectId', response.data.project_id);
-    //       await router.push('/prototype');
-    //       return response.data; // 返回成功的响应数据
-    //     } else {
-    //       ElMessage({
-    //         message: response.data.error,
-    //         type:'error'
-    //       });
-    //       throw new Error(response.data.error); // 抛出错误，进入 catch 块
-    //     }
-    //   } catch (error) {
-    //
-    //     console.error('新建项目失败:', error);
-    //     throw error; // 抛出错误，可以在组件中捕获处理
-    //   }
-    // },
 
     async fetchProjectList({ commit, state }, curTeamId) {
       // 清空projectData
@@ -65,6 +37,33 @@ export default createStore({
       }
     },
 
+    async fetchTeammateList({ commit, state }, curTeamId) {
+      commit('setPersonData', []); // 清空数组
+        axios.post('/team/seemember', {
+          team_id: Number(curTeamId),
+        })
+            .then((response) => {
+              if (response.data.code === 200) {
+                console.log('获取队员列表成功', response.data);
+                commit('setPersonData', response.data.res);
+                console.log('状态', state.personData.length);
+              }
+              else {
+                message({
+                  message: response.data.error,
+                  type:'error'
+                });
+                console.log('获取队员信息失败', response.data.error);
+              }
+            })
+            .catch((error) => {
+              message({
+                message: "获取队员信息失败，请重试",
+                type: 'eror'
+              });
+              console.log("错误", error.config);
+            })
+    }
   },
   mutations: {
     login(state, user) {
@@ -91,6 +90,9 @@ export default createStore({
     // },
     setProjectData(state, data) {
       state.projectData = data;
+    },
+    setPersonData(state, data) {
+      state.personData = data;
     }
   },
 })

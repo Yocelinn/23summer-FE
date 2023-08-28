@@ -9,7 +9,9 @@
           <el-header>
             <div class="headerleft" style="display: flex; margin-top: 10px;">
               <router-link to="/documentadmin">
-                <el-button size="mini" color="#66ccff"><el-icon><Grid /></el-icon></el-button>
+                <el-button size="mini" color="#66ccff"><el-icon>
+                    <Grid />
+                  </el-icon></el-button>
               </router-link>
               <h3>返回文档管理主页</h3>
             </div>
@@ -18,49 +20,29 @@
         <el-header>
         </el-header>
         <div>
-          <div style="position: absolute;width:200px;top:125px">
+          <div style="position: absolute;width:200px;top:160px">
             <el-card class="box-card"
-                     style="position: absolute;height:800px;width:200px;background-color: rgba(255, 255, 255, 0.85);left:20px">
+              style="position: absolute;height:800px;width:200px;background-color: rgba(255, 255, 255, 0.85);left:20px">
               <div slot="header" class="clearfix">
-                <h3>文件操作区</h3>
+                <h3>文档操作区</h3>
               </div>
               <div>
-                <el-input v-model="input1" placeholder="请输入文档名称" style="position: absolute;left: 20px;top:125px;width:158px"></el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:165px;"
-                           @click="createtext">创建新文档</el-button>
-                <el-input v-model="input2" placeholder="请输入文档id" style="position: absolute;left: 20px;top:225px;width:158px">
+                <el-button type="info" style="position: absolute;left: 20px;top:85px;" @click="docsedit">保存文档</el-button>
+                <el-input v-model="doc_name1" placeholder="请输入文档名称"
+                  style="position: absolute;left: 20px;top:165px;width:158px"></el-input>
+                <el-button type="info" style="position: absolute;left: 20px;top:200px;"
+                  @click="docscreate">创建新文档</el-button>
+                <el-input v-model="doc_id1" placeholder="请输入文档id"
+                  style="position: absolute;left: 20px;top:265px;width:158px">
                 </el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:265px;"
-                           @click="find1">查找文档</el-button>
-                <el-input v-model="input3" placeholder="请输入文档id" style="position: absolute;left: 20px;top:325px;width:158px">
-                </el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:365px;"
-                           @click="delete1">删除文档</el-button>
+                <el-button type="info" style="position: absolute;left: 20px;top:300px;"
+                  @click="docsserach">编辑指定文档</el-button>
               </div>
             </el-card>
           </div>
-          <div class="edit_container" style="width: 800px;left:420px; height: 755px; top:125px">
-            <quill-editor
-                    v-model="content"
-                    ref="myQuillEditor"
-                    :options="editorOption"
-                    @blur="onEditorBlur($event)"
-                    @focus="onEditorFocus($event)"
-                    @change="onEditorChange($event)"
-                    @ready="onEditorReady($event)"
-            >
-            </quill-editor>
-          </div>
-          <div class="documentlist">
-            <el-table :data="this.textdata" height="450" border stripe
-                      style="position:absolute;width: 320px;left:1250px;top:240px" @cell-click="find">
-              <el-table-column prop="file_name" label="文档名" width="140">
-              </el-table-column>
-              <el-table-column prop="last_modify_time" label="最后编辑时间" width="140">
-              </el-table-column>
-              <el-table-column prop="fileID" label="文档id" width="140">
-              </el-table-column>
-            </el-table>
+          <div class="edit_container" style="width: 1200px;left:420px; height: 800px; top:160px">
+            <QuillEditor id="editorId" ref="myQuillEditor" :content="editorContent" contentType="html"
+              @updateContent="update" :options="options" style="width: 800px;left:420px; top:160px" height: 800 />
           </div>
         </div>
       </el-container>
@@ -68,23 +50,10 @@
   </div>
 </template>
 
-<script>//调用编辑器\
+<script>
+//调用编辑器\
 import CommonAside from '@/components/CommonAside.vue';
-const editorOption =([
-  ['bold', 'italic', 'underline', 'strike'], // 加粗 斜体 下划线 删除线
-  ["blockquote", "code-block"], // 引用
-  [{ list: 'ordered' }, { list: 'bullet' }], // 有序、无序列表
-  [{ script: "sub" }, { script: "super" }], // 上标/下标
-  [{ indent: '-1' }, { indent: '+1' }], // 缩进
-  [{ direction: 'rtl' }], // 文本方向
-  [{ size: ['small', false, 'large', 'huge'] }], // 字体大小
-  [{ header: [1, 2, 3, 4, 5, 6, false] }], // 标题
-  [{ color: [] }, { background: [] }], // 字体颜色、字体背景颜色
-  [{ font: [] }], // 字体种类
-  [{ align: [] }], // 对齐方式
-  ['clean'], // 清除文本格式
-  ['link', 'image', 'video'] // 链接、图片、视频
-])
+import QuillEditor from '../components/Editor/index.vue';
 import {
   Check,
   Delete,
@@ -93,63 +62,136 @@ import {
   Search,
   Star,
 } from '@element-plus/icons-vue'
+import axios from 'axios';
+import { ref, onMounted, getCurrentInstance } from 'vue';
+import { ElNotification } from 'element-plus'
 export default {
-  components:{
+  components: {
     CommonAside,
+    QuillEditor,
   },
   data() {
     return {
-      username: '',
-      userhead: '',
-      real_name: '',
-      email: '',
-      phone: '',
-      profile: '',
-      username1: '',
-      imageUrl1: '',
-      password: '',
-      content: '请于此处开始编辑……',
-      str: '',
-      editorOption: {},
-      inside: '<h2> \t<strong><em>请于此开始编辑文档</em></strong></h2>',
-      textname: '',
-      input: '',
-      textdata: [
-      ],
-      input1: '',
-      input2: '',
-      input3: '',
-      //把这个页面加入项目中时，注意，跳转到这个页面的时候，now_id为当前文章id,projectid为当前项目id,teamid为当前队伍id,fatherid为其父文件夹id（可以用session之类的传入,这里需要稍微改一下（由于我这边看不到团队的那个组件，于是就没改__by zbh）
-      now_id: 0,
-      projectid: sessionStorage.getItem('ProjectID'),
-      teamid: sessionStorage.getItem('TeamID'),
-      fatherid: sessionStorage.getItem('project_root_fileID'),
-    }
+      code: '',
+      editorContent: '123',
+      message: '',
+      docs: [],
+      count: '',
+      doc_id: window.sessionStorage.getItem('curDocsId'),
+      doc_id1: '',
+      doc_id2: '',
+      project_id: window.sessionStorage.getItem('curProjectId'),
+      doc_name1: '',
+    };
   },
   methods: {
-    onEditorReady(editor) { // 准备编辑器
-
+    docscontent() {
+      axios.post('/doc/doc_search',
+        {
+          "project_id": Number(this.project_id),
+          "doc_id": this.doc_id1,
+        })
+        .then((response) => {
+          this.editorContent = response.data.content;
+        }
+        )
+      return response.data.content;
     },
-    onEditorBlur() { }, // 失去焦点事件
-    onEditorFocus() { }, // 获得焦点事件
-    onEditorChange() {
-      console.log(this.content);
-    }, // 内容改变事件
-    // 转码
-    escapeStringHTML(str) {
-      str = str.replace(/&lt;/g, '<');
-      str = str.replace(/&gt;/g, '>');
-      return str;
+    docsedit() {
+      console.log(window.sessionStorage.getItem('curDocsId'));
+      this.doc_id = window.sessionStorage.getItem('curDocsId');
+      axios.post('/doc/edit', {
+        "doc_id": this.doc_id,
+        "content": this.editorContent,
+      })
+        .then((response) => {
+          console.log(this.doc_id);
+          console.log(response.data.doc_id);
+          console.log(this.editorContent);
+        })
     },
+    update(newValue) {
+      console.log('test')
+      console.log(newValue)
+      this.editorContent = newValue;
+    },
+    docscreate() {
+      console.log(this.editorContent);
+      console.log();
+      axios.post('/doc/create', {
+        "doc_name": this.doc_name1,
+        "project_id": this.project_id,
+      })
+        .then((response) => {
+          console.log(this.doc_name1);
+          console.log(response.data.message);
+          console.log(response.data.doc_id);
+          console.log(response.data.doc_project);
+          this.doc_id = response.data.doc_id;
+          this.editorContent = '请于此处开始编辑';
+          this.$refs.myQuillEditor.changeContent( this.editorContent )
+          console.log(this.editorContent);
+          console.log(this.doc_id);
+          ElNotification({
+            title: 'success',
+            message: '新建文档成功，现在可以开始编辑了',
+            type: 'create',
+          });
+          this.doc_name1 = '';
+        }
+        )
+    },
+    docsdelete() {
+      axios.post('/doc/delete',
+        {
+          "doc_id": this.doc_id2,
+        })
+        .then((response) => {
+          console.log(this.doc_id2)
+          console.log(response.data.message);
+          this.doc_id2 = '';
+        }
+        )
+    },
+    docsserach() {
+      axios.post('/doc/doc_search',
+        {
+          "project_id": Number(this.project_id),
+          "doc_id": this.doc_id1,
+        })
+        .then((response) => {
+          console.log(this.doc_id1);
+          console.log(this.project_id);
+          console.log(response.data.code);
+          console.log(response.data.message);
+          this.doc_id = this.doc_id1;
+          console.log(this.doc_id);
+          this.editorContent = response.data.content;
+          this.$refs.myQuillEditor.changeContent( this.editorContent )
+          console.log(this.editorContent);
+          this.doc_id1 = '';
+        }
+        )
+    },
+  },
+  docsserach() {
+    axios.post('/doc/doc_search',
+      {
+        "project_id": Number(this.project_id),
+        "doc_id": this.doc_id1,
+      })
+      .then((response) => {
+        console.log(this.doc_id1);
+        console.log(this.project_id);
+        console.log(response.data.code);
+        console.log(response.data.message);
+      }
+      )
   },
 }
 </script>
 
 <style>
-body {
-  margin: 0;
-}
-
 .bgbox {
   display: block;
   opacity: 1;
@@ -181,5 +223,9 @@ body {
   margin-left: 10px;
   color: #fff;
   margin-top: 5px;
+}
+
+.ql-editor {
+  min-height: 760px;
 }
 </style>

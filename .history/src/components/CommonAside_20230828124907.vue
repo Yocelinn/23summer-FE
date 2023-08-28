@@ -9,7 +9,11 @@
         @close="handleClose"
       >
         <h2>文档管理</h2>
+<<<<<<< HEAD
+        <router-link to="/person">
+=======
         <router-link to="/person/protectCenter">
+>>>>>>> Terry_x
           <el-menu-item index="3">
           <el-icon><document /></el-icon>
           <span>返回项目</span>
