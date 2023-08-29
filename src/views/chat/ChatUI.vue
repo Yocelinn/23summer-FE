@@ -1,9 +1,6 @@
 <template>
     <div id="chatUI">
-        <div class="chat-wrapper">
-            <!-- <div class="chat-left-nav">
-                
-            </div> -->   
+        <div class="chat-wrapper">  
             <div class="chat-friend-list">
                 团队成员
                 <n-select class="chat-friend-selector" @click="choose_friend"
@@ -12,20 +9,20 @@
                 placeholder="搜索"  
                 :options="select_options"
                 />
-                <!-- <el-scrollbar> -->
-                <div v-for="(member,index) in friend_list" :key="index" class="person-card">
-                    <!-- <PersonCard :personInfo="member"/> -->
-                    <div class="info">
-                        <HeadPortrait ></HeadPortrait>
-                        <div class="info-detail">
-                            <div class="name">{{ member.nickname }}</div>
-                            <div class="detail">{{member.email}}</div>
+                <n-list hoverable clickable v-for="(member,index) in friend_list" :key="index" class="chat-list">
+                    <n-list-item class="chat-list-item">
+                        <!-- <HeadPortrait/> -->
+                        <div class="chat-item-info">
+                            <div class="avatar">
+                                <el-avatar :size="30" :src="circleUrl" />
+                            </div>
+                            <div class="chat-info">
+                                <div class="info-name">{{ member.nickname }}</div>
+                                <div class="detail">{{member.email}}</div>
+                            </div>
                         </div>
-
-                    </div>
-                </div>
-                <!-- </el-scrollbar> -->
-                
+                    </n-list-item>
+                </n-list>
             </div>
             <div class="chat-window">
                 <div class="chat-window-header">{{this.curTeamName}}({{ friend_list.length }})</div>
@@ -38,7 +35,12 @@
                     <ChatMe/> -->
                 </div>
                 <div class="chat-window-text">
+                    <div class="toolbar">
+                        <el-icon class="tool-icon" @click="sendPicture"><Picture /></el-icon>
+                        <el-icon class="tool-icon" @click="sendFile"><FolderOpened /></el-icon>
+                    </div>
                     <!-- <Editor/> -->
+                    
                     <n-mention v-if="isPerm" type="textarea" :options="manager_friend_options" :render-label="renderLabel" v-model:value="text_content" 
                     class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendMessage()"/>
                     <n-mention v-else type="textarea" :options="friend_options" :render-label="renderLabel" v-model:value="text_content" 
@@ -56,7 +58,7 @@
     import HeadPortrait from "@/components/chat/HeadPortrait.vue";
 
     import { defineComponent,ref,h } from "vue";
-    import { NSelect,NMention } from "naive-ui";
+    import { NSelect,NMention,NList,NListItem,NAvatar } from "naive-ui";
     import ChatMe from "@/components/chat/ChatMe.vue"
     import ChatFriend from "@/components/chat/ChatFriend.vue"
     import axios from 'axios'
@@ -65,7 +67,7 @@
     // import Editor from "@/components/chat/EditorArea.vue";
     export default defineComponent ({
     components:{
-       NSelect,NMention,ChatMe,ChatFriend,PersonCard,HeadPortrait
+       NSelect,NMention,ChatMe,ChatFriend,PersonCard,HeadPortrait,NList,NListItem ,NAvatar
     },
     mounted(){
         this.curTeamId=window.sessionStorage.getItem('curTeamId');
@@ -334,6 +336,7 @@
     },
     data(){
         return{
+            circleUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
             current:'',
             curTeamId:'',
             curTeamName:'',
@@ -351,88 +354,93 @@
 
 .chat-wrapper{
     display: flex;
-    width:100%;
-    height:90vh;
+    width:98%;
+    height:85vh;
+    margin:10px;
+    position: relative; 
+    // border-color:#e3e3e3
+    border: 1px solid #e3e3e3;
 }
 .chat-left-nav{
     width:10%;
     border-right: 1px solid #ccc; /* 添加右边框 */
 }
 .chat-friend-list{
-    width:20%;
-    border-radius:10px;
+    width:15%;
+    // border-radius:10px;
     border: 1px solid #e3e3e3; /* 添加右边框 */
     display: flex; /* 使用 Flex 布局 */
     flex-direction: column; /* 垂直布局子元素 */
     /* background-color: #9d9cf435; */
     align-items: center; /* 垂直居中 */
-    overflow:auto
+    overflow:auto;
+    // box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.1); /* 这里添加阴影 */
+    // flex-grow: 1; /* 让高度占满剩余部分 */
+    
 }
 .chat-window {
-    
-  flex-grow: 1;
-  margin-right:20px;
-  display: flex;
-  flex-direction: column; /* 垂直方向布局 */
-  padding:10px;
+    background: #fff;
+    border-left: 1px solid rgba(0,0,0,.09);
+    // width: calc(100% - 280px);
+    width:85%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    // min-width: 274px;
+//   flex-grow: 1;
+//   margin-right:20px;
+//   display: flex;
+//   flex-direction: column; /* 垂直方向布局 */
+//   padding:10px;
 }
 .person-card {
   width: 80%;
   height: 80px;
-  border-radius: 10px;
-  background-color: #9d9cf4c4;
+//   border-radius: 10px;
+//   background-color: #9d9cf4c4;
   position: relative;
-  margin: 25px 0 ;
+//   margin: 25px 0 ;
   cursor: pointer;
-  .info {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 90%;
-    transform: translate(-50%, -50%);
-    overflow: hidden;
-    display: flex;
-    .info-detail {
-      margin-top: 5px;
-      margin-left: 20px;
-      .name {
-        color: #fff;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        margin-bottom: 5px;
-      }
-      .detail {
-        color: #5c6675;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        font-size: 12px;
-      }
-    }
-  }
-  &:hover {
-    background-color: #9E9CF4;
-    transition: 0.3s;
-    box-shadow: 0px 0px 10px 0px rgba(#9E9CF4,0.5);
-    // box-shadow:  0 5px 20px rgba(251, 152, 11, .5);
-    .info {
-      .info-detail {
-        .detail {
-          color: #fff;
-        }
-      }
-    }
-  }
+}
+.chat-list{
+    width:100%;
+}
+.chat-list-item{
+    cursor:pointer;
+    display:flex;
+    justify-content: space-between; /* 将项目放在容器中，首尾对齐 */
+    align-items: center; /* 垂直居中对齐项目 */
+}
+.chat-item-info{
+    display:flex;
+}
+.avatar{
+    flex:0 0 auto
+}
+.chat-info{
+    margin-left: 10px;
+    text-align: left;
 }
 .chat-window-header {
-  background-color: rgba(#48464C,0.2);
-  padding: 10px;
-  border-radius: 10px;
+//   background-color: rgba(#48464C,0.2);
+  // height:10%;
+    height: 60px;
+    border-bottom: 1px solid rgba(0,0,0,.09);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    // width: 100%;
+    position: relative;
+    
 }
+//   border-radius: 10px;
 .chat-content{
+    // height: calc(100% - 276px);
+    border-bottom: 1px solid rgba(0,0,0,.09);
+
     width: 100%;
-    height: 85%;
+    height: 70%;
     overflow-y: scroll;
     padding: 20px;
     box-sizing: border-box;
@@ -455,6 +463,23 @@
   resize: none; /* 禁止文本框的尺寸调整 */
 
 }
+.toolbar{
+    height: 30px;
+    // padding: 0 5px;
+display: flex;
+}
+.tool-icon{
+    width: 42px;
+align-items: center;
+justify-content: center;
+display: flex;
+font-size:20px;
+padding: 4px;
+position: relative;
+text-align: center;
+color: grey;
+}
+
 .send-button {
   position: absolute;
   bottom: 10px;
@@ -467,7 +492,10 @@
   cursor: pointer;
 }
 .chat-friend-selector{
-    width:80%;
+    width:70%;
+    // height: 60px;
+    // padding: 14px;
+    // position: relative;
     
 }
 .chat-window-textarea{
