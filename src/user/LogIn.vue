@@ -6,7 +6,7 @@
           <template #header>
             <div class="header">
               <div class="header-welcome">
-                欢迎回来！
+                欢迎回来!
               </div>
               <div class="header-title">
                 <h1>登录</h1>
@@ -177,8 +177,10 @@ export default {
               });
               window.sessionStorage.setItem('curTeamId', -1);
               this.$store.commit('login', r.data);
-              console.log(this.$store.state.user.token);
+              console.log(this.$store.state.user.nickname);
               window.sessionStorage.setItem('token',this.$store.state.user.token);
+              window.sessionStorage.setItem('userName',this.$store.state.user.name);
+              window.sessionStorage.setItem('userNickName',this.$store.state.user.nickname);
               this.$router.push('/person');
               }
               else if(r.data.code==10101)

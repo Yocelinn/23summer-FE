@@ -1,71 +1,6 @@
 <template>
     <div class="flex-container">
         <div class="flex-descriptions">
-<!--            <d-modal v-model="updateVisable">-->
-<!--                <template #header>-->
-<!--                    <d-modal-header>-->
-<!--                        &lt;!&ndash;                <d-icon name="like"></d-icon>&ndash;&gt;-->
-<!--                        <span>修改个人信息</span>-->
-<!--                    </d-modal-header>-->
-<!--                </template>-->
-
-<!--                &lt;!&ndash;                <div class="text">昵称：</div>&ndash;&gt;-->
-<!--                <div class="tl-div-input">-->
-<!--                    <el-input-->
-<!--                            v-model="curNitName"-->
-<!--                            placeholder=我的昵称-->
-<!--                            clearable-->
-<!--                            class="tl-input1"-->
-<!--                            @input="updateCurNitName"-->
-<!--                    />-->
-<!--                </div>-->
-
-<!--                &lt;!&ndash;                <div class="text">描述：</div>&ndash;&gt;-->
-<!--                <div class="tl-div-input">-->
-<!--                    <el-input-->
-<!--                            v-model="curDescription"-->
-<!--                            placeholder="描述"-->
-<!--                            clearable-->
-<!--                            class="tl-input4"-->
-<!--                            @input="updateCurDescription"-->
-<!--                    />-->
-<!--                </div>-->
-
-<!--                &lt;!&ndash;                <div class="text">旧密码：</div>&ndash;&gt;-->
-<!--                <div class="tl-div-input">-->
-<!--                    <el-input-->
-<!--                            v-model="passwordO"-->
-<!--                            type="password"-->
-<!--                            placeholder="Please input password"-->
-<!--                            show-password-->
-<!--                            clearable-->
-<!--                            class="tl-input2"-->
-<!--                            @input="updatePasswordO"-->
-<!--                    />-->
-<!--                </div>-->
-
-<!--                &lt;!&ndash;                <div class="text">新密码：</div>&ndash;&gt;-->
-<!--                <div class="tl-div-input">-->
-<!--                    <el-input-->
-<!--                            v-model="passwordN"-->
-<!--                            type="password"-->
-<!--                            placeholder="Please input password"-->
-<!--                            show-password-->
-<!--                            clearable-->
-<!--                            class="tl-input3"-->
-<!--                            @input="updatePasswordN"-->
-<!--                    />-->
-<!--                </div>-->
-
-<!--                <template #footer>-->
-<!--                    <d-modal-footer class="tl-button-container" style="text-align: right; padding-right: 20px;">-->
-<!--                        <d-button class="custom-button-i" @click="updateSelfInform">修改信息</d-button>-->
-<!--                        <d-button class="custom-button-i" @click="updatePassword">修改密码</d-button>-->
-<!--                        <d-button class="custom-button" @click="updateVisable=false">取消</d-button>-->
-<!--                    </d-modal-footer>-->
-<!--                </template>-->
-<!--            </d-modal>-->
-
             <el-descriptions class="main-descriptions" title="团队信息" column="2">
                 <el-descriptions-item label="团队名称：">{{tName}}</el-descriptions-item>
                 <el-descriptions-item label="用户身份：">
@@ -114,10 +49,60 @@
                 </el-table>
             </el-card>
         </div>
+        <div class="in-button-container">
+            <el-button class="in-custom-button" @click="inClick">回到主页</el-button>
+        </div>
     </div>
 </template>
 
 <style scoped>
+
+.in-button-container {
+    flex: 1; /* This will make in-button-container occupy the remaining height */
+    display: flex;
+    justify-content: center; /* Align the button to the bottom of the container */
+    align-items: center; /* Align the button to the right of the container */
+    /*padding: 20px; !* Add some padding for spacing *!*/
+    width: 95%;
+    flex-direction: column;
+}
+
+.in-custom-button:hover,
+.in-custom-button:focus {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #7E7CCB;
+    color: #7E7CCB;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #9E9CF4;
+    color: #9E9CF4;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button:active {
+    display: flex;
+    width: 85%;
+    background-color: #7E7CCB;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
 .tl-card-table {
     height: 330px;
     overflow: auto;
@@ -133,7 +118,7 @@
 .flex-descriptions {
     flex: 1;
     width: 100%;
-    max-height: 30%;
+    eight: 30%;
     padding: 15px;
 }
 
@@ -300,8 +285,12 @@ export default defineComponent( {
         const callFetchTeammateList = () => {
             console.log('TL', window.sessionStorage.getItem('curTeamId'));
             store.dispatch('fetchTeammateList', window.sessionStorage.getItem('curTeamId'));
+            fetchSelfInform();
         };
 
+        const inClick = () => {
+            router.push('/person');
+        }
 
         const data = reactive({
             name: 'Tom',
@@ -399,6 +388,7 @@ export default defineComponent( {
                                 window.sessionStorage.setItem('curTeamName', tableData.value[0].team_name);
                                 console.log('检查点2', Number(window.sessionStorage.getItem('curTeamId')));
                                 // callFetchInProjectList();
+                                callFetchTeammateList();
                             }
                         }
                         else {
@@ -415,6 +405,7 @@ export default defineComponent( {
                     })
                     console.error('GET request error:', error);
                 });
+            callFetchTeammateList();
             console.log(tableData.value);
             console.log('检查点3', Number(window.sessionStorage.getItem('curTeamId')));
             // callFetchInProjectList();
@@ -436,7 +427,9 @@ export default defineComponent( {
                         })
                         console.log(response.data);
                         roleNum.value = response.data.perm;
+                        store.commit('setCurRoleNum', response.data.perm);
                         window.sessionStorage.setItem('curRoleNum', response.data.perm);
+                        console.log()
                     }
                     else {
                         message({
@@ -522,7 +515,8 @@ export default defineComponent( {
             fetchRoleNum,
             fetchSelfInform,
             fetchTeammateList,
-            callFetchTeammateList
+            callFetchTeammateList,
+            inClick
         };
     },
 });

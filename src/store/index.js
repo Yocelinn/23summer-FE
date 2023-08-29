@@ -8,6 +8,7 @@ export default createStore({
     user: {},
     // curTeamId: {},
     // curProjectId: {},
+    curRoleNum: {},
     projectData: [],
     personData: []
   },
@@ -73,6 +74,7 @@ export default createStore({
     logout(state) {
       state.user = {};
       state.isLoggedIn = false
+      window.sessionStorage.clear()
     },
     updateUser(state, data) {
       state.user.email = data.email;
@@ -92,6 +94,9 @@ export default createStore({
     },
     setPersonData(state, data) {
       state.personData = data;
+    },
+    setCurRoleNum(state, data) {
+      state.curRoleNum = data;
     }
   },
 })

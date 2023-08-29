@@ -163,9 +163,6 @@ export default defineComponent({
        const notiHasRead=ref([]);
        const isHovered_all=ref([]);
     //    const checkisShow=ref([]);
-        watchEffect(() => {
-        console.log(notifications.value)
-        })
 
         function enterChatRoom(){
             // console.log('enterChatRoom')
@@ -247,9 +244,10 @@ export default defineComponent({
                 }
                 else{
                     // console.log("消息已读");
+                    console.log("selectedValue:"+this.value);
                     if(this.value==="AllNoti"){
                         this.fetchNotifications(); // 重新获取数据
-                        this.$forceUpdate();
+                        // this.$forceUpdate();
                     }
                     else if(this.value==="NotiNotRead"){
                         this.getNotiNotRead();
@@ -269,6 +267,7 @@ export default defineComponent({
                 }
                 else{
                     // console.log("消息已读");
+                    console.log("selectedValue:"+this.value);
                     if(this.value==="AllNoti")
                         this.fetchNotifications(); // 重新获取数据
                     else if(this.value==="NotiNotRead"){
@@ -308,7 +307,7 @@ export default defineComponent({
                 console.log(error);
             })
         }
-         function   getNotiNotRead() {
+         function getNotiNotRead(){
                 axios.post('/message/all',{"is_read":0})
                 .then((response)=>{
                 // console.log(response)

@@ -40,8 +40,8 @@
                 </template>
             </d-modal>
 
-            <el-descriptions class="main-descriptions" title="团队信息" column="2">
-                <el-descriptions-item label="团队名称：">
+            <el-descriptions class="main-descriptions" title="项目信息" column="2">
+                <el-descriptions-item label="项目名称：">
                     {{tName}}
                 </el-descriptions-item>
                 <el-descriptions-item label="权限：">
@@ -51,7 +51,7 @@
                         </el-tag>
                     </div>
                 </el-descriptions-item>
-                <el-descriptions-item label="团队描述：">
+                <el-descriptions-item label="项目描述：">
                     {{description}}
                 </el-descriptions-item>
                 <el-descriptions-item>
@@ -78,10 +78,59 @@
                 </el-table>
             </el-card>
         </div>
+        <div class="in-button-container">
+            <el-button class="in-custom-button" @click="inClick">回到主页</el-button>
+        </div>
     </div>
 </template>
 
 <style scoped>
+
+.in-button-container {
+    flex: 1; /* This will make in-button-container occupy the remaining height */
+    display: flex;
+    justify-content: center; /* Align the button to the bottom of the container */
+    align-items: center; /* Align the button to the right of the container */
+    /*padding: 20px; !* Add some padding for spacing *!*/
+    width: 95%;
+    flex-direction: column;
+}
+
+.in-custom-button:hover,
+.in-custom-button:focus {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #7E7CCB;
+    color: #7E7CCB;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #9E9CF4;
+    color: #9E9CF4;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button:active {
+    display: flex;
+    width: 85%;
+    background-color: #7E7CCB;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
 
 .custom-button-w {
     cursor: pointer;
@@ -146,7 +195,7 @@
 .flex-descriptions {
     flex: 1;
     width: 100%;
-    max-height: 30%;
+    height: 30%;
     padding: 15px;
 }
 
@@ -156,9 +205,10 @@
     padding: 0 10px; /* Add some padding to prevent contents from sticking to the edges */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    /*max-height: calc(70% - 50px);*/
+    align-items: center; /* 垂直居中 */
+    justify-content: flex-start; /* 水平居中 */
+    /*height: calc(80% - 50px);*/
+    /*height: 45%;*/
 }
 
 .card-header {
@@ -278,6 +328,9 @@ export default defineComponent( {
         const description = ref(""); // Initialize with
         const curDescription = ref(""); // Initialize with
         const updateVisable = ref(false);
+        const inClick = () => {
+            router.push('/person');
+        }
 
         function getTagClass(roleNum) {
             console.log("权限", roleNum);
@@ -335,6 +388,7 @@ export default defineComponent( {
             window.sessionStorage.setItem('curProjectName', data.projectName);
             window.sessionStorage.setItem('curProjectDes', data.projectDescription);
             callFetchInProjectList();
+            fetchSelfInform();
         }
 
         const updateCurDescription = (newValue) => {
@@ -509,6 +563,7 @@ export default defineComponent( {
             handleClick,
             fetchCPList,
             fetchSelfInform,
+            inClick
         };
     },
 });

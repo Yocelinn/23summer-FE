@@ -5,60 +5,60 @@
                 <template #header>
                     <d-modal-header>
                         <!--                <d-icon name="like"></d-icon>-->
-                        <span>修改项目信息</span>
+                        <span>修改个人信息</span>
                     </d-modal-header>
                 </template>
 
                 <!--                <div class="text">昵称：</div>-->
-                <div class="cp-div-input">
+                <div class="tl-div-input">
                     <el-input
                             v-model="curNitName"
                             placeholder=我的昵称
                             clearable
-                            class="cp-input1"
+                            class="tl-input1"
                             @input="updateCurNitName"
                     />
                 </div>
 
                 <!--                <div class="text">描述：</div>-->
-                <div class="cp-div-input">
+                <div class="tl-div-input">
                     <el-input
                             v-model="curDescription"
                             placeholder="描述"
                             clearable
-                            class="cp-input4"
+                            class="tl-input4"
                             @input="updateCurDescription"
                     />
                 </div>
 
                 <!--                <div class="text">旧密码：</div>-->
-                <div class= "cp-div-input">
+                <div class="tl-div-input">
                     <el-input
                             v-model="passwordO"
                             type="password"
                             placeholder="Please input password"
-                            show-password="false"
+                            show-password
                             clearable
-                            class="cp-input2"
+                            class="tl-input2"
                             @input="updatePasswordO"
                     />
                 </div>
 
                 <!--                <div class="text">新密码：</div>-->
-                <div class="cp-div-input">
+                <div class="tl-div-input">
                     <el-input
                             v-model="passwordN"
                             type="password"
                             placeholder="Please input password"
-                            show-password="false"
+                            show-password
                             clearable
-                            class="cp-input3"
+                            class="tl-input3"
                             @input="updatePasswordN"
                     />
                 </div>
 
                 <template #footer>
-                    <d-modal-footer class="cp-button-container" style="text-align: right; padding-right: 20px;">
+                    <d-modal-footer class="tl-button-container" style="text-align: right; padding-right: 20px;">
                         <d-button class="custom-button-i" @click="updateSelfInform">修改信息</d-button>
                         <d-button class="custom-button-i" @click="updatePassword">修改密码</d-button>
                         <d-button class="custom-button" @click="updateVisable=false">取消</d-button>
@@ -68,11 +68,12 @@
 
             <el-descriptions class="main-descriptions" title="个人信息">
                 <el-descriptions-item label="昵称：">{{nitName}}</el-descriptions-item>
+                <el-descriptions-item label="邮箱：">{{email}}</el-descriptions-item>
+                <el-descriptions-item label="id：">{{uid}}</el-descriptions-item>
+                <el-descriptions-item label="姓名：">{{name}}</el-descriptions-item>
+                <el-descriptions-item label="描述：">{{description}}</el-descriptions-item>
                 <el-descriptions-item>
-                    <el-button class="custom-save-button-cp" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
-                </el-descriptions-item>
-                <el-descriptions-item>
-                    <el-button class="custom-save-button-cp" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
+                    <el-button class="custom-save-button-tl" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
                 </el-descriptions-item>
             </el-descriptions>
         </div>
@@ -100,10 +101,10 @@
                         </d-modal>
                     </div>
                 </template>
-                <el-table class="cp-card-table" :data="tableData" style="width: 100%" flex="1" :show-header="false">
+                <el-table class="tl-card-table" :data="tableData" style="width: 100%" flex="1" :show-header="false">
                     <el-table-column label="Name" fit="true" align="center">
                         <template #default="scope">
-                            <d-button class="custom-button-w"  v-ripple="{ duration: 300 }" @click="chooseCurTeam(scope.row.team_id)">
+                            <d-button class="custom-button-w"  v-ripple="{ duration: 300 }" @click="chooseCurTeam(scope.row.team_id, scope.row.team_name)">
                                 {{scope.row.team_name}}
                             </d-button>
                         </template>
@@ -111,40 +112,90 @@
                 </el-table>
             </el-card>
         </div>
+        <div class="in-button-container">
+            <el-button class="in-custom-button" @click="inClick">进入团队</el-button>
+        </div>
     </div>
 </template>
 
-<style>
-.cp-button-container {
+<style scoped>
+
+.in-button-container {
+    flex: 1; /* This will make in-button-container occupy the remaining height */
+    display: flex;
+    justify-content: center; /* Align the button to the bottom of the container */
+    align-items: center; /* Align the button to the right of the container */
+    /*padding: 20px; !* Add some padding for spacing *!*/
+    width: 95%;
+    flex-direction: column;
+}
+
+.in-custom-button:hover,
+.in-custom-button:focus {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #7E7CCB;
+    color: #7E7CCB;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #9E9CF4;
+    color: #9E9CF4;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button:active {
+    display: flex;
+    width: 85%;
+    background-color: #7E7CCB;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.tl-button-container {
     display: flex;
     justify-content: flex-end;
     /*padding-right: 20px; !* 调整按钮与容器边缘的间距 *!*/
     max-width: 100%;
 }
 
-.cp-input1 {
+.tl-input1 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
-.cp-input2 {
+.tl-input2 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
-.cp-input3 {
+.tl-input3 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
-.cp-input4 {
+.tl-input4 {
     max-width: 85%;
     flex: 0 0 85%;
     margin: 5px;
 }
 
-.cp-card-table {
-    height: 450px;
+.tl-card-table {
+    height: 330px;
     overflow: auto;
 }
 
@@ -168,9 +219,10 @@
     padding: 0 10px; /* Add some padding to prevent contents from sticking to the edges */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    max-height: calc(70% - 50px);
+    align-items: center; /* 垂直居中 */
+    justify-content: flex-start; /* 水平居中 */
+    /*height: calc(80% - 50px);*/
+    /*height: 45%;*/
 }
 
 .card-header {
@@ -185,7 +237,7 @@
 
 .box-card {
     width: 85%;
-    height: 75%;
+    height: 95%;
     align-items: center; /* 垂直居中 */
     justify-content: center; /* 水平居中 */
 }
@@ -218,14 +270,14 @@
     line-height: 40px; /* 使文本垂直居中 */
 }
 
-.custom-save-button-cp {
+.custom-save-button-tl {
     background-color: white;
     border-color: #9E9CF4;
     color: #9E9CF4;
 }
 
-.custom-save-button-cp:hover,
-.custom-save-button-cp:focus {
+.custom-save-button-tl:hover,
+.custom-save-button-tl:focus {
     background-color: white;
     border-color: #7E7CCB;
     color: #7E7CCB;
@@ -233,7 +285,7 @@
     transition: background-color 0.3s, color 0.3s;
 }
 
-.custom-save-button-cp:active {
+.custom-save-button-tl:active {
     background-color: #9E9CF4;
     border-color: white;
     color: white;
@@ -305,20 +357,27 @@
 </style>
 
 <script>
-import { ref, defineComponent, reactive, onMounted, inject } from 'vue';
+import { ref, defineComponent, reactive, onMounted, computed } from 'vue';
 import axios from "axios";
 import {ElMessage} from "element-plus";
 import router from "@/router";
-import { useStore } from 'vuex';
-
-// const API_URL = 'http://81.70.184.77:8000/'; // 新增这一行，定义API_URL
+import { useStore, mapActions, mapState } from 'vuex';
+// const API_URL = '/'; // 新增这一行，定义API_URL
 
 export default defineComponent( {
-    name: 'ChooseProject',
+    name: 'TeamList',
+    computed: {
+        ...mapState(['projectData']),
+        // 其他 computed properties
+    },
     setup() {
         const store = useStore();
         const user = store.state.user;
-        const curTeamId = store.state.curTeamId;
+        // const curTeamId = toRef(store.state, 'curTeamId')
+        // const curTeamId = store.state.curTeamId;
+        const curTeamId = computed(() => {
+            return store.state.curTeamId;
+        });
         const input = ref('');
         const message = ElMessage;
         const visible = ref(false);
@@ -334,11 +393,12 @@ export default defineComponent( {
         const updateVisable = ref(false);
         const passwordO = ref(""); // Initialize with
         const passwordN = ref(""); // Initialize
-        const fetchProjectList = inject('fetchProjectList');
-        const callFetchProjectList = () => {
-            if (fetchProjectList) {
-                fetchProjectList();
-            }
+        // const fetchProjectList = inject('FetchProjectList');
+        const { fetchProjectList } = mapActions(['fetchProjectList']);
+        console.log(fetchProjectList);
+        const callFetchInProjectList = () => {
+            console.log('TL', curTeamId, store.state.curTeamId);
+            store.dispatch('fetchProjectList', curTeamId);
         };
         const data = reactive({
             name: 'Tom',
@@ -346,25 +406,6 @@ export default defineComponent( {
             address: 'Chengdu',
         });
         const tableData = ref([]);
-        // const tableData = [
-        //     {
-        //         "team_id": 1,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 2,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 3,
-        //         "team_name": "testTeam1"
-        //     },
-        //     {
-        //         "team_id": 4,
-        //         "team_name": "testTeam1"
-        //     },
-        // ]
-
 
         const updateCurDescription = (newValue) => {
             curDescription.value = newValue;
@@ -378,7 +419,6 @@ export default defineComponent( {
         const updateCurNitName = (newValue) => {
             curNitName.value = newValue;
         };
-
 
         const handleClear = () => {
             console.log('clear');
@@ -412,6 +452,10 @@ export default defineComponent( {
                             message: response.data.message,
                             type:'success'
                         })
+                        store.state.commit('setCurTeamId', response.data.team_id);
+                        store.state.commit('setCurTeamName', valueBasic1.value);
+                        window.sessionStorage.setItem('curTeamId', response.data.team_id);
+                        console.log('视察', window.sessionStorage.getItem('curTeamId'));
                         fetchTeamList();
                         router.push('/teamCenter'); // 原型是设计的url是prototype
                     }
@@ -420,7 +464,7 @@ export default defineComponent( {
                             message: '新建团队失败，请重试',
                             type:'error'
                         })
-                        console.log('一次新建', response.data);
+                        console.log('一次新建', response);
                     }
                 })
                 .catch(error => {
@@ -436,8 +480,29 @@ export default defineComponent( {
         const fetchTeamList = () => {
             axios.get('/team/all') // 从后端获取团队列表数据
                 .then((response) => {
+                    console.log(response.data.res);
                     if (response.data.code === 200) {
                         tableData.value = response.data.res; // 将获取的数据赋值给tableData
+                        console.log('success');
+                        console.log(tableData.value);
+                        console.log('检查点1', curTeamId.value);
+                        if (tableData.value !== null) {
+                            if (tableData.value.length > 0 && Number(window.sessionStorage.getItem('curTeamId')) === -1) {
+                                // store.state.commit('setCurTeamId', tableData.value[0].team_id);
+                                store.state.commit('setCurTeamId', tableData.value[0].team_id);
+                                store.state.commit('setCurTeamName', tableData.value[0].team_name);
+                                console.log('突击检查', store.state.curTeamId, curTeamId);
+                                window.sessionStorage.setItem('curTeamId', tableData.value[0].team_id);
+                                window.sessionStorage.setItem('curTeamName', tableData.value[0].team_name);
+                                console.log('检查点2', curTeamId.value);
+                                callFetchInProjectList();
+                            }
+                        }
+                        else {
+                            store.state.commit('setCurTeamId', -1);
+                            window.sessionStorage.setItem('curTeamId', -1);
+                        }
+                        console.log('查看', curTeamId)
                     }
                 })
                 .catch((error) => {
@@ -447,18 +512,14 @@ export default defineComponent( {
                     })
                     console.error('GET request error:', error);
                 });
+            console.log(tableData.value);
+            console.log('检查点3', curTeamId.value);
+            callFetchInProjectList();
         };
 
-        const initCurTeam = () => {
-            if (tableData.value !== null) {
-                if (tableData.value.length > 0) {
-                    curTeamId.value = tableData.value[0].id;
-                }
-                else {
-                    curTeamId.value = -1;
-                }
-            }
-        };
+        // const initCurTeam = () => {
+        //     console.log('长度', tableData.value.length);
+        // };
         const fetchSelfInform = () => {
             axios.get('/user/myself')
                 .then((response) => {
@@ -525,7 +586,7 @@ export default defineComponent( {
         };
 
         const updatePassword = () => {
-            axios.post('/user/changepassword', {
+            axios.post('/user/changepassword/', {
                 old_password: passwordO.value,
                 new_password: passwordN.value
             })
@@ -557,21 +618,33 @@ export default defineComponent( {
             fetchSelfInform();
         };
 
-        const chooseCurTeam = (team_id) => {
+        const chooseCurTeam = (team_id, team_name) => {
             curTeamId.value = team_id;
-            callFetchProjectList();
-            console.log(curTeamId.value);
+            store.state.commit('setCurTeamId', team_id);
+            store.state.commit('setCurTeamName', team_name);
+            window.sessionStorage.setItem('curTeamId', team_id);
+            window.sessionStorage.setItem('curTeamName', team_name);
+            callFetchInProjectList();
+            console.log(window.sessionStorage.getItem('curTeamId'));
+        };
+
+        const inClick = () => {
+            if (curTeamId.value === -1) {
+                message({
+                    message: '未选择团队',
+                    type: 'error'
+                });
+            }
+            else {
+                router.push('/teamCenter');
+            }
         }
 
-        onMounted(() => {
-            fetchTeamList(); // 组件挂载后获取团队列表数据
-            if (tableData.value !== null) {
-                if (tableData.value.length > 0)
-                    curTeamId.value = tableData.value[0].id;
-            }
+        onMounted(async () => {
+            console.log('m', fetchProjectList);
+            await fetchTeamList(); // 组件挂载后获取团队列表数据
             fetchSelfInform();
-            initCurTeam();
-            //
+            // initCurTeam();
         });
 
         return {
@@ -593,7 +666,8 @@ export default defineComponent( {
             updateVisable,
             passwordO,
             passwordN,
-            callFetchProjectList,
+            fetchProjectList,
+            callFetchInProjectList,
             updateSelfInform,
             updatePassword,
             updateCurDescription,
@@ -607,6 +681,7 @@ export default defineComponent( {
             chooseCurTeam,
             fetchTeamList,
             fetchSelfInform,
+            inClick
         };
     },
 });

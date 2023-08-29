@@ -6,9 +6,25 @@
         
           
       </div>
-      <div class="chat-text" >
-          {{chatInfo.content}}
-      </div>
+      <div class="chat-record">
+          <div class="chat-text" v-if="chatInfo.type==='text'">
+              {{chatInfo.content}}
+          </div>
+          <div v-else-if="chatInfo.type==='image'">
+            <div class="img-wrapper">
+              <el-image
+                style="width: 150px; height: 150px;z-index: 2;"
+                lazy
+                :src="'http://81.70.184.77:8000'+ chatInfo.file"
+                :zoom-rate="1.2"
+                :preview-src-list="['http://81.70.184.77:8000' + chatInfo.file]"
+                :initial-index="1"
+                fit="cover"
+              />
+            </div>
+            <!-- <img :src="'http://81.70.184.77:8000'+ chatInfo.file"> -->
+          </div>
+          </div>
       <div class="info-time">
           <span>{{ formattedTime(chatInfo.send_time) }}</span>
       </div>
@@ -88,11 +104,17 @@ export default defineComponent({
               background-color:   #FACCCC ;
             }
           }
-          .chat-img {
-            img {
-              width: 100px;
-              height: 100px;
-            }
+          .img-wrapper{
+            height:180px;
+            width:180px;
+            background-color: rgba(#FACCCC ,0.7)  ;
+            // padding: 10px 10px;
+            box-sizing: border-box;
+            border-radius: 3px;
+            display: flex; /* 使用 Flex 布局 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+    
           }
           .info-time {
             margin: 10px 0;
@@ -112,4 +134,5 @@ export default defineComponent({
             }
           }
         }
+ 
 </style>

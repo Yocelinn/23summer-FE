@@ -13,7 +13,7 @@
                     <Grid />
                   </el-icon></el-button>
               </router-link>
-                <h3>返回文档管理主页</h3>
+              <h3>返回文档管理主页</h3>
             </div>
           </el-header>
         </div>
@@ -116,7 +116,8 @@ export default {
       this.editorContent = newValue;
     },
     docscreate() {
-      console.log(this.editorContent );
+      console.log(this.editorContent);
+      console.log();
       axios.post('/doc/create', {
         "doc_name": this.doc_name1,
         "project_id": this.project_id,
@@ -128,6 +129,7 @@ export default {
           console.log(response.data.doc_project);
           this.doc_id = response.data.doc_id;
           this.editorContent = '请于此处开始编辑';
+          this.$refs.myQuillEditor.changeContent( this.editorContent )
           console.log(this.editorContent);
           console.log(this.doc_id);
           ElNotification({
@@ -135,7 +137,7 @@ export default {
             message: '新建文档成功，现在可以开始编辑了',
             type: 'create',
           });
-          this.doc_name1='';
+          this.doc_name1 = '';
         }
         )
     },
@@ -147,7 +149,7 @@ export default {
         .then((response) => {
           console.log(this.doc_id2)
           console.log(response.data.message);
-          this.doc_id2='';
+          this.doc_id2 = '';
         }
         )
     },
@@ -165,27 +167,28 @@ export default {
           this.doc_id = this.doc_id1;
           console.log(this.doc_id);
           this.editorContent = response.data.content;
+          this.$refs.myQuillEditor.changeContent( this.editorContent )
           console.log(this.editorContent);
-          this.doc_id1='';
+          this.doc_id1 = '';
         }
         )
     },
   },
-  docsserach(){
+  docsserach() {
     axios.post('/doc/doc_search',
-    {
-      "project_id":Number(this.project_id),
-      "doc_id": this.doc_id1,
-    })
-    .then((response)=>{
-      console.log(this.doc_id1);
-      console.log(this.project_id);
-      console.log(response.data.code);
-      console.log(response.data.message);
-    }
-    )
+      {
+        "project_id": Number(this.project_id),
+        "doc_id": this.doc_id1,
+      })
+      .then((response) => {
+        console.log(this.doc_id1);
+        console.log(this.project_id);
+        console.log(response.data.code);
+        console.log(response.data.message);
+      }
+      )
   },
- }
+}
 </script>
 
 <style>
