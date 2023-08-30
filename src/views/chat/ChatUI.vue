@@ -2,22 +2,29 @@
     <div id="chatUI">
         <div class="chat-wrapper">  
             <div class="chat-friend-list">
-                团队成员
-                <n-select class="chat-friend-selector" @click="choose_friend(value)"
-                v-model:value="selectedValue"
-                filterable
-                placeholder="搜索"  
-                :options="select_options"
-                />
+                
+                <div class="header-item">
+                    <el-icon class="header-icon"><ChatDotRound /></el-icon>
+                    <div class="header-text">全部</div>
+                </div>
+                <div class="list-hearder">
+                    <n-select class="chat-friend-selector"
+                    v-model:value="selectedValue" 
+                    filterable
+                    placeholder="搜索"  
+                    :options="select_options"
+                    />
+                    
+                </div>
                 <n-list hoverable clickable v-for="(member,index) in friend_list" :key="index" class="chat-list">
-                    <n-list-item class="chat-list-item" @click="choose_friend(member)">
+                    <n-list-item class="chat-list-item" @click="choose_friend(member)" :class="{'isSelected' :selectedValue===member.user_id}">
                         <!-- <HeadPortrait/> -->
                         <div class="chat-item-info">
                             <div class="avatar">
                                 <el-avatar :size="30" :src="circleUrl" />
                             </div>
                             <div class="chat-info">
-                                <div class="info-name">{{ member.nickname }}</div>
+                                <div class="info-name" >{{ member.nickname }}</div>
                                 <div class="detail">{{member.email}}</div>
                             </div>
                         </div>
@@ -25,7 +32,8 @@
                 </n-list>
             </div>
             <div class="chat-window">
-                <div class="chat-window-header">{{this.curTeamName}}({{ friend_list.length }})</div>
+                <!-- <div class="chat-window-header">{{this.curTeamName}}({{ friend_list.length }})</div> -->
+                <div class="chat-window-header">{{this.selectedChat.nickname}}</div>
                 <div class="chat-content" ref="chatContent">
                     <div class="chat-window-content" v-for="record in this.records" :key="record.chat_id">
                         <ChatFriend :chatInfo="record" v-if="record.sender_id!=this.user.user_id"/>
@@ -36,17 +44,33 @@
                 </div>
                 <div class="chat-window-text">
                     <div class="toolbar">
-                        <el-upload ref="uploadRef" class="upload-demo" accept="image/png, image/jpeg,image.jpg" :auto-upload="false"
-                        :on-change="sendImg">
-                            <template #trigger>
-                                <el-icon class="tool-icon"><Picture /></el-icon>
+                            <el-upload ref="uploadRef" class="upload-demo" accept="image/png, image/jpeg,image.jpg" :auto-upload="false"
+                            :on-change="sendImg">
+                                <template #trigger>
+                                    <el-icon class="tool-icon"><Picture /></el-icon>
+                                </template>
+                            </el-upload>
+                            <el-upload ref="uploadRef" class="upload-demo" accept=".doc,.docx,.pdf,.zip,.pptx" :auto-upload="false" :on-change="sendFile">
+                                <template #trigger>
+                                    <el-icon class="tool-icon" ><FolderOpened /></el-icon>
+                                </template>
+                            </el-upload>
+                            <el-icon class="tool-icon"  @click="showModal=true"><Search /></el-icon>
+                            <n-modal
+                                v-model:show="showModal"
+                                class="custom-card"
+                                preset="card"
+                                :style="bodyStyle"
+                                
+                                size="huge"
+                                :bordered="false"
+                                :segmented="segmented"
+                            >
+                            <template #header>
+                                聊天记录
                             </template>
-                        </el-upload>
-                        <el-upload ref="uploadRef" class="upload-demo" :auto-upload="false">
-                            <template #trigger>
-                                <el-icon class="tool-icon" @click="sendFile"><FolderOpened /></el-icon>
-                            </template>
-                        </el-upload>
+                            <SearchMsg :curTeamId="this.curTeamId" :selectedMember="this.selectedChat"/>
+                            </n-modal>
                     </div>
                     <!-- <Editor/> -->
                     
@@ -66,34 +90,35 @@
 <script>
     import PersonCard from "@/components/chat/PersonCard.vue";
     import HeadPortrait from "@/components/chat/HeadPortrait.vue";
-
     import { defineComponent,ref,h } from "vue";
-    import { NSelect,NMention,NList,NListItem,NAvatar } from "naive-ui";
+    import { NSelect,NMention,NList,NListItem,NTag,NAvatar,NModal } from "naive-ui";
     import ChatMe from "@/components/chat/ChatMe.vue"
     import ChatFriend from "@/components/chat/ChatFriend.vue"
     import axios from 'axios'
     import { useStore } from 'vuex';
     import { animation } from "@/util/util";
+    import CryptoJS from 'crypto-js'
+    import SearchMsg from "@/components/chat/SearchMsg.vue"
     // import Editor from "@/components/chat/EditorArea.vue";
     export default defineComponent ({
     components:{
-       NSelect,NMention,ChatMe,ChatFriend,PersonCard,HeadPortrait,NList,NListItem 
+       NSelect,NMention,ChatMe,ChatFriend,PersonCard,HeadPortrait,NList,NListItem,NAvatar,NTag,NModal,
+       SearchMsg
     },
     mounted(){
         this.curTeamId=window.sessionStorage.getItem('curTeamId');
         this.curTeamName=window.sessionStorage.getItem('curTeamName');
-        this.getUserInfo();
-        this.getFriendList();
-        this.getAllRecord();
-        
-        
-        const self = this;
-        this.chatSocket = new WebSocket( 
-            'ws://'
+        this.websocketURL= 'ws://'
             +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
             + '/ws/chat/' 
             + this.curTeamId //改成团队id 
-            + '/' ),
+            + '/';
+        this.getUserInfo();
+        this.getFriendList();
+        this.getAllRecord();
+        const self = this;
+        this.chatSocket = new WebSocket( 
+            this.websocketURL ),
         // console.log('ws://'
         //     +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
         //     + '/ws/chat/' 
@@ -109,6 +134,21 @@
     },
     setup(){
         const store = useStore();
+        // const crypto = require('crypto-js');
+        function generateIdentifier(num1, num2) {
+        // 确保数字从小到大排列
+            const smallerNum = Math.min(num1, num2);
+            const largerNum = Math.max(num1, num2);
+            // 将数字组合转换为字符串
+            const numStr = `${smallerNum}-${largerNum}`;
+                // console.log(numStr)
+            // 使用 SHA-256 哈希函数生成标识
+            // console.log(crypto)
+            const identifier = CryptoJS.SHA256(numStr).toString(CryptoJS.enc.Hex);
+            // console.log(identifier)
+            return identifier;
+
+        }
         // const user = store.state.user;
         // const curTeamId = store.state.curTeamId;
         // const curTeamId=ref(1)
@@ -122,12 +162,12 @@
         const manager_friend_options=ref([{ value: "所有人", label: "所有人" }])
         // const records=ref([])
         
-        function getFriendList(){
+         function getFriendList(){
             // console.log(this.curTeamId)
             axios.post('/team/seemember',{ "team_id":parseInt(this.curTeamId)})
             .then((response)=>{
                 // console.log(this.curTeamId)
-                console.log(response)
+                // console.log(response)
                 if(response.data.code!=200){
                     // console.log("seemember wrong")
                     // console.log("seemember wrong")
@@ -135,7 +175,19 @@
                     // alert(response.data.msg);
                 }
                 else{
-                    friend_list.value=response.data.res;
+                    
+                    // friend_list.value=response.data.res;
+                    let teamChat={
+                        "user_id": -1,
+                        // "perm": 1,
+                        "nickname": this.curTeamName,
+                        // "name": "ttt",
+                        "email": ""
+                    }
+                    // friend_list.value=response.data.res;
+                    friend_list.value.push(teamChat)
+                    this.selectedChat=teamChat;
+                    this.friend_list.push(...response.data.res.filter(item => item.user_id !== this.user.user_id) );
                     const foundMe = friend_list.value.find(friend => friend.user_id === this.user.user_id);
                     // console.log(foundMe.perm)
                     if(foundMe){
@@ -148,12 +200,13 @@
                     // if (foundFriend && foundFriend.perm !== 1) {
                     //     this.isPerm = true;
                     // }
-                    select_options.value=response.data.res
-                    // .filter(item => item.user_id !== this.user.user_id) 
+                    select_options.value.push({value:teamChat.user_id,label:teamChat.nickname})
+                    select_options.value.push(...response.data.res
+                    .filter(item => item.user_id !== this.user.user_id) 
                     .map(item => ({
                         value: item.user_id,  // 假设 id 为 value
                         label: item.nickname  // 假设 name 为 label
-                    }));
+                    })))
                     
                     friend_options.value = response.data.res
                     .filter(item => item.user_id !== this.user.user_id) 
@@ -170,11 +223,9 @@
                         })));
                 }
             })
-        }
-       
-       
+        }    
         return{
-            selectedValue: ref(null),
+            selectedValue: ref(-1),
             selectedValues: ref(null),
             store,
             text_content,
@@ -187,7 +238,16 @@
             ]),
             // records,
             getFriendList,
-
+            // crypto,
+            generateIdentifier,
+            showModal: ref(false),
+            bodyStyle: {
+            width: "600px"
+            },
+            segmented: {
+                content: "soft",
+                footer: "soft"
+            },
         }
     },  
     watch: {
@@ -199,24 +259,46 @@
         isActive() {
       this.current = this.pcCurrent
     },
-
-        choose_friend(member){
+       
+      choose_friend(member){
             // console.log("choose"+member.nickname)
-            axios.get(`/chat/all/pri/${this.curTeamId}/${member.user_id}`)
-            .then((response)=>{
-                if(response.data.code!=200){
-                    console.log(response.data.message);
-                }
-                else{
-                    this.records=response.data.chats;
-                    console.log(response.data)
-                    this.scrollBottom();
-                }
-            })
-            .catch(error=>{
-                        console.log(error);
-                    })
-
+            this.selectedValue=member.user_id;
+            this.selectedChat=member
+            // console.log(this.selectedChat)
+            if(this.selectedChat.user_id!=-1){
+                let hash=this.generateIdentifier(this.user.user_id,this.selectedChat.user_id)
+                this.websocketURL= 'ws://'
+            +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
+            + '/ws/chat/pri/' 
+            + hash //hash标识
+            + '/'  
+            // console.log(this.websocketURL)
+                axios.get(`/chat/all/pri/${this.curTeamId}/${member.user_id}`)
+                .then((response)=>{
+                    // console.log('获取成功')
+                    if(response.data.code!=200){
+                        console.log(response.data.message);
+                    }
+                    else{
+                        this.records=response.data.chats;
+                        // console.log("ALLNOTI")
+                        // console.log(this.records)
+                        // console.log(response.data)
+                        this.scrollBottom();
+                    }
+                })
+                .catch(error=>{
+                    console.log(error);
+                })
+            }
+            else{
+                this.websocketURL= 'ws://'
+            +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
+            + '/ws/chat/' 
+            + this.curTeamId //改成团队id 
+            + '/'
+                this.getAllRecord();
+            }
         },
         atFriend(option){
             this.selectedMentionValue=option.label;
@@ -230,25 +312,39 @@
                     this.mentionedMembers.push(this.selectedMentionValue);
                 }
             }
-            console.log(this.mentionedMembers)
+            // console.log(this.mentionedMembers)
         },
         getAllRecord(){
             // chat=chat/all'+curTeamId
 
             // console.log(chat)
-            axios.get(`/chat/all/${this.curTeamId}`)
-            .then((response)=>{
-                console.log(response)
-                if(response.data.code!=200){
-                    console.log(response.data.message);
-                }
-                else{
-                    // records.value=response.data.chats;
-                    this.records=response.data.chats;
-                    this.scrollBottom();
-                    // console.log(records.value)
-                }
-            })
+            // if(this.selectedChat.user_id===-1){
+                axios.get(`/chat/all/${this.curTeamId}`)
+                .then((response)=>{
+                    // console.log(response)
+                    if(response.data.code!=200){
+                        console.log(response.data.message);
+                    }
+                    else{
+                        // records.value=response.data.chats;
+                        this.records=response.data.chats;
+                        this.scrollBottom();
+                        // console.log(records.value)
+                    }
+                })
+            // }
+            // else{
+            //     axios.get(`/chat/all/pri/${this.curTeamId}/${this.selectedChat.user_id}`)
+            //     .then((response=>{
+            //         if(response.data.code!=200){
+            //             console.log(response.data)
+            //         }
+            //         else{
+            //             this.records=response.data.chats
+            //         }
+            //     }))
+            // }   
+          
         },
         getUserInfo(){
             axios.get('user/myself/')
@@ -277,13 +373,13 @@
                     type:"text"
              }   
             }
-            else{
+            else {
                 receiveMsg={
                     sender_id:data.id,
                     file:data.message,
                     send_time:data.time,
                     sender:data.name,
-                    type:"image"
+                    type:data.is_file===1?"image":"file"
                 }
             }
             // console.log(this.records);
@@ -296,20 +392,30 @@
                 // console.log(this.text_content)
                 // const now=new Date()
                 // console.log(now.toISOString())
-                if(this.text_content){      
-                    axios.post('/chat/create',{"team_id": parseInt(this.curTeamId), "content": this.text_content})
+                let sendUrl='/chat/create'
+                let postData = {
+                    team_id: parseInt(this.curTeamId),
+                    content: this.text_content
+                    };
+                if(this.selectedChat.user_id!=-1){
+                    sendUrl='/chat/create/pri';
+                    postData={
+                        team_id: parseInt(this.curTeamId),
+                        content: this.text_content,
+                        rec_id:this.selectedChat.user_id
+                    }
+                }
+                 if(this.text_content){    
+                    // console.log("sendUrl "+sendUrl)
+                    // console.log("postData "+postData)  
+                    axios.post(sendUrl,JSON.stringify(postData))
                     .then((response)=>{
                         // console.log("发送消息")
-                        console.log(response.data)
+                        // console.log(response.data)
                         if(response.data.code!=200){
                             console.log(response.data.message)
                         }
-                        else{ 
-                            // document.querySelector('#chat-message-submit').onclick = function(e) 
-                            // { 
-                            // const messageInputDom = document.querySelector('#chat-message-input'); 
-                            // const message = messageInputDom.value; // 使用chatSocket发送信息 
-                            console.log(this.user.name);
+                        else{  
                             this.chatSocket.send(JSON.stringify({
                                 'id': response.data.sender, 
                                 'name':this.user.nickname,
@@ -317,6 +423,11 @@
                                 'time': response.data.send_time,
                                 'is_file':0
                             })); 
+                            this.mentionedMembers = this.mentionedMembers.filter(member => {
+                            // 假设 member 是一个成员对象，成员对象有一个属性比如 name，用于表示成员名字
+                            return this.text_content.includes(member.nickname)})
+                            // console.log(this.mentionedMembers);
+
                             this.sendNotiToMembers(this.mentionedMembers);
                             // this.scrollBottom();
                             this.text_content="";
@@ -325,22 +436,24 @@
                     .catch(error=>{
                         console.log(error);
                     })
-            
                 }
-                
                 else{
                     console.log("发送消息不能为空！")
                 }
             },
         sendImg(image){
+            let sendUrl='/chat/create'
             let imgData=new FormData();
-
             imgData.append("team_id",parseInt(this.curTeamId));
             imgData.append("file",image.raw);
             // console.log(image.raw)
-            axios.post('/chat/file',imgData)
+            if(this.selectedChat.user_id!=-1){
+                sendUrl='/chat/file/pri';
+                imgData.append("rec_id",this.selectedChat.user_id)
+            }
+            axios.post(sendUrl,imgData)
             .then((response)=>{
-                console.log(response.data)
+                // console.log(response.data)
                 if(response.data.code!=200){
                     console.log(response.data.message)
                 }
@@ -352,27 +465,50 @@
                         'time': response.data.send_time,
                         'is_file':1
                     })); 
-                    console.log(imgData.get('file'))
-                    console.log('http://81.70.184.77:8000'+response.data.file)
+                    // console.log(imgData.get('file'))
+                    // console.log('http://81.70.184.77:8000'+response.data.file)
                 }
-
             })
             .catch(error=>{
                 console.log(error);
+            })  
+        },
+        sendFile(file){
+            let fileData=new FormData();
+            fileData.append("team_id",parseInt(this.curTeamId));
+            fileData.append("file",file.raw);
+            // console.log(image.raw)
+            axios.post('/chat/file',fileData)
+            .then((response)=>{
+                // console.log(response.data)
+                if(response.data.code!=200){
+                    console.log(response.data.message)
+                }
+                else{
+                    this.chatSocket.send(JSON.stringify({
+                        'id': response.data.sender, 
+                        'name':this.user.nickname,
+                        'message': response.data.file,
+                        'time': response.data.send_time,
+                        'is_file':2
+                    })); 
+                    // console.log(fileData.get('file'))
+                    // console.log('http://81.70.184.77:8000'+response.data.file)
+                }
             })
-            
+            .catch(error=>{
+                console.log(error);
+            })  
         },
         sendNotiToMembers(members){
             members.forEach((member)=>{
                 const NotiContent = {
-                            rec_id: member, // 假设 member 中包含接收者的 id
+                            rec_id: member, // member是接收者的 id
                             content:"@了你" // 通知内容可以根据需求自定义
                         }
                 axios.post('message/create',NotiContent)
                 .then((response)=>{
-                   
-                        console.log(response.data.message)
-                   
+                         console.log(response.data.message)
                 })
                 .catch(error=>{
                     console.log(error);
@@ -382,8 +518,12 @@
     },
     data(){
         return{
+            // crypto: require('crypto'),
             circleUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
             current:'',
+            selectedChat:'',
+            websocketURL:'',
+            // TeamChat:{},
             curTeamId:'',
             curTeamName:'',
             user:'',
@@ -401,10 +541,45 @@
 </script>
 
 <style lang="scss" scoped>
+#chatUI{
+    display: flex;
+     justify-content: center; /* 在水平方向上居中 */
+    align-items: center; 
+}
+.header-item {
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+}
 
+.header-icon{
+    // width: 42px;
+    align-items: center;
+    justify-content: center;
+    // display: flex;
+    font-size:20px;
+    // padding: 4px;
+    margin:4px;
+    position: relative;
+    text-align: center;
+    color: #48464C;
+   
+}
+.header-text{
+  color:  #48464C;
+}
+
+.header-tag{
+    margin-top: 20px; 
+    font-size:15px;
+    padding:10px;
+    text-align: left; /* 靠左对齐 */
+  border-bottom: 1px solid #e3e3e3; /* 添加下边框 */
+}
 .chat-wrapper{
     display: flex;
-    width:98%;
+   
+    // padding:20px;
+    width:90%;
     height:85vh;
     margin:10px;
     position: relative; 
@@ -416,7 +591,7 @@
     border-right: 1px solid #ccc; /* 添加右边框 */
 }
 .chat-friend-list{
-    width:15%;
+    width:20%;
     // border-radius:10px;
     border: 1px solid #e3e3e3; /* 添加右边框 */
     display: flex; /* 使用 Flex 布局 */
@@ -462,6 +637,7 @@
     align-items: center; /* 垂直居中对齐项目 */
 }
 .chat-item-info{
+    margin-left: 20px;;
     display:flex;
 }
 .avatar{
@@ -470,6 +646,14 @@
 .chat-info{
     margin-left: 10px;
     text-align: left;
+    font-size: 14px;
+    display: block;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    overflow: hidden;
+    max-height: 18px;
+    line-height: 18px;
+    max-width: 140px;
 }
 .chat-window-header {
 //   background-color: rgba(#48464C,0.2);
@@ -482,6 +666,8 @@
     justify-content: space-between;
     // width: 100%;
     position: relative;
+    font-size:20px;
+    font-weight:400
     
 }
 //   border-radius: 10px;
@@ -519,6 +705,7 @@
 display: flex;
 }
 
+
 .tool-icon{
     width: 42px;
 align-items: center;
@@ -539,7 +726,7 @@ color: grey;
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background-color: #007bff; /* 设置按钮背景颜色 */
+//   background-color: #007bff; /* 设置按钮背景颜色 */
   color: #fff; /* 设置按钮文字颜色 */
   border: none;
   border-radius: 5px;
@@ -547,6 +734,8 @@ color: grey;
   cursor: pointer;
 }
 .chat-friend-selector{
+    margin-top:20px;
+    margin-bottom:20px;
     width:70%;
     // height: 60px;
     // padding: 14px;
@@ -561,4 +750,9 @@ color: grey;
 // .chat-window-textarea:focus{
 //         border: var(--n-border-focus);
 //     }
+.isSelected{
+    background-color:rgb(243, 243, 245);
+    // background-color: #9d9cf464;;
+}
+
 </style>

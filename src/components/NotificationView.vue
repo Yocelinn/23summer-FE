@@ -46,7 +46,7 @@
                         </div>
                     </div> 
                     <div class="icon-choose" :class="{'hovered': isHovered_all}">
-                        <template v-if="checkisShow[index]&& !isHovered_all[index]">
+                        <template v-if="!noti.is_read&& !isHovered_all[index]">
                             <!-- 未读消息的图标 -->
                             <!-- 显示数字标识未读消息数量 -->
                             <div class="unread-badge">1</div>
@@ -54,7 +54,7 @@
 
                         </template>
                         <el-icon  class="noti-icon-check"
-                            style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti(noti.msg_id,index)" v-if="isHovered_all[index]&&checkisShow[index]">
+                            style="color:  #A1EBDE ;margin-right:30px" @click="checkNoti(noti.msg_id,index)" v-if="isHovered_all[index]&&!noti.is_read">
                             <CircleCheckFilled />
                         </el-icon>
                         
@@ -148,7 +148,7 @@ import { NList,NListItem,NThing,NSpace,NTag } from 'naive-ui'
 import { CheckmarkCircle } from "@vicons/ionicons5";
 import axios from 'axios'
 import { useRouter } from 'vue-router';
-
+import { onMounted } from 'vue';
 // import { post } from '@/utils/'
 
 export default defineComponent({
@@ -162,6 +162,25 @@ export default defineComponent({
        const notiNotRead=ref([]);
        const notiHasRead=ref([]);
        const isHovered_all=ref([]);
+       const value=ref("AllNoti");
+       const circleUrl=ref('https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png');
+       const noti_options=ref([
+            {
+                value:"AllNoti",
+                label:"全部消息"
+            },
+            {
+                value:"NotiNotRead",
+                label:"未读消息"
+            },
+            {
+                value:"NotiHasRead",
+                label:"已读消息"
+            }
+        ])
+        const isHovered_not=ref([]);
+        const isHovered_read=ref([]);
+        const checkisShow=([]);
     //    const checkisShow=ref([]);
 
         function enterChatRoom(){
@@ -178,105 +197,99 @@ export default defineComponent({
                 else{
                     // console.log("消息已读");
                     // console.log("selectedValue:"+this.value)
-                    if(this.value==="AllNoti")
+                    if(value.value==="AllNoti")
                        {
-                        this.checkisShow[index]=false;
+                        // this.checkisShow[index]=false;
                         
-                        this.fetchNotifications();
+                        fetchNotifications();
                         // console.log("重新拉取")
                         // console.log(this.checkisShow);
                        }
-                    else if(this.value==="NotiNotRead"){
-                        this.getNotiNotRead();
+                    else if(value.value==="NotiNotRead"){
+                        getNotiNotRead();
                     }
-                    else if(this.value==="NotiHasRead"){
-                        this.getNotiHasRead();
+                    else if(value.value==="NotiHasRead"){
+                        getNotiHasRead();
                     }
-                    // if (typeof notifications.value[index].is_read === 'undefined') {
-                    // notifications.value[index].is_read = true; // 或者你想要的默认值
-                    // } else {
-                    // notifications.value[index].is_read = true;
-                    // }
-
-                    // location.reload();
-                    // if(this.selectedValue==="AllNoti")
-                    // {
-                    //     const index = this.notifications.findIndex(noti => noti.msg_id === id);
-                    //     if (index !== -1) {
-                    //         this.notifications[index].is_read = 1;
-                    //     }
-                    // }
-                    //     // this.fetchNotifications(); // 重新获取数据
-                    // else if(this.selectedValue==="NotiNotRead"){
-                    //     this.getNotiNotRead();
-                    // }
                 }
+            })
+            .catch(error=>{
+                console.log(error);
             })
         }
         function deleteNoti(id){
             axios.post('/message/operate',{"msg_id": id})
             .then((response)=>{
-                console.log(response)
+                // console.log(response)
                 if(response.data.code!=200){
                     console.log(response.data.error);
                 }
                 else{
                     // console.log(notifications)
 
-                    console.log("selectedValue:"+this.value);
-                    if(this.value==="AllNoti")
-                        this.fetchNotifications(); // 重新获取数据
-                    else if(this.value==="NotiNotRead"){
-                        this.getNotiNotRead();
+                    // console.log("selectedValue:"+this.value);
+                    if(value.value==="AllNoti")
+                        fetchNotifications(); // 重新获取数据
+                    else if(value.value==="NotiNotRead"){
+                        getNotiNotRead();
                     }
-                    else if(this.value==="NotiHasRead"){
-                        this.getNotiHasRead();
+                    else if(value.value==="NotiHasRead"){
+                        getNotiHasRead();
                     }
                 }
+            })
+            .catch(error=>{
+                console.log(error);
             })
         }
         function allNotiFinished(){
             axios.put('/message/operate_all',{})
             .then((response)=>{
-                console.log(response)
+                // console.log(response)
                 if(response.data.code!=200){
                     alert(response.data.messages);
                 }
                 else{
                     // console.log("消息已读");
-                    console.log("selectedValue:"+this.value);
-                    if(this.value==="AllNoti"){
-                        this.fetchNotifications(); // 重新获取数据
+                    // console.log("selectedValue:"+value.value);
+                    if(value.value==="AllNoti"){
+                        fetchNotifications(); // 重新获取数据
                         // this.$forceUpdate();
                     }
-                    else if(this.value==="NotiNotRead"){
-                        this.getNotiNotRead();
+                    else if(value.value==="NotiNotRead"){
+                        getNotiNotRead();
                     }
-                    else if(this.value==="NotiHasRead"){
-                        this.getNotiHasRead();
+                    else if(value.value==="NotiHasRead"){
+                        getNotiHasRead();
                     }
                 }
+            })
+            .catch(error=>{
+                console.log(error);
             })
         }
         function allNotiDeleted(){
             axios.delete('/message/operate_all',{})
             .then((response)=>{
-                console.log(response)
+                // console.log(response)
                 if(response.data.code!=200){
-                    alert(response.data.messages);
+                    console.log(response.data.messages);
                 }
                 else{
                     // console.log("消息已读");
-                    console.log("selectedValue:"+this.value);
-                    if(this.value==="AllNoti")
-                        this.fetchNotifications(); // 重新获取数据
-                    else if(this.value==="NotiNotRead"){
-                        this.getNotiNotRead();
+                    // console.log("selectedValue:"+value.value);
+                    if(value.value==="AllNoti")
+                        fetchNotifications(); // 重新获取数据
+                    else if(value.value==="NotiNotRead"){
+                        getNotiNotRead();
                     }
-                    else if(this.value==="NotiHasRead"){
-                        this.getNotiHasRead();
+                    else if(value.value==="NotiHasRead"){
+                        getNotiHasRead();
                     }
                 }
+            })
+            .catch(error=>{
+                console.log(error);
             })
         }
         function fetchNotifications() {
@@ -288,14 +301,13 @@ export default defineComponent({
                     // alert(response.data.msg);
                 }
                 else{
-                    this.notifications = response.data.messages;
-                    // console.log("获取notifications成功")
+                    notifications.value = response.data.messages;
                     // console.log(response.data.messages);
                     // this.checkisShow=j
-                    this.checkisShow = this.notifications.map((message) => !message.is_read);
+                    // this.checkisShow = this.notifications.map((message) => !message.is_read);
 
                     // console.log(this.checkisShow);
-                    this.isHovered_all = response.data.messages.map(() => false);
+                    isHovered_all.value = response.data.messages.map(() => false);
                     // response.data.messages.forEach((msg,index) => {
                     //     this.notifications[index]=msg;
                     //     this.isHovered_not.value = response.data.messages.map(() => false);
@@ -316,8 +328,8 @@ export default defineComponent({
                     // alert(response.data.msg);
                 }
                 else{
-                    this.notiNotRead = response.data.messages;
-                    this.isHovered_all = response.data.messages.map(() => false);
+                    notiNotRead.value = response.data.messages;
+                    isHovered_all.value = response.data.messages.map(() => false);
                     // response.data.messages.forEach((msg,index) => {
                     //     this.notiNotRead[index]=msg;
                         
@@ -330,104 +342,49 @@ export default defineComponent({
             })
        }
        function getNotiHasRead() {
-                    axios.post('/message/all',{"is_read":1})
-                    .then((response)=>{
-                    // console.log(response)
-                    if(response.data.code!=200){
-                        console.log(response.data.messages);
-                        // alert(response.data.msg);
-                    }
-                    else{
-                        response.data.messages.forEach((msg,index) => {
-                            this.notiHasRead[index]=msg;
-                            this.isHovered_read[index]=false;
-                        });
-                    }
-                })
-                .catch(error=>{
-                    console.log(error);
-                })
+            axios.post('/message/all',{"is_read":1})
+            .then((response)=>{
+            // console.log(response)
+            if(response.data.code!=200){
+                console.log(response.data.messages);
+                // alert(response.data.msg);
+            }
+            else{
+                notiHasRead.value = response.data.messages;
+                    isHovered_read.value = response.data.messages.map(() => false);
+            }
+        })
+        .catch(error=>{
+            console.log(error);
+        })
         }
-       return{
-        notifications,notiNotRead,notiHasRead,isHovered_all,
-        // checkisShow,
-        CheckmarkCircle,
-        checkNoti,deleteNoti,allNotiDeleted,allNotiFinished,
-        getNotiHasRead,getNotiNotRead,fetchNotifications,
-        enterChatRoom,router
-       }
-    },
-    data() {
-        return {
-        
-        isHovered_not:[],
-        isHovered_read:[],
-        checkisShow:[],
-        // selectedValue: '',
-        value:"AllNoti",
-        circleUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-        showList:true,
-        noti_options:[
-            {
-                value:"AllNoti",
-                label:"全部消息"
-            },
-            {
-                value:"NotiNotRead",
-                label:"未读消息"
-            },
-            {
-                value:"NotiHasRead",
-                label:"已读消息"
+        function handleNotiSelectChange(newValue){
+            value.value=newValue;
+            // console.log(value.value);
+            if(value.value==="NotiNotRead"){
+                getNotiNotRead();
             }
-        ]
-        };
-    },
-    components:{
-        NList,NListItem,NThing,NSpace,NTag
-    },
-    mounted(){
-        this.fetchNotifications();
-        // this.getNotiNotRead();
-        // this.getNotiHasRead();
-        // this.fetchNotifications({"is_read":1});
-    },
-    methods: {
-        // toggleList() {
-        // this.showList = !this.showList; // 切换列表显示状态
-        // },
-        
-        handleNotiSelectChange(newValue){
-            this.value=newValue;
-            console.log(this.value);
-            if(this.value==="NotiNotRead"){
-                this.getNotiNotRead();
+            else if(value.value==="NotiHasRead"){
+                getNotiHasRead();
             }
-            else if(this.value==="NotiHasRead"){
-                this.getNotiHasRead();
+            else if(value.value==="AllNoti"){
+                fetchNotifications();
             }
-            else if(this.value==="AllNoti"){
-                this.fetchNotifications();
-            }
-        },
-        setHover(index, value) {
+        }
+        function setHover(index, value) {
             // 使用 Vue.set 方法来确保响应式更新
-            this.isHovered_all[index]= value;
+            isHovered_all.value[index]= value;
 
-        },
-        setHoverNot(index, value) {
+        }
+        function setHoverNot(index, value) {
             // 使用 Vue.set 方法来确保响应式更新
-            this.isHovered_not[index]= value;
-        },
-        setHoverRead(index, value) {
+            isHovered_not.value[index]= value;
+        }
+        function setHoverRead(index, value) {
             // 使用 Vue.set 方法来确保响应式更新
-            this.isHovered_read[index]= value;
-        },
-       
-       
-       
-       
-         formattedTime(dateTimeStr) {
+            isHovered_read.value[index]= value;
+        }
+        function formattedTime(dateTimeStr) {
             const dateTime = new Date(dateTimeStr);
             const now = new Date();
 
@@ -449,7 +406,40 @@ export default defineComponent({
                 const minutes = dateTime.getMinutes().toString().padStart(2, '0');
                 return `${month}-${day} ${hours}:${minutes}`;
             }
-        },
+        }
+       onMounted(()=>{
+        fetchNotifications();
+       });
+       return{
+        notifications,notiNotRead,notiHasRead,isHovered_all,noti_options,circleUrl,value, isHovered_not,
+        isHovered_read,checkisShow,
+        // checkisShow,
+        CheckmarkCircle,
+        checkNoti,deleteNoti,allNotiDeleted,allNotiFinished,
+        getNotiHasRead,getNotiNotRead,fetchNotifications, handleNotiSelectChange,setHoverNot,setHover,setHoverRead,
+        formattedTime,enterChatRoom,router
+       }
+    },
+    data() {
+        return {
+        
+       
+        // selectedValue: '',
+        
+        showList:true,
+        
+        };
+    },
+    components:{
+        NList,NListItem,NThing,NSpace,NTag
+    },
+    
+    methods: {
+        // toggleList() {
+        // this.showList = !this.showList; // 切换列表显示状态
+        // },
+        
+      
        
     },
    
