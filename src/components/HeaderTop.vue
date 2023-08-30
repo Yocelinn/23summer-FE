@@ -137,15 +137,16 @@ export default {
 
 <style scoped>
 .logo {
+    margin-top: 10px;
     width: 40px
 }
 .header-container {
     height:7vh;
-    line-height:40px;
+    line-height:50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 40px;
+    height: 50px;
 }
 .left-container {
     margin-left: 20px;

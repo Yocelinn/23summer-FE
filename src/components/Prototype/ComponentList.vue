@@ -15,12 +15,12 @@
 </template>
 
 <script>
-import componentList from '@/custom-component/component-list'
+// import componentList from '@/custom-component/component-list'
 
 export default {
     data() {
         return {
-            componentList,
+            // componentList,
         }
     },
     methods: {

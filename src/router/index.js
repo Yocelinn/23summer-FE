@@ -47,6 +47,13 @@ const routes = [
           title: '原型设计',
         }
       },
+      {
+        path: '/demo',
+        component: () => import('@/views/prototype/demoView.vue'),
+        meta: {
+          title: '原型设计',
+        }
+      },
     ]
   },
   {

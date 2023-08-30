@@ -14,6 +14,16 @@
             
             <el-divider border-style="double" />
 
+            <div class="itemlist" @dragstart="handleDragStart">
+                <div
+                    v-for="(item, index) in componentList"
+                    :key="index"
+                    class="list"
+                    draggable
+                    :data-index="index"
+                >
+            </div>
+            </div>
             <ComponentList></ComponentList>
             <el-divider border-style="double" />
 
@@ -43,7 +53,7 @@
             这是右边栏
             <div class="text">元素名：{{ Object.keys(activeItem).length > 0 ? activeItem.content.name : '' }} </div>
             <div class="button-container">
-                <button @click="deletePage(activeItem.id)" class="basic-button">删除页面</button>
+                <button @click="deletePage(activeIndex)" class="basic-button">删除页面</button>
             </div>
             
             <el-divider border-style="double" />
@@ -95,6 +105,7 @@ export default {
             pageArray: [],
 
             activeItem: {},
+            activeIndex: 0,
 
             changePageVisible: false
         }
@@ -116,6 +127,7 @@ export default {
             this.pageStyle.height += 'px'
             this.pageStyle.width += 'px'
         },
+        // pageArray: [{content: {name :'',backgroundColor:''},id:0}...],
         createPage() {
             this.onePage.name = '页面'
             this.pageArray.push({content: JSON.parse(JSON.stringify(this.onePage))})
@@ -123,7 +135,8 @@ export default {
         selectItem(item, index) {
             console.log(item)
             this.activeItem = item
-            Reflect.set(this.activeItem,'id',index)
+            this.activeIndex = index
+            // Reflect.set(this.activeItem,'id',index)
             // 选中的是页面
             if(this.activeItem.content.type === 'page') {
                 this.pageArray.forEach((page, i) => {
@@ -140,13 +153,18 @@ export default {
         },
         goProject() {
             router.push('/person/protectCenter')
-        }
+        },
+
+        handleDragStart(e) {
+            e.dataTransfer.setData('index', e.target.dataset.index)
+        },
+
     }
 }
     
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .main {
     height: 93vh;
     display: flex;
@@ -182,6 +200,31 @@ export default {
     height: 1.5px;
     width: 95%;
     margin-left: 2.5%;
+}
+
+.itemlist{
+    padding: 10px;
+    display: grid;
+    grid-gap: 10px 19px;
+    grid-template-columns: repeat(auto-fill, 80px);
+    grid-template-rows: repeat(auto-fill, 40px);
+
+    .list {
+        width: 80px;
+        height: 40px;
+        border: 1px solid #ddd;
+        cursor: grab;
+        text-align: center;
+        color: #333;
+        padding: 2px 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    
+        &:active {
+            cursor: grabbing;
+        }
+    }
 }
 
 .canvas {
