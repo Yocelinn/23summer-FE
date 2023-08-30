@@ -16,6 +16,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getCurrentInstance, reactive, ref, toRaw, computed, onMounted, watch } from "vue";
 // 引入插入图片标签自定义的类
 import './quill'
+import "quill-mention"
 
 // 注册图片拖拽和大小修改插件(不起效果暂时屏蔽)
 // import { ImageDrop } from 'quill-image-drop-module';

@@ -23,12 +23,6 @@
           <span>原型设计</span>
           </el-menu-item>
         </router-link>
-        <router-link to="/documentadd">
-          <el-menu-item index="4" @click="docsedit">
-          <el-icon><Edit /></el-icon>
-          <span>文档编辑</span>
-          </el-menu-item>
-        </router-link>
       </el-menu>
     </el-col>
   </el-row>

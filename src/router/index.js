@@ -33,7 +33,21 @@ const routes = [
         meta: {
           title: '新增文档',
         },
-      }
+      },
+      {
+        path: '/documentadmin/:id',
+        component: () => import('@/documentadmin/DocumentAdd.vue'),
+        meta: {
+          title: '编辑文档',
+        },
+      },
+      {
+        path: '/prototype',
+        component: () => import('@/views/prototype/PrototypeView.vue'),
+        meta: {
+          title: '原型设计',
+        }
+      },
     ]
   },
 ]
