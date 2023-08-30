@@ -41,15 +41,15 @@ const routes = [
         },
       },
       {
-        path: '/prototype',
-        component: () => import('@/views/prototype/PrototypeView.vue'),
+        path: '/documentadmin/:id',
+        component: () => import('@/documentadmin/DocumentAdd.vue'),
         meta: {
-          title: '原型设计',
-        }
+          title: '编辑文档',
+        },
       },
       {
-        path: '/demo',
-        component: () => import('@/views/prototype/demoView.vue'),
+        path: '/prototype',
+        component: () => import('@/views/prototype/PrototypeView.vue'),
         meta: {
           title: '原型设计',
         }

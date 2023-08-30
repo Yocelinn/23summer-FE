@@ -42,11 +42,7 @@
                 </el-table-column>
                 <el-table-column prop="option" label="选择" width="180">
                   <template #default="scope">
-                    <router-link to="/documentadd">
-                      <el-button link type="primary" size="small" @click="docsedit(scope.row)"
-                      >Edit</el-button
-                    >
-                    </router-link>
+                    <el-button link type="primary" size="small" @click="docsedit(scope.row)">Edit</el-button>
                     <el-button link type="primary" size="small" @click="docsdelete(scope.row)">Delete</el-button>
                   </template>
                 </el-table-column>
@@ -86,23 +82,8 @@ export default {
     )
     },
     docsedit(row){
-      window.sessionStorage.setItem('curDocsId', row.doc_id);
-      this.$router.push('/documentadd');
+      this.$router.push(`/documentadmin/${row.doc_id}`);
     }
-  },
-  methods:{
-    docsdelete(row ){
-      axios.post('/doc/delete',
-    {
-      "doc_id": row.doc_id,
-    })
-    .then((response)=>{
-      console.log(row.doc_id);
-      console.log(response.data.message);
-      this.refresh();
-    }
-    )
-    },
   },
   components: {
     CommonAside
