@@ -61,7 +61,7 @@
                     <d-modal-footer class="tl-button-container" style="text-align: right; padding-right: 20px;">
                         <d-button class="custom-button-i" @click="updateSelfInform">修改信息</d-button>
                         <d-button class="custom-button-i" @click="updatePassword">修改密码</d-button>
-                        <d-button class="custom-button" @click="updateVisable=false">取消</d-button>
+                        <d-button class="custom-button" @click="cutInput">取消</d-button>
                     </d-modal-footer>
                 </template>
             </d-modal>
@@ -424,6 +424,13 @@ export default defineComponent( {
         //     },
         // ]
 
+        const cutInput = () => {
+            updateVisable.value = false;
+            curNitName.value = '';
+            curDescription.value = '';
+            passwordN.value = '';
+            passwordO.value = '';
+        };
 
         const updateCurDescription = (newValue) => {
             curDescription.value = newValue;
@@ -601,6 +608,8 @@ export default defineComponent( {
                 })
             updateVisable.value = false;
             fetchSelfInform();
+            curNitName.value = '';
+            curDescription.value = '';
         };
 
         const updatePassword = () => {
@@ -634,6 +643,8 @@ export default defineComponent( {
                 })
             updateVisable.value = false;
             fetchSelfInform();
+            passwordO.value = '';
+            passwordN.value = '';
         };
 
         const chooseCurTeam = (team_id, team_name) => {
@@ -700,7 +711,8 @@ export default defineComponent( {
             chooseCurTeam,
             fetchTeamList,
             fetchSelfInform,
-            inClick
+            inClick,
+            cutInput
         };
     },
 });

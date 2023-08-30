@@ -503,6 +503,7 @@ export default {
             selectInputValue.value = newValue;
             console.log('检查输入', selectInputValue.value, newValue);
             axios.post('/project/find', {
+                team_id: Number(window.sessionStorage.getItem('curTeamId')),
                 key_word: selectInputValue.value,
                 options: checkType.value
             })
