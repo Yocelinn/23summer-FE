@@ -83,6 +83,13 @@ const routes = [
     name: 'porjectcenter',
     component: () => import('@/components/ProjectCenter/ProjectCenter.vue')
   },
+  {
+    path: '/demo',
+    component: () => import('@/views/prototype/demoView.vue'),
+    meta: {
+      title: '原型设计',
+    }
+  },
 ]
 
 const router = createRouter({
