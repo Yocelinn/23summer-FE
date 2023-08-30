@@ -5,8 +5,38 @@
           
             <n-avatar round>{{ chatInfo.sender.slice(-2)}}</n-avatar>
         </div>
-        <div class="chat-text" >
-            {{chatInfo.content}}
+        <div class="chat-record">
+          <div class="chat-text" v-if="chatInfo.type==='text'">
+              {{chatInfo.content}}
+          </div>
+          <div v-else-if="chatInfo.type==='image'">
+            <div class="img-wrapper">
+            <el-image
+              style="width: 150px; height: 150px;z-index:2"
+              lazy
+              :src="'http://81.70.184.77:8000'+ chatInfo.file"
+              :zoom-rate="1.2"
+              :preview-src-list="['http://81.70.184.77:8000' + chatInfo.file]"
+              :initial-index="1"
+              fit="cover"
+            />
+           </div>
+            <!-- <img :src="'http://81.70.184.77:8000'+ chatInfo.file"> -->
+          </div>
+          <div v-else-if="chatInfo.type==='file'">
+            <a :href="'http://81.70.184.77:8000'+chatInfo.file" download style="text-decoration: none;">
+              <div class="file-wrapper">
+                <div class="file-data">
+                  <img src="@/assets/file.png">
+                  <div class="file-info">
+                    <div class="file-name">
+                      {{ chatInfo.file.replace('/media/chat/', '') }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
         </div>
         <div class="info-time">
             <span>{{ formattedTime(chatInfo.send_time) }}</span>
@@ -45,6 +75,7 @@ export default defineComponent({
   props:{
     chatInfo:{}
   },
+
     // setup() {
     //     return{
     //         value:ref('这里是名字')
@@ -88,7 +119,8 @@ export default defineComponent({
                 return `${month}-${day} ${hours}:${minutes}`;
             }
         },
-    }
+    },
+  
 })
 </script>
 
@@ -104,7 +136,7 @@ export default defineComponent({
           align-items: flex-end;
           .chat-text {
             float: right;
-            max-width: 90%;
+            // max-width: 90%;
             padding: 15px;
             font-size: 18px;
             border-radius: 20px 5px 20px 20px;
@@ -114,12 +146,49 @@ export default defineComponent({
               background-color: rgba(#9E9CF4,0.8) ;
             }
           }
-          .chat-img {
-            img {
-              max-width: 300px;
-              max-height: 200px;
-              border-radius: 10px;
-            }
+          .img-wrapper{
+            height:180px;
+            width:180px;
+            background-color: rgba(#9E9CF4 ,0.6)  ;
+            // padding: 10px 10px;
+            box-sizing: border-box;
+            border-radius: 3px;
+            display: flex; /* 使用 Flex 布局 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+    
+          }
+          .file-wrapper{
+            display: flex;
+            align-items: center; /* 垂直居中对齐 */
+            justify-content: center; /* 水平居中对齐 */
+            height: 70px;
+            // padding: 2px;
+            width: 240px;
+            background: #fff;
+            border-radius: 3px;
+            border: 1px solid rgba(0,0,0,.12);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+            cursor: pointer;
+          }
+          .file-data{
+            display: -webkit-flex;
+          }
+          .file-info{
+            // margin-left: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: space-around;
+          }
+          .file-name{
+            color: rgba(0,0,0,.6784313725);
+            font-size: 14px;
+            width: 160px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .info-time {
             margin: 10px 0;
