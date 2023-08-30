@@ -329,6 +329,8 @@ export default defineComponent( {
             visible.value = false;
         };
         const newTeam = () => {
+            const hole = ref('');
+            hole.value = valueBasic1.value;
             if(valueBasic1.value.length > 20) {
                 message({
                     message:"团队名称需少于20个字符",
@@ -349,9 +351,11 @@ export default defineComponent( {
                             message: response.data.message,
                             type:'success'
                         })
+                        window.sessionStorage.setItem('curTeamName', hole.value);
                         window.sessionStorage.setItem('curTeamId', response.data.team_id);
                         console.log('视察', window.sessionStorage.getItem('curTeamId'));
                         fetchTeamList();
+                        fetchSelfInform();
                         router.push('/teamCenter'); // 原型是设计的url是prototype
                     }
                     else {

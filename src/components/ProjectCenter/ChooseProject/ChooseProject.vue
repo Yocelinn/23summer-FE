@@ -5,7 +5,7 @@
                 <template #header>
                     <d-modal-header>
                         <!--                <d-icon name="like"></d-icon>-->
-                        <span>修改团队信息</span>
+                        <span>修改项目信息</span>
                     </d-modal-header>
                 </template>
 
@@ -13,7 +13,7 @@
                 <div class="tl-div-input">
                     <el-input
                             v-model="curTName"
-                            placeholder=团队名称
+                            placeholder=项目名称
                             clearable
                             class="tl-input1"
                             @input="updateCurTName"
@@ -44,12 +44,8 @@
                 <el-descriptions-item label="项目名称：">
                     {{tName}}
                 </el-descriptions-item>
-                <el-descriptions-item label="权限：">
-                    <div :key="roleNum">
-                        <el-tag class="ml" :type="getTagClass(roleNum)">
-                            {{role}}
-                        </el-tag>
-                    </div>
+                <el-descriptions-item label="所属团队：">
+                    {{curTeamName}}
                 </el-descriptions-item>
                 <el-descriptions-item label="项目描述：">
                     {{description}}
@@ -318,7 +314,7 @@ export default defineComponent( {
         const store = useStore();
         const user = store.state.user;
         const curTeamId = window.sessionStorage.getItem('curTeamId');
-        // const curTeamId = store.state.curTeamId;
+        const curTeamName = ref('');
         const roleNum = ref(0);
         const message = ElMessage;
         const valueBasic1 = ref('');
@@ -404,14 +400,17 @@ export default defineComponent( {
 
         const fetchCPList = () => {
             console.log(window.sessionStorage.getItem('curTeamId'));
-            axios.post('/team/seemember', {
+            axios.post('/project/info', {
                 team_id: Number(window.sessionStorage.getItem('curTeamId'))
             }) // 从后端获取团队列表数据
                 .then((response) => {
-                    console.log(response.data.res);
+                    console.log(response.data.projects);
                     console.log(response.config.data);
                     if (response.data.code === 200) {
-                        CPData.value = response.data.res; // 将获取的数据赋值给tableData
+                        console.log(response.data.projects);
+                        // CPData.value = response.data.projects; // 将获取的数据赋值给tableData
+                        store.commit('setProjectData', response.data.projects);
+                        console.log(response.data.res);
                         console.log('success');
                         console.log(CPData.value);
                     }
@@ -439,6 +438,7 @@ export default defineComponent( {
                         console.log(response.data);
                         tName.value = window.sessionStorage.getItem('curProjectName');
                         roleNum.value = response.data.perm;
+                        curTeamName.value = window.sessionStorage.getItem('curTeamName')
                         description.value = window.sessionStorage.getItem('curProjectDes');
                     }
                     else {
@@ -465,9 +465,11 @@ export default defineComponent( {
         };
 
         const updateName = () => {
+            const Cname = ref('');
+            Cname.value = curTName.value;
             axios.post('/project/rename', {
                 project_id: Number(window.sessionStorage.getItem('curProjectId')),
-                new_name: curTName.value
+                new_name:  Cname.value
             })
                 .then((response2) => {
                     if (response2.data.code === 200) {
@@ -476,7 +478,9 @@ export default defineComponent( {
                             type:'success'
                         })
                         console.log(response2.data.message)
-                        window.sessionStorage.setItem('curProjectName', curTName.value);
+                        window.sessionStorage.setItem('curProjectName',  Cname.value);
+                        fetchSelfInform();
+                        fetchCPList();
                     }
                     else {
                         message({
@@ -502,8 +506,10 @@ export default defineComponent( {
         };
 
         const updateDes = () => {
+            const holdDes = ref('');
+             holdDes.value = curDescription.value
             axios.post('/project/change_description', {
-                new_description: curDescription.value,
+                new_description: holdDes.value,
                 project_id: Number(window.sessionStorage.getItem('curProjectId'))
             })
                 .then((response) => {
@@ -513,7 +519,9 @@ export default defineComponent( {
                             type:'success'
                         })
                         console.log(response.data.message);
-                        window.sessionStorage.setItem('curProjectDes', curDescription.value)
+                        window.sessionStorage.setItem('curProjectDes', holdDes.value)
+                        console.log('检查curProjectDes更新', curDescription.value);
+                        fetchSelfInform();
                     }
                     else {
                         message({
@@ -554,6 +562,7 @@ export default defineComponent( {
             curDescription,
             updateVisable,
             fetchProjectList,
+            curTeamName,
             chooseCurProject,
             getTagClass,
             updateName,

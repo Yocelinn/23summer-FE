@@ -1,18 +1,33 @@
 <template>
     <div class="flex-container-pl">
         <span>
-            <h2>所有队员</h2>
+            <div style="font-size: 22px">团队项目</div>
         </span>
+
         <div class="align-right-pl">
             <!--            <span>-->
             <!--                -->
             <!--            </span>-->
             <!--            <el-divider class="custom-divider" direction="vertical" />-->
-            <span>
-                <d-button class="newProject-pl" @click="plNewPjVisable=true">
-                    邀请队员
-                </d-button>
-            </span>
+<!--            <div class="button-select">-->
+<!--                <button class="selected-button" @click="toggleDropdown">{{ selectedOption || placeholder }}</button>-->
+<!--                <div v-if="isDropdownVisible" class="dropdown" @click.stop>-->
+<!--                    <button-->
+<!--                            v-for="(option, index) in options"-->
+<!--                            :key="index"-->
+<!--                            class="option-button"-->
+<!--                            @click="selectOption(option)"-->
+<!--                    >-->
+<!--                        {{ option }}-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="selevt-input">
+                <d-input v-model="selectInputValue" autofocus placeholder="项目名称" @input="selectFor"></d-input>
+            </div>
+            <d-button class="newProject-pl" @click="plNewPjVisable=true">
+                新建项目
+            </d-button>
         </div>
 
         <d-modal v-model="plNewPjVisable">
@@ -51,29 +66,56 @@
 
     </div>
     <div class="table-container-pl">
-        <el-table class="table-pl" :data="personData" style="width: 100%" stripe="true" fit="true">
-            <el-table-column label="姓名">
+        <el-table class="table-pl" :data="projectData" style="width: 100%" stripe="true" fit="true">
+            <el-table-column>
+                <template #header>
+                    <el-button class="sortB1" @click="clickSortB1">
+                        项目名称
+                        <el-icon v-if="arrow11"><ArrowUp/></el-icon>
+                        <el-icon v-if="arrow1"><ArrowDown/></el-icon>
+                    </el-button>
+                </template>
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
-                        <span>{{ scope.row.name }}</span>
+                        <span>{{ scope.row.projectName }}</span>
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="昵称">
+            <!--            <el-table-column>-->
+            <!--                <template #header>-->
+            <!--                    <el-button class="sortB2" @click="clickSortB2">-->
+            <!--                        项目创建者-->
+            <!--                        <el-icon :name="arrow2"></el-icon>-->
+            <!--                    </el-button>-->
+            <!--                </template>-->
+            <!--                <template #default="scope">-->
+            <!--                    <div style="display: flex; align-items: center">-->
+            <!--                        <span>{{ scope.row.creator_name }}</span>-->
+            <!--                    </div>-->
+            <!--                </template>-->
+            <!--            </el-table-column>-->
+            <el-table-column>
+                <template #header>
+                    <el-button class="sortB2" @click="clickSortB2">
+                        创建时间
+                        <el-icon v-if="arrow21"><ArrowUp/></el-icon>
+                        <el-icon v-if="arrow2"><ArrowDown/></el-icon>
+                    </el-button>
+                </template>
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
-                        <span>{{ scope.row.nickname }}</span>
+                        <span>{{ scope.row.created_time }}</span>
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="邮箱">
-                <template #default="scope">
-                    <div style="display: flex; align-items: center">
-                        <span>{{ scope.row.email }}</span>
-                    </div>
+            <el-table-column>
+                <template #header>
+                    <el-button class="sortB3" @click="clickSortB3">
+                        最后修改时间
+                        <el-icon v-if="arrow31"><ArrowUp/></el-icon>
+                        <el-icon v-if="arrow3"><ArrowDown/></el-icon>
+                    </el-button>
                 </template>
-            </el-table-column>
-            <el-table-column label="身份">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
                         <span>{{ scope.row.updated_time }}</span>
@@ -83,12 +125,25 @@
             <el-table-column label="操作">
                 <template #default="scope">
                     <d-button
+                            class="copy"
+                            size="small"
+                            @click="copyProject(scope.$index, scope.row)"
+                    >
+                        复制项目
+                    </d-button>
+                    <d-button
+                            class="access-pl"
+                            size="small"
+                            @click="handleEdit(scope.$index, scope.row)">
+                        进入项目
+                    </d-button>
+                    <d-button
                             class="delete"
                             size="small"
                             type="danger"
                             @click="handleDelete(scope.$index, scope.row)"
                     >
-                        删除队员
+                        删除项目
                     </d-button>
                 </template>
             </el-table-column>
@@ -102,112 +157,36 @@ import { ElMessage } from 'element-plus';
 import axios from "axios";
 import router from "@/router";
 import {mapState, useStore, mapActions } from 'vuex';
+import {ArrowUp, ArrowDown} from "@element-plus/icons";
+// import {color} from "vue-devui/types/color-picker/src/utils/color";
 // import message from "@element-plus/icons/lib/Message";
 
 export default {
-    name: 'ManageTeam',
+    name: 'ProjectList',
+    components: {ArrowUp, ArrowDown},
     computed: {
         ...mapState(['projectData']),
-        ...mapState(['personData']),
         // 其他 computed properties
     },
 
     setup() {
         const store = useStore();
         const user = store.state.user;
-        // const curTeamId = store.state.curTeamId;
-        // const curTeamId = toRef(store.state, 'curTeamId');
         const curTeamId = window.sessionStorage.getItem('curTeamId');
         const curProjectId = ref('');
         const plNewPjVisable = ref(false);
-        // const projectData = store.state.projectData;
         const projectData = computed(() => {
             return store.state.projectData;
         });
-        const personData = computed(() => {
-            return store.state.personData;
-        })
-        // const projectData = ref([]);
-        // const projectData = [
-        //     {
-        //         project_id: 1,
-        //         projectName: "体通却者",
-        //         projectDescription: "",
-        //         creator_name: "难极理",
-        //         creator_id: 1,
-        //         created_time: "2023-08-25T07:10:22.887Z",
-        //         updated_time: "2023-08-25T07:10:22.897Z"
-        //     },
-        //     {
-        //         project_id: 1,
-        //         projectName: "体通却者",
-        //         projectDescription: "",
-        //         creator_name: "难极理",
-        //         creator_id: 1,
-        //         created_time: "2023-08-25T07:10:22.887Z",
-        //         updated_time: "2023-08-25T07:10:22.897Z"
-        //     },
-        //     {
-        //         project_id: 1,
-        //         projectName: "体通却者",
-        //         projectDescription: "",
-        //         creator_name: "难极理",
-        //         creator_id: 1,
-        //         created_time: "2023-08-25T07:10:22.887Z",
-        //         updated_time: "2023-08-25T07:10:22.897Z"
-        //     },
-        //     {
-        //         project_id: 1,
-        //         projectName: "体通却者",
-        //         projectDescription: "",
-        //         creator_name: "难极理",
-        //         creator_id: 1,
-        //         created_time: "2023-08-25T07:10:22.887Z",
-        //         updated_time: "2023-08-25T07:10:22.897Z"
-        //     },
-        //     {
-        //         project_id: 1,
-        //         projectName: "体通却者",
-        //         projectDescription: "",
-        //         creator_name: "难极理",
-        //         creator_id: 1,
-        //         created_time: "2023-08-25T07:10:22.887Z",
-        //         updated_time: "2023-08-25T07:10:22.897Z"
-        //     },
-        //     {
-        //         project_id: 1,
-        //         projectName: "体通却者",
-        //         projectDescription: "",
-        //         creator_name: "难极理",
-        //         creator_id: 1,
-        //         created_time: "2023-08-25T07:10:22.887Z",
-        //         updated_time: "2023-08-25T07:10:22.897Z"
-        //     },
-        // ];
         const newPjName = ref('');
         const newPjDes = ref('');
+
         const { fetchProjectList } = mapActions(['fetchProjectList']);
-        // const { createNewProject } = mapActions(['createNewProject']);
         const callFetchInProjectList = () => {
             console.log('PL', window.sessionStorage.getItem('curTeamId'));
             store.dispatch('fetchProjectList', window.sessionStorage.getItem('curTeamId'));
             console.log('PL检查', projectData);
         };
-
-
-        const { fetchTeammateList } = mapActions(['fetchProjectList']);
-        const callFetchTeammateList = () => {
-            console.log('TL', window.sessionStorage.getItem('curTeamId'));
-            store.dispatch('fetchTeammateList', window.sessionStorage.getItem('curTeamId'));
-            console.log('MT', personData.value);
-        };
-
-        // const callCreatNewProject = async () => {
-        //     const NewPjName = newPjName.value;
-        //     const NewPjDes = newPjDes.value;
-        //     await store.dispatch('createNewProject', { curTeamId, NewPjName, NewPjDes });
-        //     plNewPjVisable.value = false;
-        // }
         const createNewProject = () => {
             if (window.sessionStorage.getItem('curTeamId').value === -1) {
                 ElMessage({
@@ -256,7 +235,13 @@ export default {
                         plNewPjVisable.value = false;
                     });
             }
+            callFetchInProjectList();
         };
+
+
+        const isDropdownVisible = ref(false);
+
+        // 操作
 
         const handleEdit = (index, data) => {
             curProjectId.value = data.project_id;
@@ -298,48 +283,253 @@ export default {
                 });
         }
 
-        // const fetchProjectList = () => {
-        //     console.log('获取数据fetchProjectList' + curTeamId);
-        //     // console.log(curTeamId.value);
-        //     // console.log(curTeamId.value.value);
-        //     axios.post('/project/info', {
-        //         // team_id: curTeamId.value
-        //         team_id: curTeamId
-        //     })
-        //         .then((response) => {
-        //             console.log('Request Data:', response.config.data);
-        //             if (response.data.code === 200) {
-        //                 ElMessage( {
-        //                     message: '已获取团队项目',
-        //                     type: 'success'
-        //                 });
-        //                 console.log(response);
-        //                 projectData.value = response.data.projects;
-        //             }
-        //             else {
-        //                 ElMessage( {
-        //                     message: response.data.error + '请重试',
-        //                     type: 'error'
-        //                 });
-        //                 console.log(response);
-        //                 // console.log(curTeamId.value);
-        //             }
-        //         })
-        //         .catch((error) => {
-        //             ElMessage( {
-        //                 message: '获取团队项目失败，请重试',
-        //                 type: 'error'
-        //             });
-        //             console.log('POST request error:', error);
-        //             // console.log('未知错误', curTeamId.value);
-        //         });
+        const copyProject = (index, data) => {
+            axios.post('/project/copy', {
+                project_id: data.project_id
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
+                        callFetchInProjectList();
+                    }
+                    else {
+                        ElMessage({
+                            message: response.data.error,
+                            type: 'error'
+                        });
+                        console.log(response.config.data);
+                        console.log(response.data);
+                    }
+                })
+                .catch((error) => {
+                    ElMessage({
+                        message: '复制项目失败，请重试',
+                        type: 'error'
+                    });
+                    console.log(error.config.data);
+                })
+        }
+
+        // 排序
+
+        const sortFlag = ref('0');
+        const sortOption = ref('0');
+        const arrow1 = ref(false);
+        const arrow11 = ref(false);
+        const arrow2 = ref(false);
+        const arrow21 = ref(false);
+        const arrow3 = ref(false);
+        const arrow31 = ref(false);
+        // const arrow4 = ref('');
+        const clickSortB1 = () => {
+            // 处理flag
+            if (!(sortFlag.value === 2)) {
+                sortFlag.value = 2;
+                sortOption.value = 0;
+                arrow1.value = true;
+                arrow11.value = !arrow1.value;
+                arrow2.value = false;
+                arrow21.value = false;
+                arrow3.value = false;
+                arrow31.value = false;
+            }
+            else {
+                sortOption.value = (sortOption.value + 1) % 2;
+                arrow11.value = arrow1.value;
+                arrow1.value = !arrow1.value;
+            }
+            axios.post('/project/order', {
+                team_id: window.sessionStorage.getItem('curTeamId'),
+                type: sortFlag.value,
+                option: sortOption.value
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
+                        store.commit('setProjectData', response.data.projects);
+                    }
+                    else {
+                        ElMessage({
+                            message: response.data.error,
+                            type: 'error'
+                        });
+                        console.log(response.config.data);
+                        console.log(response.data);
+                    }
+                })
+                .catch((error) => {
+                    ElMessage({
+                        message: "排序错误，请重试",
+                        type: 'error'
+                    });
+                    console.log(error.config.data);
+                    console.log(error.data);
+                })
+        };
+        const clickSortB2 = () => {
+            // 处理flag
+            if (!(sortFlag.value === 0)) {
+                sortFlag.value = 0;
+                sortOption.value = 0;
+                arrow1.value = false;
+                arrow11.value = false;
+                arrow2.value = true;
+                arrow21.value = !arrow2.value;
+                arrow3.value = false;
+                arrow31.value = false;
+            }
+            else {
+                sortOption.value = (sortOption.value + 1) % 2;
+                arrow2.value = !arrow2.value;
+                arrow21.value = !arrow2.value;
+            }
+            axios.post('/project/order', {
+                team_id: window.sessionStorage.getItem('curTeamId'),
+                type: sortFlag.value,
+                option: sortOption.value
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
+                        store.commit('setProjectData', response.data.projects);
+                    }
+                    else {
+                        ElMessage({
+                            message: response.data.error,
+                            type: 'error'
+                        });
+                        console.log(response.config.data);
+                        console.log(response.data);
+                    }
+                })
+                .catch((error) => {
+                    ElMessage({
+                        message: "排序错误，请重试",
+                        type: 'error'
+                    });
+                    console.log(error.config.data);
+                    console.log(error.data);
+                })
+        };
+        const clickSortB3 = () => {
+            // 处理flag
+            if (!(sortFlag.value === 1)) {
+                sortFlag.value = 1;
+                sortOption.value = 0;
+                arrow1.value = false;
+                arrow11.value = false;
+                arrow2.value = false;
+                arrow21.value = false;
+                arrow3.value = true;
+                arrow31.value = !arrow3.value;
+            }
+            else {
+                sortOption.value = (sortOption.value + 1) % 2;
+                arrow3.value = !arrow3.value;
+                arrow31.value = !arrow3.value;
+            }
+            axios.post('/project/order', {
+                team_id: window.sessionStorage.getItem('curTeamId'),
+                type: sortFlag.value,
+                option: sortOption.value
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
+                        store.commit('setProjectData', response.data.projects);
+                    }
+                    else {
+                        ElMessage({
+                            message: response.data.error,
+                            type: 'error'
+                        });
+                        console.log(response.config.data);
+                        console.log(response.data);
+                    }
+                })
+                .catch((error) => {
+                    ElMessage({
+                        message: "排序错误，请重试",
+                        type: 'error'
+                    });
+                    console.log(error.config.data);
+                    console.log(error.data);
+                })
+        };
+        // const clickSortB1 = (1) => {
+        //
         // };
 
-        // provide('fetchProjectList', fetchProjectList);
-        // provide('test', 0);
+        //搜索
+        // const selectedOption = ref(null);
+        // const options = ref([
+        //     "项目名称",
+        //     "创建时间",
+        //     "最后修改时间"
+        // ]);
+        // const placeholder = ref('搜索类型');
+        //
+        // const selectInputValue = ref('');
+
+
+        // const checkType = ref('');
+        // const toggleDropdown = () => {
+        //     isDropdownVisible.value = !isDropdownVisible.value;
+        // };
+
+        // const selectOption = (option) => {
+        //     if (isDropdownVisible.value === true) {
+        //         selectedOption.value = option;
+        //         if (option.value === "项目名称")
+        //         isDropdownVisible.value = false;
+        //     }
+        // };
+        const selectInputValue = ref('');
+        const selectFor = () => {
+            axios.post('/project/find', {
+                key_word: selectInputValue.value
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'error'
+                        });
+                        store.commit('setProjectData', response.data.projects);
+                    }
+                    else {
+                        ElMessage({
+                            message: response.data.error,
+                            type: 'error'
+                        });
+                        console.log(response.config.data);
+                        console.log(response.data);
+                    }
+                })
+                .then((error) => {
+                    ElMessage({
+                        message: "查询失败，请重试",
+                        type: 'error'
+                    });
+                    console.log(error.config.data);
+                    console.log(error.data);
+                })
+        }
 
         onMounted(() => {
-            callFetchTeammateList();
+            // callFetchInProjectList();
         });
 
         return {
@@ -348,9 +538,28 @@ export default {
             curProjectId,
             plNewPjVisable,
             projectData,
-            personData,
             newPjName,
             newPjDes,
+            isDropdownVisible,
+            // selectedOption,
+            // options,
+            // placeholder,
+            // selectInputValue,
+            sortFlag,
+            sortOption,
+            arrow1,
+            arrow11,
+            arrow2,
+            arrow21,
+            arrow3,
+            arrow31,
+            clickSortB1,
+            clickSortB2,
+            clickSortB3,
+
+            // checkType,
+            // toggleDropdown,
+            // selectOption,
 
             createNewProject,
             fetchProjectList,
@@ -358,14 +567,120 @@ export default {
             // callCreatNewProject,
             handleEdit,
             handleDelete,
-            fetchTeammateList,
-            callFetchTeammateList
+            copyProject,
+
+            selectInputValue,
+            selectFor
         };
     },
 };
 </script>
 
 <style scoped>
+.sortB1,
+.sortB2,
+.sortB3
+{
+    width: 100%;
+    height: 100%;
+    border: hidden;
+}
+.sortB1:active,
+.sortB2:active,
+.sortB3:active
+{
+    width: 100%;
+    height: 100%;
+    border: hidden;
+    background-color: rgba(126, 124, 203, 0.34);
+    color: rgba(126, 124, 203, 0.34);
+}
+.sortB1:hover,
+.sortB2:hover,
+.sortB3:hover
+{
+    width: 100%;
+    height: 100%;
+    border: hidden;
+    background-color: rgba(158, 156, 244, 0.26);
+    color: #7E7CCB;
+}
+.sortB1:focus,
+.sortB2:focus,
+.sortB3:focus
+{
+    width: 100%;
+    height: 100%;
+    border: hidden;
+    background-color: rgba(126, 124, 203, 0.3);
+    color: #7E7CCB;
+}
+
+.selevt-input {
+    height: 35px;
+    width: 130px;
+    border-radius: 4px; /* 添加圆角半径 */
+    margin-right: 5px;
+    align-items: center;
+}
+
+/*!*.button-select {*!*/
+/*!*    position: relative;*!*/
+/*!*    display: inline-flex;*!*/
+/*!*    flex-direction: column;*!*/
+/*!*    align-items: flex-end; !* Right-align the items *!*!*/
+/*!*    margin-right: 5px;*!*/
+/*!*}*!*/
+
+/*!*.selected-button {*!*/
+/*!*    !*padding: 8px 12px;*!*!*/
+/*!*    border: 1px solid #ccc;*!*/
+/*!*    background-color: #fff;*!*/
+/*!*    cursor: pointer;*!*/
+/*!*    border-radius: 4px; !* 添加圆角半径 *!*!*/
+/*!*    height: 35px;*!*/
+/*!*    width: 85px;*!*/
+
+/*!*}*!*/
+
+/*!*.dropdown {*!*/
+/*!*    position: absolute;*!*/
+/*!*    margin-top: 3px;*!*/
+/*!*    top: 100%;*!*/
+/*!*    left: 0;*!*/
+/*!*    width: 120px;*!*/
+/*!*    border: 1px solid #ccc;*!*/
+/*!*    background-color: #fff;*!*/
+/*!*    border-radius: 4px; !* 添加圆角半径 *!*!*/
+/*!*    max-height: 150px; !* 设置最大高度 *!*!*/
+/*!*    overflow-y: auto; !* 设置纵向滚动 *!*!*/
+/*!*    z-index: 2; !* 设置较高的 z-index 值 *!*!*/
+/*!*}*!*/
+
+/*!*.dropdown::-webkit-scrollbar {*!*/
+/*!*    width: 8px; !* 滚动条宽度 *!*!*/
+/*!*}*!*/
+
+/*!*.dropdown::-webkit-scrollbar-thumb {*!*/
+/*!*    background-color: rgba(204, 204, 204, 0.24); !* 滚动条 thumb 颜色 *!*!*/
+/*!*    border-radius: 4px; !* thumb 圆角 *!*!*/
+/*!*}*!*/
+
+/*!*.option-button {*!*/
+/*!*    display: flex;*!*/
+/*!*    width: 100%;*!*/
+/*!*    padding: 8px 12px;*!*/
+/*!*    border: none;*!*/
+/*!*    background-color: transparent;*!*/
+/*!*    cursor: pointer;*!*/
+/*!*    text-align: left;*!*/
+/*!*    border-radius: 4px; !* 添加圆角半径 *!*!*/
+/*!*}*!*/
+
+/*!*.option-button:hover {*!*/
+/*!*    background-color: #f5f5f5;*!*/
+/*}*/
+
 .pl-button-d-c:hover,
 .pl-button-d-c:focus {
     border-style: solid;
@@ -427,21 +742,27 @@ export default {
     padding: 15px;
     overflow: auto;
     height: 570px;
+    width: 100%;
 }
 
 .table-container-pl {
     margin-top: -10px;
     margin-bottom: 30px;
+    z-index: 1; /* 设置较低的 z-index 值 */
 }
 
 .flex-container-pl {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 15px;
-}
+    padding: 15px;}
 
 .align-right-pl {
+    display: flex;
     margin-left: auto;
+    align-items: center;
+    white-space: nowrap;
+    flex-wrap: nowrap;
 }
 
 .newProject-pl:hover,
@@ -454,6 +775,7 @@ export default {
     transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Add border-color transition */}
 
 .newProject-pl {
+    display: inline-flex;
     font-size: 17px;
     height: 35px;
     width: 85px;
@@ -470,6 +792,11 @@ export default {
     border-color: #7E7CCB;
     color: #7E7CCB;
     transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Add border-color transition */
+}
+
+.selevt-input {
+    height: 35px;
+    width: 150px;
 }
 
 </style>
