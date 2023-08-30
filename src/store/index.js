@@ -21,8 +21,11 @@ export default createStore({
       // 清空projectData
       commit('setProjectData', []); // 清空数组
       try {
-        const response = await axios.post('/project/info', {
+        const response = await axios.post('/project/order', {
           team_id: Number(curTeamId),
+          type: 0,
+          option: 0
+
         });
         console.log(response.config.data);
         console.log(curTeamId)

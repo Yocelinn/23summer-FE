@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="selevt-input">
-                <d-input v-model="selectInputValue" autofocus @input="selectFor"></d-input>
+                <d-input v-model="selectInputValue" autofocus></d-input>
             </div>
             <d-button class="newProject-pl" @click="plNewPjVisable=true">
                 新建项目
@@ -475,12 +475,13 @@ export default {
         //搜索
         const selectedOption = ref(null);
         const options = ref([
-            "区分大小写",
-            "不区分大小写"
+            "项目名称",
+            "创建时间",
+            "最后修改时间"
         ]);
-        const placeholder = ref('大小写');
+        const placeholder = ref('搜索类型');
 
-        const checkType = ref(1);
+        const checkType = ref('');
         const toggleDropdown = () => {
             isDropdownVisible.value = !isDropdownVisible.value;
         };
@@ -488,13 +489,8 @@ export default {
         const selectOption = (option) => {
             if (isDropdownVisible.value === true) {
                 selectedOption.value = option;
-                   if (option === "区分大小写") {
-                       checkType.value = 0;
-                   }
-                   else {
-                       checkType.value = 1;
-                   }
-                isDropdownVisible.value = false;
+                if (option.value === "项目名称")
+                    isDropdownVisible.value = false;
             }
         };
 
@@ -503,8 +499,7 @@ export default {
             selectInputValue.value = newValue;
             console.log('检查输入', selectInputValue.value, newValue);
             axios.post('/project/find', {
-                key_word: selectInputValue.value,
-                options: checkType.value
+                key_word: selectInputValue.value
             })
                 .then((response) => {
                     if (response.data.code === 200) {
