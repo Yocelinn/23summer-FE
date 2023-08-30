@@ -13,14 +13,8 @@
 <script setup>
 import { QuillEditor, Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-<<<<<<< HEAD
 import { getCurrentInstance, reactive, ref, toRaw, computed, onMounted, watch, defineExpose } from "vue";
-=======
-import { getCurrentInstance, reactive, ref, toRaw, computed, onMounted, watch } from "vue";
->>>>>>> ignister
 // 引入插入图片标签自定义的类
-import './quill'
-import "quill-mention"
 
 // 注册图片拖拽和大小修改插件(不起效果暂时屏蔽)
 // import { ImageDrop } from 'quill-image-drop-module';
@@ -49,7 +43,6 @@ const props = defineProps({
     },
 })
 
-<<<<<<< HEAD
 defineExpose({
     changeContent: (newValue) => {
         if (myQuillEditor.value)
@@ -57,8 +50,6 @@ defineExpose({
     }
 })
 
-=======
->>>>>>> ignister
 const editContent = ref(props.content);
 
 const myQuillEditor = ref(null)
@@ -73,12 +64,7 @@ watch(props.content, (newVal, oldVal) => {
 const editorContent = computed({
     get: () => {
         // console.log(props.content,myQuillEditor);
-<<<<<<< HEAD
 
-=======
-        if (myQuillEditor.value)
-            myQuillEditor.value.setHTML(props.content);
->>>>>>> ignister
         return props.content;
     },
     set: (val) => {
