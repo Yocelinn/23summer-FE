@@ -123,7 +123,7 @@ export default defineComponent({
         <ElForm label-position="top" style="padding:30px">
           {content}
           <ElFormItem>
-            <ElButton type="primary" onclick={() => apply()}>
+            <ElButton color="#ca96ff" onclick={() => apply()}>
               应用
             </ElButton>
             <ElButton type="default" onclick={reset}>

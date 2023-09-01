@@ -37,7 +37,7 @@ const DiglogComponent = defineComponent({
                   <ElButton type="default" onclick={onCancel}>
                     取消
                   </ElButton>
-                  <ElButton type="primary" onclick={onConfirm}>
+                  <ElButton  color="#ca96ff" onclick={onConfirm}>
                     确定
                   </ElButton>
                 </div>

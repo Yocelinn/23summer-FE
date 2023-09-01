@@ -1,17 +1,23 @@
 import { computed, defineComponent, inject, ref } from 'vue'
 import '@/assets/css/editor.scss'
 import EditorBlock from './editor-block'
+// import EditorIcon from './editor-icon-item'
 import deepcopy from 'deepcopy'
 import { useMenuDragger } from './useMenuDragger'
 import { useFocus } from './useFocus'
+// 引入保存图片的函数
+import { savePicture } from './editor-picture'
 import { useBlockDargger } from './useBlockDargger'
 import { useCommand } from './useCommand.js'
-import { ElButton, ElMenu, ElMenuItem } from 'element-plus'
+import { ElButton, ElMenu, ElMenuItem, ElTabs, ElTabPane } from 'element-plus'
 import { useButtons } from './useButtons'
 import { onContextMenuBlock } from './useContextMenuBlock'
-import github from '../assets/github.png'
-import start from '../assets/start.png'
+// import logo from '../assets/logo.jpg'
+// import github from '../assets/github.png'
+// import start from '../assets/start.png'
 import EditorRight from './editor-right'
+
+
 export default defineComponent({
   props: {
     modelValue: {
@@ -40,6 +46,8 @@ export default defineComponent({
     }))
     // 接收config配置
     const config = inject('config')
+    // 接收图标列表
+    const iconConfig = inject('icon')
     const formDate = inject('formDate')
     const containerRef = ref(null)
     const selectedBoxRef = ref(null)
@@ -47,12 +55,17 @@ export default defineComponent({
     // 预览的状态控制，内容不能在操作，可以点击，输入内容，可以看效果
     const previewRef = ref(false)
     const editorRef = ref(true)
-    //右侧菜单默认index
+    // 左侧菜单默认index
+    const activeName = ref('components')
+    const leftSelect = (key, keypath) => {
+      activeName.value = key
+    }
+    // 右侧菜单默认index
     const rightActiveIndex = ref('1')
     const handelSelect = (key, keypath) => {
       rightActiveIndex.value = key
     }
-    //1.实现菜单的拖拽功能
+    // 1.实现菜单的拖拽功能
     const { dragstart, dragend } = useMenuDragger(data, containerRef)
     // 2.实现获取焦点的功能,或直接拖拽
     const { blockMousedown, containerMousedown, focusData, lastSelectBlock, clearBlockFocus } = useFocus(data, containerRef, selectedBoxRef, canvasRef, previewRef, e => {
@@ -60,10 +73,12 @@ export default defineComponent({
     })
     // 3.实现拖拽多个元素的功能
     const { mousedown, markLine } = useBlockDargger(focusData, lastSelectBlock, data)
+    // 4.实现保存为图片的功能
+    const { saveImg } = savePicture(containerRef)
     // 命令库
     const { commands } = useCommand(data, focusData)
     // 按钮库
-    const buttons = useButtons(data, commands, previewRef, editorRef, clearBlockFocus)
+    const buttons = useButtons(data, commands, previewRef, editorRef, clearBlockFocus, saveImg)
     return () =>
       !editorRef.value ? (
         <>
@@ -74,7 +89,7 @@ export default defineComponent({
             ))}
           </div>
           <span>
-            <ElButton type="primary" onClick={() => (editorRef.value = true)}>
+            <ElButton color="#ca96ff" onClick={() => (editorRef.value = true)}>
               继续编辑
             </ElButton>
           </span>
@@ -82,17 +97,37 @@ export default defineComponent({
       ) : (
         <div class="editor">
           <div class="editor-left">
-            <div class="topTitle">组件</div>
-            {/* 根据注册列表渲染对应预览元素 */}
-            {config.componentList.map(component => (
-              // dragstart: 用户开始拖拉元素的时候触发
-              // drag:元素拖动过程中触发
-              // dragend: 用户完成元素拖动后触发
-              <div class="editor-left-item" draggable ondragstart={e => dragstart(e, component)} ondragend={dragend}>
-                <span>{component.label} </span>
-                <div>{component.preview()} </div>
-              </div>
-            ))}
+            <ElTabs v-model={activeName} tab-click={leftSelect} stretch>
+              <ElTabPane label="组件" name="components" >
+              <div class="topTitle">组件</div>
+                {/* 根据注册列表渲染对应预览元素 */}
+                {config.componentList.map(component => (
+                  // dragstart: 用户开始拖拉元素的时候触发
+                  // drag:元素拖动过程中触发
+                  // dragend: 用户完成元素拖动后触发
+                  <div class="editor-left-item" draggable ondragstart={e => dragstart(e, component)} ondragend={dragend}>
+                    <span>{component.label} </span>
+                    <div>{component.preview()} </div>
+                  </div>
+                ))}
+              </ElTabPane>
+              <ElTabPane label="图标" name="icons">
+                <div class="topTitle">图标</div>
+                <div class="editor-left-icon" >
+                  {/* 根据注册列表渲染对应预览元素 */}
+                  {iconConfig.iconList.map(component => (
+                    // dragstart: 用户开始拖拉元素的时候触发
+                    // drag:元素拖动过程中触发
+                    // dragend: 用户完成元素拖动后触发
+                  <div>
+                    {/* <span>{component.label} </span> */}
+                    <div draggable ondragstart={e => dragstart(e, component)} ondragend={dragend}>{component.preview()} </div>
+                  </div>
+                ))}
+                </div>
+              </ElTabPane>
+            </ElTabs>
+            
           </div>
 
           <div class="editor-top">
@@ -108,28 +143,6 @@ export default defineComponent({
                 </div>
               )
             })}
-            <img
-              src={github}
-              alt="代码仓库"
-              title="代码仓库"
-              width="40"
-              height="40"
-              class="editor-top-rightImg1"
-              onClick={() => {
-                window.location = 'https://github.com/b996a/vue-visual-editor'
-              }}
-            />
-            <img
-              src={start}
-              alt="演示页面"
-              title="演示页面"
-              width="40"
-              height="40"
-              class="editor-top-rightImg2"
-              onClick={() => {
-                window.location = 'http://www.e.wwtcm.xyz/'
-              }}
-            />
           </div>
           <div class="editor-right">
             {/* <div class="topTitle">组件属性</div>
@@ -170,6 +183,19 @@ export default defineComponent({
                     previewRef={previewRef}
                   ></EditorBlock>
                 ))}
+                {data.value.blocks.map((block, index) => (
+                  <EditorBlock
+                    class={block.focus ? 'editor-block-focus' : previewRef.value ? 'editor-block-preview' : ''}
+                    block={block}
+                    formData={formDate}
+                    onMousedown={e => {
+                      blockMousedown(e, block, index)
+                    }}
+                    onContextmenu={e => onContextMenuBlock(e, block, commands)}
+                    previewRef={previewRef}
+                  ></EditorBlock>
+                ))}
+                
                 {markLine.x !== null && <div class="line-x" style={{ left: markLine.x + 'px' }}></div>}
                 {markLine.y !== null && <div class="line-y" style={{ top: markLine.y + 'px' }}></div>}
                 <div class="selected-box" ref={selectedBoxRef}></div>

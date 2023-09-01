@@ -88,6 +88,13 @@
       "font_class": "forward",
       "unicode": "e671",
       "unicode_decimal": 58993
+    },
+    {
+      "icon_id": "658956",
+      "name": "图片",
+      "font_class": "tupian",
+      "unicode": "e67f",
+      "unicode_decimal": 59007
     }
   ]
 }

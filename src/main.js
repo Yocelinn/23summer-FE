@@ -38,6 +38,9 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import VueDragResizeRotate from "@gausszhou/vue3-drag-resize-rotate";
 import "@gausszhou/vue3-drag-resize-rotate/lib/bundle.esm.css";
 
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import 'animate.css'
+
 axios.defaults.baseURL='http://81.70.184.77:8000'
 axios.interceptors.request.use(
     config => {
@@ -51,6 +54,11 @@ const app= createApp(App)
 Object.keys(icons).forEach(key => {
     app.component(key, icons[key])
 })
+
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+  }
+
 ThemeServiceInit({ infinityTheme }, 'infinityTheme');
 
 import { ElMessage } from 'element-plus';

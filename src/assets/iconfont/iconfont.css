@@ -9,6 +9,9 @@
         url('iconfont.ttf?t=1610438286453') format('truetype'),
         /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
         url('iconfont.svg?t=1610438286453#iconfont') format('svg');
+        src: url('iconfont.woff2?t=1693501077385') format('woff2'),
+        url('iconfont.woff?t=1693501077385') format('woff'),
+        url('iconfont.ttf?t=1693501077385') format('truetype');
     /* iOS 4.1- */
 }
 [class*='icon-'] {
@@ -69,4 +72,8 @@
 
 .icon-Plus:before {
     content: "\e60b";
+}
+
+.icon-tupian:before {
+    content: "\e67f";
 }

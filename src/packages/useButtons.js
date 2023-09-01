@@ -1,6 +1,6 @@
 import { $dialog } from '@/components/Dialog'
 
-export function useButtons(data, commands, previewRef, editorRef, clearBlockFocus) {
+export function useButtons(data, commands, previewRef, editorRef, clearBlockFocus, saveImg) {
   const buttons = [
     {
       label: '撤销',
@@ -17,13 +17,43 @@ export function useButtons(data, commands, previewRef, editorRef, clearBlockFocu
       }
     },
     {
-      label: '导出',
+      "label": '导出',
       icon: 'icon-export',
       handler: () => {
         $dialog({
           title: '导出json数据',
           content: JSON.stringify(data.value),
-          footer: false
+          "footer": true,
+          onConfirm: () => {
+            $dialog({
+              title: '下载js文件',
+              footer: true,
+              default: false,
+              onConfirm: () => {
+                var a = document.createElement('a');
+                a.download = "export_prototype.js";
+                a.style.display = "none";
+                // console.log(data.value)
+                var jsCode = `var exportedData = ${JSON.stringify(data.value, null, 2)};`;
+                var blob = new Blob([jsCode], { type: "application/javascript" });
+                a.href = URL.createObjectURL(blob);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              },
+              // onCancel: () => {
+              //   var a = document.createElement('a');
+              //   a.download = "export_prototype.json";
+              //   a.style.display="none";
+              //   var dat = JSON.stringify(data.value,null,4);
+              //   var blob = new Blob([dat],{type:"Application/json"});
+              //   a.href = URL.createObjectURL(blob);
+              //   document.body.appendChild(a);
+              //   a.click();
+              //   document.body.removeChild(a);
+              // }
+            })
+          }
         })
       }
     },
@@ -88,7 +118,14 @@ export function useButtons(data, commands, previewRef, editorRef, clearBlockFocu
         editorRef.value = false
         clearBlockFocus()
       }
-    }
+    },
+    {
+      label: '图片',
+      icon: 'icon-tupian',
+      handler: () => {
+        saveImg()
+      }
+    },
   ]
   return buttons
 }

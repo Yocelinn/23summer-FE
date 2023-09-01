@@ -40,7 +40,7 @@ export default defineComponent({
             </ElSelect>
           </ElFormItem>
           <ElFormItem>
-            <ElButton type="primary" onclick={() => apply()}>
+            <ElButton color="#ca96ff" onclick={() => apply()}>
               应用
             </ElButton>
             <ElButton  onclick={() => reset()}>

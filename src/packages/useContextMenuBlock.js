@@ -1,6 +1,6 @@
 import { $dropdown, DropdownItem } from '@/components/Dropdown'
 import { $dialog } from '@/components/Dialog'
-export const onContextMenuBlock = (e, block, commands) => {
+export const onContextMenuBlock = (e, block, commands, saveImg) => {
   e.preventDefault()
   $dropdown({
     el: e.target, //以目标元素位置生成组件
@@ -59,6 +59,13 @@ export const onContextMenuBlock = (e, block, commands) => {
                   commands.updataBlock(text, block)
                 }
               })
+            }}
+          ></DropdownItem>
+          <DropdownItem
+            label="图片"
+            icon="icon-tupian"
+            onClick={() => {
+              saveImg
             }}
           ></DropdownItem>
         </>
