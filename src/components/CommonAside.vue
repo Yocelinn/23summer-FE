@@ -9,7 +9,7 @@
         @close="handleClose"
       >
         <h2>文档管理</h2>
-        <router-link to="/documentadmin">
+        <router-link to="/person/protectCenter">
           <el-menu-item index="3">
           <el-icon><document /></el-icon>
           <span>返回项目</span>
@@ -43,9 +43,9 @@ export default{
 }
 </script>
 
-<style>
+<style scoped>
 .tac {
-  /*height: 93vh;*/
+  height: 93vh;
 }
 
 .el-menu {

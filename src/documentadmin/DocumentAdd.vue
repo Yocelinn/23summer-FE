@@ -1,41 +1,41 @@
 <template>
   <div class="common-layout">
-    <el-container>
-      <el-aside width="180px">
+    <el-container class="container-all">
+      <el-aside width="13vw">
         <CommonAside></CommonAside>
       </el-aside>
-      <el-container>
+      <el-container class="big-container">
         <div class="header" style="margin: 0; padding: 0;">
           <el-header>
-            <div class="headerleft" style="display: flex; margin-top: 0;">
+            <div class="headerleft" style="margin-top: 0;">
               <router-link to="/documentadmin">
                 <el-button size="mini" color="#545c64">返回管理页</el-button>
               </router-link>
-              <el-button type="info" style="margin-top: 0;margin-left: 800px;" color="#545c64"
-                  @click="this.dialogFormVisible = true">分享文档</el-button>
-                <el-dialog v-model="this.dialogFormVisible" title="分享文档">
-                  <el-form :model="form">
-                    <el-form-item label="分享文档链接：" :label-width="this.formLabelWidth">
-                      {{this.link}}
-                    </el-form-item>
-                    <el-form-item label="Zones" :label-width="this.formLabelWidth">
-                      <el-select v-model="this.tourist" placeholder="游客是否能编辑文档">
-                        <el-option label="游客能编辑文档" value="can"/>
-                        <el-option label="游客不能编辑文档" value="cant" />
-                      </el-select>
-                    </el-form-item>
-                  </el-form>
-                  <template #footer>
+              <el-button type="info" style="margin-top: 0;margin-left: 795px;" color="#545c64"
+                         @click="this.dialogFormVisible = true">分享文档</el-button>
+              <el-dialog v-model="this.dialogFormVisible" title="分享文档">
+                <el-form :model="form">
+                  <el-form-item label="分享文档链接：" :label-width="this.formLabelWidth">
+                    {{this.link}}
+                  </el-form-item>
+                  <el-form-item label="Zones" :label-width="this.formLabelWidth">
+                    <el-select v-model="this.tourist" placeholder="游客是否能编辑文档">
+                      <el-option label="游客能编辑文档" value="can"/>
+                      <el-option label="游客不能编辑文档" value="cant" />
+                    </el-select>
+                  </el-form-item>
+                </el-form>
+                <template #footer>
                     <span class="dialog-footer">
                       <el-button type="primary" @click="dialogFormVisible = false">取消</el-button>
                       <el-button type="primary" @click="sharedocs">
                         分享
                       </el-button>
                     </span>
-                  </template>
-                </el-dialog>
-                <el-dropdown>
-                <el-button color="#545c64">
+                </template>
+              </el-dialog>
+              <el-dropdown>
+                <el-button color="#545c64" style="margin-left: 5px">
                   导出文档<el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </el-button>
                 <template #dropdown>
@@ -49,38 +49,32 @@
             </div>
           </el-header>
         </div>
-        <el-header>
-        </el-header>
-        <div>
-          <div style="position: absolute;width:200px;top:100px">
-            <el-card class="box-card" style="position: absolute;height:650px;width:200px;background-color: rgba(255, 255, 255, 0.85);left:20px">
+        <!--        <el-header>-->
+        <!--        </el-header>-->
+        <div class="small-container">
+          <div class="card1" style="width: 20%; flex: 1; height: 100%">
+            <el-card class="box-card" style="background-color: rgba(255, 255, 255, 0.85); height: 100%">
               <div slot="header" class="clearfix">
                 <h3>文档操作区</h3>
                 <h4>文档名:<span>{{ this.doc_name }}</span></h4>
               </div>
               <div>
-                <el-button type="info" style="position: absolute;left: 20px;top:125px;" @click="docsedit">保存文档</el-button>
-                <el-input v-model="doc_name1" placeholder="请输入文档名称"
-                  style="position: absolute;left: 20px;top:165px;width:158px"></el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:200px;"
-                  @click="docscreate">创建新文档</el-button>
-                <el-input v-model="doc_id1" placeholder="请输入文档id"
-                  style="position: absolute;left: 20px;top:265px;width:158px">
-                </el-input>
-                <el-button type="info" style="position: absolute;left: 20px;top:300px;"
-                  @click="docsserach">编辑指定文档</el-button>
+                <el-button type="info"  @click="docsedit">保存文档</el-button>
+                <el-input v-model="doc_name1" placeholder="请输入文档名称"></el-input>
+                <el-button type="info" @click="docscreate">创建新文档</el-button>
+                <el-input v-model="doc_id1" placeholder="请输入文档id"></el-input>
+                <el-button type="info" @click="docsserach">编辑指定文档</el-button>
               </div>
             </el-card>
           </div>
-          <div class="edit_container" style="width: 900px;left:420px; top:100px"  @keyup="handkeKeyUp" @keydown="handleKeyDown">
-            <QuillEditor id="editorId" ref="myQuillEditor" :content="editorContent" contentType="html"
-              @updateContent="update" :options="options" style="width: 800px;left:420px; top:160px; height: 800px"  />
+          <div class="edit_container" style="width: 60%; flex: 3; max-height: 100%" @keyup="handkeKeyUp" @keydown="handleKeyDown">
+            <QuillEditor id="editorId" ref="myQuillEditor" :content="editorContent" contentType="html" @updateContent="update" :options="options" style="max-height: 100%"/>
           </div>
-          <div class="templateuse">
-            <el-card class="templatecard" style="position: absolute;height:650px;width:200px;top:100px;background-color: rgba(255, 255, 255, 0.85);left:1350px" >
+          <div class="card2" style="width: 20%; flex: 1; height: 100%">
+            <el-card class="box-card2" style="background-color: rgba(255, 255, 255, 0.85); height: 100%" >
               <div>
                 <div slot="header" class="clearfix">
-                <h3>文档模板</h3>
+                  <h3>文档模板</h3>
                 </div>
                 <el-collapse v-model="activeName" accordion>
                   <el-collapse-item title="项目计划" name="1">
@@ -89,11 +83,11 @@
                     </div>
                     <div>
                       <el-button
-                          :key='primary'
-                          :type='primary'
-                          @click="model1"
-                          link
-                          >点我使用该模板</el-button>
+                              :key='primary'
+                              :type='primary'
+                              @click="model1"
+                              link
+                      >点我使用该模板</el-button>
                     </div>
                   </el-collapse-item>
                   <el-collapse-item title="会议纪要" name="2">
@@ -102,11 +96,11 @@
                     </div>
                     <div>
                       <el-button
-                          :key='primary'
-                          :type='primary'
-                          @click="model2"
-                          link
-                          >点我使用该模板</el-button>
+                              :key='primary'
+                              :type='primary'
+                              @click="model2"
+                              link
+                      >点我使用该模板</el-button>
                     </div>
                   </el-collapse-item>
                   <el-collapse-item title="项目管理" name="3">
@@ -115,11 +109,11 @@
                     </div>
                     <div>
                       <el-button
-                          :key='primary'
-                          :type='primary'
-                          @click="model3"
-                          link
-                          >点我使用该模板</el-button>
+                              :key='primary'
+                              :type='primary'
+                              @click="model3"
+                              link
+                      >点我使用该模板</el-button>
                     </div>
                   </el-collapse-item>
                   <el-collapse-item title="工作周报" name="4">
@@ -128,11 +122,11 @@
                     </div>
                     <div>
                       <el-button
-                          :key='primary'
-                          :type='primary'
-                          @click="model4"
-                          link
-                          >点我使用该模板</el-button>
+                              :key='primary'
+                              :type='primary'
+                              @click="model4"
+                              link
+                      >点我使用该模板</el-button>
                     </div>
                   </el-collapse-item>
                   <el-collapse-item title="需求调研报告" name="5">
@@ -141,11 +135,11 @@
                     </div>
                     <div>
                       <el-button
-                          :key='primary'
-                          :type='primary'
-                          @click="model5"
-                          link
-                          >点我使用该模板</el-button>
+                              :key='primary'
+                              :type='primary'
+                              @click="model5"
+                              link
+                      >点我使用该模板</el-button>
                     </div>
                   </el-collapse-item>
                   <el-collapse-item title="需求规格说明书" name="6">
@@ -154,11 +148,11 @@
                     </div>
                     <div>
                       <el-button
-                          :key='primary'
-                          :type='primary'
-                          @click="model6"
-                          link
-                          >点我使用该模板</el-button>
+                              :key='primary'
+                              :type='primary'
+                              @click="model6"
+                              link
+                      >点我使用该模板</el-button>
                     </div>
                   </el-collapse-item>
                   <el-collapse-item title="架构设计说明书" name="7">
@@ -167,11 +161,11 @@
                     </div>
                     <div>
                       <el-button
-                          :key='primary'
-                          :type='primary'
-                          @click="model7"
-                          link
-                          >点我使用该模板</el-button>
+                              :key='primary'
+                              :type='primary'
+                              @click="model7"
+                              link
+                      >点我使用该模板</el-button>
                     </div>
                   </el-collapse-item>
                 </el-collapse>
@@ -263,64 +257,64 @@ export default {
       const documentid = this.$route.params.id;
       if(this.project_id != null)
       {
-      axios.post('/doc/doc_search',{
-        "project_id": Number(this.project_id),
-        "doc_id": documentid,
-      })
-      .then(async (response) => {
-        this.editorContent = response.data.content;
-        await this.$refs.myQuillEditor.changeContent(this.editorContent);
-        this.doc_name = response.data.doc_name;
-        console.log("did", this.doc_id);
-        console.log("content", this.editorContent);
-        console.log("dname", this.doc_name);
-      })
+        axios.post('/doc/doc_search',{
+          "project_id": Number(this.project_id),
+          "doc_id": documentid,
+        })
+                .then(async (response) => {
+                  this.editorContent = response.data.content;
+                  await this.$refs.myQuillEditor.changeContent(this.editorContent);
+                  this.doc_name = response.data.doc_name;
+                  console.log("did", this.doc_id);
+                  console.log("content", this.editorContent);
+                  console.log("dname", this.doc_name);
+                })
       }
       else{
         axios.get('/doc/decode/'+ documentid)
-        .then((response)=>{
-          this.perm = response.data.res.perm;
-          this.doc_id = response.data.res.doc_id;
-          console.log(response.data.res.perm);
-          console.log(response.data.res.doc_id);
-          console.log(this.perm)
-          console.log(this.doc_id)
-          axios.post(('/doc/view'),
-          {
-            "doc_id": this.doc_id,
-          })
-          .then((response1)=>{
-            this.project_id = response1.data.doc_project;
-            this.editorContent = response1.data.content;
-            this.$refs.myQuillEditor.changeContent( this.editorContent );
-          });
-        });
+                .then((response)=>{
+                  this.perm = response.data.res.perm;
+                  this.doc_id = response.data.res.doc_id;
+                  console.log(response.data.res.perm);
+                  console.log(response.data.res.doc_id);
+                  console.log(this.perm)
+                  console.log(this.doc_id)
+                  axios.post(('/doc/view'),
+                          {
+                            "doc_id": this.doc_id,
+                          })
+                          .then((response1)=>{
+                            this.project_id = response1.data.doc_project;
+                            this.editorContent = response1.data.content;
+                            this.$refs.myQuillEditor.changeContent( this.editorContent );
+                          });
+                });
       }
     },
     docsedit() {
       if(this.$store.state.isLoggedIn==true || (this.$store.state.isLoggedIn ==false)&&this.perm == 1){
 
-      axios.post('/doc/edit', {
-        "doc_id": this.doc_id,
-        "content": this.editorContent,
-      })
-        .then((response) => {
-          console.log(this.doc_id);
-          console.log(response.data.doc_id);
-          console.log(this.editorContent);
-          ElNotification({
-            title: 'success',
-            message: '保存文档成功',
-            type: 'edit',
-          });
-        })}
-        else{
-          ElNotification({
-            title: 'fail',
-            message: '您没有编辑的权限',
-            type: 'editfail',
-          });
-        }
+        axios.post('/doc/edit', {
+          "doc_id": this.doc_id,
+          "content": this.editorContent,
+        })
+                .then((response) => {
+                  console.log(this.doc_id);
+                  console.log(response.data.doc_id);
+                  console.log(this.editorContent);
+                  ElNotification({
+                    title: 'success',
+                    message: '保存文档成功',
+                    type: 'edit',
+                  });
+                })}
+      else{
+        ElNotification({
+          title: 'fail',
+          message: '您没有编辑的权限',
+          type: 'editfail',
+        });
+      }
     },
     update(newValue) {
       console.log('test')
@@ -330,139 +324,139 @@ export default {
     docscreate() {
       if(this.$store.state.isLoggedIn == true)
       {
-      console.log(this.editorContent);
-      console.log(this.doc_id);
-      axios.post('/doc/create', {
-        "doc_name": this.doc_name1,
-        "project_id": this.project_id,
-      })
-        .then((response) => {
-          this.doc_id = response.data.doc_id;
-          this.$router.push(`/documentadmin/${this.doc_id}`);
-          this.editorContent = '请于此处开始编辑';
-          this.$refs.myQuillEditor.changeContent( this.editorContent );
-          console.log(this.editorContent);
-          console.log(this.doc_id);
-          ElNotification({
-            title: 'success',
-            message: '新建文档成功，现在可以开始编辑了',
-            type: 'create',
-          });
-        }
-        )}
+        console.log(this.editorContent);
+        console.log(this.doc_id);
+        axios.post('/doc/create', {
+          "doc_name": this.doc_name1,
+          "project_id": this.project_id,
+        })
+                .then((response) => {
+                          this.doc_id = response.data.doc_id;
+                          this.$router.push(`/documentadmin/${this.doc_id}`);
+                          this.editorContent = '请于此处开始编辑';
+                          this.$refs.myQuillEditor.changeContent( this.editorContent );
+                          console.log(this.editorContent);
+                          console.log(this.doc_id);
+                          ElNotification({
+                            title: 'success',
+                            message: '新建文档成功，现在可以开始编辑了',
+                            type: 'create',
+                          });
+                        }
+                )}
       else{
         ElNotification({
-            title: 'fail',
-            message: '您没有新建文档的权限',
-            type: 'createfail',
-          });
+          title: 'fail',
+          message: '您没有新建文档的权限',
+          type: 'createfail',
+        });
       }
     },
     docsdelete() {
       if(this.$store.state.isLoggedIn == true)
       {
-      axios.post('/doc/delete',
-        {
-          "doc_id": this.doc_id2,
-        })
-        .then((response) => {
-          console.log(this.doc_id2)
-          console.log(response.data.message);
-          this.doc_id2 = '';
-          ElNotification({
-            title: 'success',
-            message: '删除文档成功',
-            type: 'delete',
-          });
-        }
-        )}
+        axios.post('/doc/delete',
+                {
+                  "doc_id": this.doc_id2,
+                })
+                .then((response) => {
+                          console.log(this.doc_id2)
+                          console.log(response.data.message);
+                          this.doc_id2 = '';
+                          ElNotification({
+                            title: 'success',
+                            message: '删除文档成功',
+                            type: 'delete',
+                          });
+                        }
+                )}
       else{
         ElNotification({
-            title: 'fail',
-            message: '您没有删除文档的权限',
-            type: 'deletefail',
-          });
+          title: 'fail',
+          message: '您没有删除文档的权限',
+          type: 'deletefail',
+        });
       }
     },
     docsserach() {
       if(this.$store.state.isLoggedIn == true)
       {
-      axios.post('/doc/doc_search',
-        {
-          "project_id": Number(this.project_id),
-          "doc_id": this.doc_id1,
-        })
-        .then((response) => {
-          console.log(this.doc_id1);
-          console.log(response.data.content);
-          this.editorContent = response.data.content;
-          this.$refs.myQuillEditor.changeContent( this.editorContent );
-          this.$router.push(`/documentadmin/${this.doc_id1}`);
-          this.doc_id1='';
-        }
-        )}
-        else{
-          ElNotification({
-            title: 'fail',
-            message: '您没有查看其他文档的权限的权限',
-            type: 'serachfail',
-          });
-        }
+        axios.post('/doc/doc_search',
+                {
+                  "project_id": Number(this.project_id),
+                  "doc_id": this.doc_id1,
+                })
+                .then((response) => {
+                          console.log(this.doc_id1);
+                          console.log(response.data.content);
+                          this.editorContent = response.data.content;
+                          this.$refs.myQuillEditor.changeContent( this.editorContent );
+                          this.$router.push(`/documentadmin/${this.doc_id1}`);
+                          this.doc_id1='';
+                        }
+                )}
+      else{
+        ElNotification({
+          title: 'fail',
+          message: '您没有查看其他文档的权限的权限',
+          type: 'serachfail',
+        });
+      }
     },
     sharedocs(){
       console.log(this.$store.state.isLoggedIn);
       console.log(window.sessionStorage.getItem('curRoleNum'));
       if(this.$store.state.isLoggedIn === true)
       {
-      this.dialogFormVisible=false;
-      if(window.sessionStorage.getItem('curRoleNum')=='0'||window.sessionStorage.getItem('curRoleNum')=='1')
-      {
-        if(this.tourist=='游客不能编辑文档')
+        this.dialogFormVisible=false;
+        if(window.sessionStorage.getItem('curRoleNum')=='0'||window.sessionStorage.getItem('curRoleNum')=='1')
         {
-         axios.post('/doc/link',
-         {
-            "doc_id": this.doc_id,
-            "perm": Number('0'),
-         })
-         .then((response) => {
-          this.link='http://localhost:8080/documentadmin/'+ response.data.doc_token;
-          console.log(this.link);
-          this.copyText();
-          this.link='/documandadmin/token'
-         })
-        ElNotification({
-          title: '已复制链接',
-          message: '现在已经可以将链接分享给游客了(游客不能编辑)',
-          type: 'cant',
-        })
+          if(this.tourist=='游客不能编辑文档')
+          {
+            axios.post('/doc/link',
+                    {
+                      "doc_id": this.doc_id,
+                      "perm": Number('0'),
+                    })
+                    .then((response) => {
+                      this.link='http://localhost:8080/documentadmin/'+ response.data.doc_token;
+                      console.log(this.link);
+                      this.copyText();
+                      this.link='/documandadmin/token'
+                    })
+            ElNotification({
+              title: '已复制链接',
+              message: '现在已经可以将链接分享给游客了(游客不能编辑)',
+              type: 'cant',
+            })
+          }
+          else(this.tourist=='游客能编辑文档')
+          {
+            axios.post('/doc/link',
+                    {
+                      "doc_id": this.doc_id,
+                      "perm": Number('1'),
+                    })
+                    .then((response) => {
+                      this.link='http://localhost:8080/documentadmin/'+ response.data.doc_token;
+                      console.log(this.link);
+                      this.copyText();
+                      this.link='/documandadmin/token';
+                    })
+            ElNotification({
+              title: '已复制链接',
+              message: '现在已经可以将链接分享给游客了(游客可以编辑)',
+              type: 'can',
+            })
+          }
         }
-        else(this.tourist=='游客能编辑文档')
-        {
-         axios.post('/doc/link',
-         {
-            "doc_id": this.doc_id,
-            "perm": Number('1'),
-         })
-         .then((response) => {
-          this.link='http://localhost:8080/documentadmin/'+ response.data.doc_token;
-          console.log(this.link);
-          this.copyText();
-          this.link='/documandadmin/token';
-         })
-        ElNotification({
-          title: '已复制链接',
-          message: '现在已经可以将链接分享给游客了(游客可以编辑)',
-          type: 'can',
-        })
+        else{
+          ElNotification({
+            title: 'fail',
+            message: '您没有分享文档的权限',
+            type: 'sharefail',
+          })
         }
-      }
-      else{
-        ElNotification({
-          title: 'fail',
-          message: '您没有分享文档的权限',
-          type: 'sharefail',
-        })
-      }
       }
       else{
         ElNotification({
@@ -475,22 +469,46 @@ export default {
     copyText(){
       navigator.clipboard.writeText(this.link).then(() => {
       });
-      },
+    },
   },
 }
 </script>
 
-<style>
+<style scoped>
+.container-all {
+
+  display: flex;
+  /*flex-direction: column; !* 垂直布局 *!*/
+  justify-content: space-between;
+  /*align-items: center; !* 如果需要水平居中对齐，可以添加这行 *!*/
+}
+
+.big-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column; /* 垂直布局 */
+  /*align-items: center;*/
+  width: 10%;
+}
+
+.small-container {
+  display: flex;
+  justify-content: space-between;
+  /*align-items: center;*/
+  margin: 10px;
+}
+
 .common-layout {
-  height: 93%;
+  height: calc(100vh - 50px);
   width: 100vw;
 }
+
 
 .bgbox {
   display: block;
   opacity: 1;
   z-index: -3;
-  position: fixed;
+  /*position: fixed;*/
   left: 0;
   top: 0;
   width: 100%;
@@ -501,10 +519,9 @@ export default {
 }
 
 .edit_container {
-  height: 100%;
-  margin-top: 0px;
-  margin-right: 40px;
-  position: absolute;
+  /*height: 100%;*/
+  margin: 0 10px;
+  /*position: absolute;*/
 }
 
 .headerleft h3 {

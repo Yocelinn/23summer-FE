@@ -6,10 +6,9 @@
     <div class="editor">
         <QuillEditor id="editorId" ref="myQuillEditor" v-model:content="editorContent" contentType="html"
             @update:content="onContentChange" :options="options" />
-        <!-- <QuillEditor theme="snow" :content="props.content" contentType="html"/> -->
     </div>
 </template>
-   
+
 <script setup>
 import { QuillEditor, Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -251,7 +250,7 @@ onMounted(() => {
 })
 </script>
   //通过css样式来汉化
-<style>
+<style scoped>
 .editor,
 .ql-toolbar {
     white-space: pre-wrap !important;
@@ -264,7 +263,7 @@ onMounted(() => {
 
 .ql-editor {
     min-height: 200px;
-    max-height: 600px;
+    max-height: 100%;
     overflow: auto;
 }
 
@@ -353,4 +352,3 @@ onMounted(() => {
     content: '等宽字体';
 }
 </style>
-  
