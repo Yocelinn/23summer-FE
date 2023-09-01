@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import axios from "axios";
 import message from "@element-plus/icons/lib/Message";
+import {ElMessage} from "element-plus";
 
 export default createStore({
   state: {
@@ -53,7 +54,7 @@ export default createStore({
                 console.log('状态', state.personData.length);
               }
               else {
-                message({
+                ElMessage({
                   message: response.data.error,
                   type:'error'
                 });
@@ -61,9 +62,9 @@ export default createStore({
               }
             })
             .catch((error) => {
-              message({
+              ElMessage({
                 message: "获取队员信息失败，请重试",
-                type: 'eror'
+                type: 'error'
               });
               console.log("错误", error.config);
             })

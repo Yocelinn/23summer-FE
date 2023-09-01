@@ -24,8 +24,11 @@
     "deepcopy": "^2.1.0",
     "devui-theme": "^0.0.7",
     "element-plus": "^2.3.12",
+    "html2pdf.js": "^0.10.1",
+    "jspdf": "^1.5.3",
     "html2canvas": "^1.4.1",
     "moment": "^2.29.4",
+    "pdfmake": "^0.2.7",
     "quill-mention": "^3.4.0",
     "stream-browserify": "^3.0.0",
     "vue": "^3.2.13",
@@ -53,6 +56,7 @@
     "sass-loader": "^13.3.2",
     "unplugin-auto-import": "^0.16.6",
     "unplugin-vue-components": "^0.25.1",
-    "vfonts": "^0.0.3"
+    "vfonts": "^0.0.3",
+    "webpack-node-externals": "^3.0.0"
   }
 }

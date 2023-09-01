@@ -14,6 +14,7 @@
 import { QuillEditor, Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getCurrentInstance, reactive, ref, toRaw, computed, onMounted, watch, defineExpose } from "vue";
+import {ElMessage} from "element-plus";
 // 引入插入图片标签自定义的类
 
 // 注册图片拖拽和大小修改插件(不起效果暂时屏蔽)
@@ -263,7 +264,7 @@ onMounted(() => {
 
 .ql-editor {
     min-height: 200px;
-    max-height: 300px;
+    max-height: 600px;
     overflow: auto;
 }
 
