@@ -35,7 +35,7 @@ export default defineComponent({
             }))
           }
           <ElFormItem>
-            <ElButton type="primary" onclick={() => applyEvents()}>
+            <ElButton color="#ca96ff" onclick={() => applyEvents()}>
               应用
             </ElButton>
             <ElButton  onclick={() => resetEvents()}>

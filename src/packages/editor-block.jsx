@@ -20,6 +20,7 @@ export default defineComponent({
       zIndex: `${props.block.zIndex}`
     }))
     const config = inject('config') //拿到元素
+    const iconConfig = inject('icon')
     const blockRef = ref(null)
     // console.log(blockRef)
     onMounted(() => {
@@ -38,7 +39,17 @@ export default defineComponent({
     // console.log(props.block)
     return () => {
       // 用block中提供的key取出对应的元素
-      const component = config.componentMap[props.block.key]
+      let blockItem = config.componentMap[props.block.key]
+      // console.log('________________________________________')
+      // console.log(blockItem)
+      if(blockItem == null || blockItem == undefined) {
+        blockItem = iconConfig.iconMap[props.block.key]
+        // console.log('***********************************')
+        // console.log(iconConfig.iconMap)
+      }
+      const component = blockItem
+      // console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+      // console.log(component)
       const RenderComponent = component.render({
         // 发生大小改变就将hasResize置为true,改变对应的元素大小
         size: props.block.hasResize ? { width: props.block.width, height: props.block.height } : {},

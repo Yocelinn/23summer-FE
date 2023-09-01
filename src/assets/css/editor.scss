@@ -20,10 +20,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 250px;
-      min-height: 100px;
-      margin: 20px auto;
-      padding: 20px;
+      width: 230px;
+      min-height: 80px;
+      margin: 10px auto;
+      // padding: 20px;
       background-color: #fff;
       border: 3px solid #f5f5f5;
       cursor: move;
@@ -34,7 +34,8 @@
         left: -1px;
         padding: 3px;
         color: #fff;
-        background-color: #409eff;
+        background-color: #c081ff;
+        font-size: 14px;
       }
       &::after {
         content: '';
@@ -47,8 +48,16 @@
         opacity: 0.1;
       }
       &:hover {
-        border-color: #53a8ff;
+        border-color: #ddbdfe;
       }
+    }
+    &-icon {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      width: 250px;
+      margin: 10px auto;
+      grid-row-gap: 8px;
     }
   }
   &-right {
@@ -264,10 +273,10 @@
   height: 48px;
   line-height: 40px;
   margin: auto;
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
   text-align: center;
-  color: #409eff;
+  color: #a958f9;
 }
 //动画组件样式
 .animate {

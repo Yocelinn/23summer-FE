@@ -1,5 +1,6 @@
 // 列表区可以显示所有的元素
-import { ElButton, ElInput, ElOption, ElSelect, ElDatePicker, ElRadio, ElSlider, ElProgress, ElInputNumber, ElCheckboxGroup, ElRadioGroup, ElCheckbox, ElLink, ElImage } from 'element-plus'
+import { ElButton, ElInput, ElOption, ElSelect, ElDatePicker} from 'element-plus'
+import { ElRadio, ElSlider, ElProgress, ElInputNumber, ElCheckboxGroup, ElRadioGroup, ElCheckbox, ElLink, ElImage, ElMenu, ElMenuItem, ElDivider } from 'element-plus'
 import Range from '@/components/Range.jsx'
 import 'animate.css'
 // key对应的元素的映射关系
@@ -23,7 +24,7 @@ const createColorProp = label => ({ type: 'color', label })
 const createSelectProp = (label, options) => ({ type: 'select', label, options })
 const createTableProp = (label, table) => ({ type: 'table', label, table })
 const createPercentageProp = (label, value) => ({ type: 'input', label, value })
-
+// console.log(registerConfig)
 registerConfig.register({
   label: '文本',
   preview: () => <span>预览文本</span>,
@@ -90,7 +91,7 @@ registerConfig.register({
     size: createSelectProp('按钮尺寸', [
       { label: '小型按钮', value: 'small' },
       { label: '默认按钮', value: 'default' },
-      { label: '大型按钮', value: 'large' }
+      { label: '大型按钮', value: 'larger' }
     ])
   }
 })
@@ -167,6 +168,164 @@ registerConfig.register({
     })
   }
 })
+registerConfig.register({
+  label: '链接',
+  preview: () => <ElLink style="text-decoration-line:underline">预览链接</ElLink>,
+  render: ({ size, props }) => (
+    <ElLink style={{ color: props.color || '#56a7f7', fontSize: props.fontSize, textDecorationLine: props.textDecorationLine || 'underline' }} href={props.hrefContent} type={props.type} size={size}>
+      {props.text || '默认链接'}
+    </ElLink>
+  ),
+  key: 'link',
+  animate: {},
+  events:[
+    {
+        key: 'redirect',
+        label: '跳转事件',
+        param: '',
+    },
+    {
+        key: 'alert',
+        label: 'alert 事件',
+        param: '',
+    },
+  ],
+  props: {
+    hrefContent: createInputProp('链接地址'),
+    text: createInputProp('显示内容'),
+    color: createColorProp('字体颜色'),
+    type: createSelectProp('链接类型', [
+      { label: '默认链接', value: 'href' },
+      { label: '主要链接', value: 'primary' },
+      { label: '成功链接', value: 'success' },
+      { label: '警告链接', value: 'warning' },
+      { label: '危险链接', value: 'danger' },
+      { label: '信息链接', value: 'info' }
+    ]),
+    fontSize: createSelectProp('字体大小', [
+      { label: '14px', value: '14px' },
+      { label: '18px', value: '18px' },
+      { label: '22px', value: '22px' }
+    ]),
+    textDecorationLine: createSelectProp('下划线', [
+      { label: '有', value: 'underline' },
+      { label: '无', value: 'none' }
+    ])
+  }
+})
+
+registerConfig.register({
+  label: '卡片',
+  resize: {
+      width: true,
+      height: true
+  },
+  preview: () => <ElCard style="width:60px;height:60px" ></ElCard>,
+  render: ({ props, size }) => (
+      <ElCard body-style={{ width:(size.width || '200') + 'px', height: (size.height || '200')+'px', backgroundColor: props.backgroundColor}} 
+      header= {props.header}
+      shadow= {props.shadow}
+      >
+        {props.text || '默认内容'}
+      </ElCard>
+  ),
+  key: 'card',
+  animate: {},
+  events:[
+    {
+        key: 'redirect',
+        label: '跳转事件',
+        param: '',
+    },
+    {
+        key: 'alert',
+        label: 'alert 事件',
+        param: '',
+    },
+  ],
+  props: {
+    text: createInputProp('卡片内容'),
+    header: createInputProp('卡片标题'),
+    backgroundColor: createColorProp('背景颜色'),
+    shadow: createSelectProp('阴影', [
+      { label: '有', value: 'always' },
+      { label: '无', value: 'never' }
+    ])
+  }
+})
+registerConfig.register({
+  label: '导航栏',
+  resize: {
+      width: true,
+      height: true
+  },
+  preview: () => (
+  <ElMenu defaultActive="2" >
+    <ElMenuItem index='1'>导航索引1</ElMenuItem>
+    <ElMenuItem index='2'>导航索引2</ElMenuItem>
+  </ElMenu>),
+  render: ({ props, size }) => (
+    <ElMenu defaultActive={props.defaultActive || "2"} activeTextColor={props.activeTextColor}
+    backgroundColor={props.backgroundColor}
+    textColor={props.textColor} style={{height:(size.height || '220') + 'px', width: size.width+'px'}}>
+      <ElMenuItem index='1' style={{height:(props.itemHeight || '60') + 'px'}}>{ props.value1 || '导航索引1' }</ElMenuItem>
+      <ElMenuItem index='2' style={{height:(props.itemHeight || '60') + 'px'}}>{ props.value2 || '导航索引2' }</ElMenuItem>
+      <ElMenuItem index='3' style={{height:(props.itemHeight || '60') + 'px'}}>{ props.value3 || '导航索引3' }</ElMenuItem>
+    </ElMenu>
+  ),
+  key: 'menu',
+  animate: {},
+  events:[
+    {
+        key: 'redirect',
+        label: '跳转事件',
+        param: '',
+    },
+    {
+        key: 'alert',
+        label: 'alert 事件',
+        param: '',
+    },
+  ],
+  props: {
+    value1:createInputProp('索引1'),
+    value2:createInputProp('索引2'),
+    value3:createInputProp('索引3'),
+    itemHeight:createInputProp('导航索引高度'),
+    backgroundColor:createColorProp('背景颜色'),
+    textColor:createColorProp('字体颜色'),
+    defaultActive:createInputProp('默认选中(1/2/3)'),
+    activeTextColor:createColorProp('选中字体颜色'),
+  }
+})
+// registerConfig.register({
+//   label: '表格',
+//   preview: () => <ElCard style="width:60px;height:60px" ></ElCard>,
+//   render: ({props}) => (
+//       <ElCard body-style={{ width:(props.width || '200') + 'px', height: (props.height || '200')+'px', backgroundColor: props.backgroundColor}} 
+//       header= {props.header}>
+//         {props.text || '默认内容'}
+//       </ElCard>
+//   ),
+//   key: 'table',
+//   animate: {},
+//   events:[
+//     {
+//         key: 'redirect',
+//         label: '跳转事件',
+//         param: '',
+//     },
+//     {
+//         key: 'alert',
+//         label: 'alert 事件',
+//         param: '',
+//     },
+//   ],
+//   props: {
+//     width:createInputProp('宽'),
+//     height:createInputProp('高')
+//   }
+// })
 registerConfig.register({
   label: '范围选择器',
   preview: () => <Range></Range>,
@@ -445,56 +604,12 @@ registerConfig.register({
     ])
   }
 })
-registerConfig.register({
-  label: '链接',
-  preview: () => <ElLink>预览按钮</ElLink>,
-  render: ({ size, props }) => (
-    <ElLink style={{ color: props.color, fontSize: props.fontSize }} href={props.hrefContent} type={props.type} size={props.size} underline={props.linkUnderline}>
-      {props.text || '默认效果'}
-    </ElLink>
-  ),
-  key: 'link',
-  animate: {},
-  events:[
-    {
-        key: 'redirect',
-        label: '跳转事件',
-        param: '',
-    },
-    {
-        key: 'alert',
-        label: 'alert 事件',
-        param: '',
-    },
-  ],
-  props: {
-    hrefContent: createInputProp('链接地址'),
-    text: createInputProp('显示内容'),
-    color: createColorProp('字体颜色'),
-    type: createSelectProp('链接类型', [
-      { label: '默认链接', value: 'href' },
-      { label: '主要链接', value: 'primary' },
-      { label: '成功链接', value: 'success' },
-      { label: '警告链接', value: 'warning' },
-      { label: '危险链接', value: 'danger' },
-      { label: '信息链接', value: 'info' }
-    ]),
-    fontSize: createSelectProp('字体大小', [
-      { label: '14px', value: '14px' },
-      { label: '18px', value: '18px' },
-      { label: '22px', value: '22px' }
-    ]),
-    linkUnderline: createSelectProp('下划线', [
-      { label: '有', value: true },
-      { label: '无', value: false }
-    ])
-  }
-})
+
 //style={`width:${props.width}px;height:${props.height}px`}
 //props.url
 registerConfig.register({
   label: '图片',
-  preview: () => <ElImage style="width:80px;height:80px" ></ElImage>,
+  preview: () => <ElImage style="width:60px;height:60px" ></ElImage>,
   render: ({props}) => {
     return (
       <img width={('width' in props) ? `${props.width}`:'80'} height={('height' in props) ? `${props.height}`:'80'} src={('url' in props) ? props.url : 'https://img0.baidu.com/it/u=2655940096,3422380782&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1661619600&t=d213f9e87e5caecb23cbc206d8678cc6'} >

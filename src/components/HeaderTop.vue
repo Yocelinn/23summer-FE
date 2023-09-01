@@ -4,16 +4,7 @@
             <img src="../assets/logo.jpg" alt="logo" class="logo">
         </div>
         <div class="right-container">
-            <div class="item">
-                <el-input
-                    v-model="input2"
-                    class="w-50 m-2"
-                    placeholder="Please Input"
-                    :suffix-icon="Search"
-                    >
-                    <el-icon><Search /></el-icon>
-                    </el-input>
-            </div>
+            
             <div class="item chat" @click="goPerson">
                 <el-icon size="20" ><House /></el-icon>
             </div>

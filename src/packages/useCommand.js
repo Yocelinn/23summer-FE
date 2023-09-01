@@ -1,6 +1,7 @@
 import deepcopy from 'deepcopy'
 import { events } from './events'
 import { onUnmounted } from 'vue'
+
 export function useCommand(data, focusData) {
   // 定义整体状态
   const state = {
@@ -12,6 +13,7 @@ export function useCommand(data, focusData) {
   }
 
   const registry = command => {
+    if(command.name !== 'picture'){
     // 存放注册的命令
     state.commandArray.push(command)
     // 命令名字对应为执行函数
@@ -30,9 +32,9 @@ export function useCommand(data, focusData) {
       queue.push({ redo, undo }) //保存指令的前进后退
       state.current++ //执行命令后current+1
     }
+    }
   }
   // 注册命令
-
   // 前进命令
   registry({
     name: 'redo',
@@ -237,6 +239,7 @@ export function useCommand(data, focusData) {
       }
     }
   })
+
   // 键盘监听函数(自执行)
   const keyboardEvent = (() => {
     const keyCodes = {
