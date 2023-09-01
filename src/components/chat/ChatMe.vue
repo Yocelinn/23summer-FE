@@ -1,46 +1,49 @@
 <template>
-    <div class="chat-me" >
-        <div class="info-time">
-            <span>{{ chatInfo.sender }}</span>
-          
-            <n-avatar round>{{ chatInfo.sender.slice(-2)}}</n-avatar>
-        </div>
-        <div class="chat-record">
-          <div class="chat-text" v-if="chatInfo.type==='text'">
-              {{chatInfo.content}}
-          </div>
-          <div v-else-if="chatInfo.type==='image'">
-            <div class="img-wrapper">
-            <el-image
-              style="width: 150px; height: 150px;z-index:2"
-              lazy
-              :src="'http://81.70.184.77:8000'+ chatInfo.file"
-              :zoom-rate="1.2"
-              :preview-src-list="['http://81.70.184.77:8000' + chatInfo.file]"
-              :initial-index="1"
-              fit="cover"
-            />
-           </div>
-            <!-- <img :src="'http://81.70.184.77:8000'+ chatInfo.file"> -->
-          </div>
-          <div v-else-if="chatInfo.type==='file'">
-            <a :href="'http://81.70.184.77:8000'+chatInfo.file" download style="text-decoration: none;">
-              <div class="file-wrapper">
-                <div class="file-data">
-                  <img src="@/assets/file.png">
-                  <div class="file-info">
-                    <div class="file-name">
-                      {{ chatInfo.file.replace('/media/chat/', '') }}
+    <div class="chat-me" :id="'record'+chatInfo.chat_id">
+        <div class="left-info">
+          <span>{{ chatInfo.sender }}</span>
+          <div class="chat-record">
+           
+            <div class="chat-text" v-if="chatInfo.type==='text'">
+                {{chatInfo.content}}
+            </div>
+            <div v-else-if="chatInfo.type==='image'">
+              <div class="img-wrapper">
+              <el-image
+                style="width: 150px; height: 150px;z-index:2"
+                lazy
+                :src="'http://81.70.184.77:8000'+ chatInfo.file"
+                :zoom-rate="1.2"
+                :preview-src-list="['http://81.70.184.77:8000' + chatInfo.file]"
+                :initial-index="1"
+                fit="cover"
+              />
+            </div>
+              <!-- <img :src="'http://81.70.184.77:8000'+ chatInfo.file"> -->
+            </div>
+            <div v-else-if="chatInfo.type==='file'">
+              <a :href="'http://81.70.184.77:8000'+chatInfo.file" download style="text-decoration: none;">
+                <div class="file-wrapper">
+                  <div class="file-data">
+                    <img src="@/assets/file.png">
+                    <div class="file-info">
+                      <div class="file-name">
+                        {{ chatInfo.file.replace('/media/chat/', '') }}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </div>
+          </div>
+          <div class="info-time">
+              <span>{{ formattedTime(chatInfo.send_time) }}</span>
           </div>
         </div>
         <div class="info-time">
-            <span>{{ formattedTime(chatInfo.send_time) }}</span>
+          <n-avatar >{{ chatInfo.sender.slice(-2) }}</n-avatar>
         </div>
+         
             <!-- <div class="chat-img" v-if="item.chatType == 1">
               <img
                 :src="item.msg"
@@ -128,20 +131,33 @@ export default defineComponent({
 .chat-me {
           width: 100%;
           float: right;
-          // margin-bottom: 20px;
+          margin-bottom: 10px;
           position: relative;
           display: flex;
-          flex-direction: column;
+          // flex-direction: column;
           justify-content: flex-end;
-          align-items: flex-end;
+          // align-items: flex-end;
+          .left-info{
+            display:flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-right:10px;
+            color:#48464C
+          }
+          .chat-record{
+            flex:1;
+          }
           .chat-text {
             float: right;
             // max-width: 90%;
-            padding: 15px;
-            font-size: 18px;
-            border-radius: 20px 5px 20px 20px;
+            max-width:500px;
+            text-align:left;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 10px 1px 10px 10px;
             background-color:rgba(#9E9CF4 ,0.6);
             color: #48464C;
+            word-wrap: break-word;
             &:hover {
               background-color: rgba(#9E9CF4,0.8) ;
             }
@@ -191,19 +207,19 @@ export default defineComponent({
             text-overflow: ellipsis;
           }
           .info-time {
-            margin: 10px 0;
-            color: #fff;
-            font-size: 14px;
+            // margin: 10px 0;
+            color: #48464C;
+            font-size: 12px;
             display: flex;
             justify-content: flex-end;
 
-            img {
-              width: 30px;
-              height: 30px;
-              border-radius: 50%;
-              vertical-align: middle;
-              margin-left: 10px;
-            }
+            // img {
+            //   width: 30px;
+            //   height: 30px;
+            //   border-radius: 50%;
+            //   vertical-align: middle;
+            //   margin-left: 10px;
+            // }
             span {
               line-height: 30px;
             }

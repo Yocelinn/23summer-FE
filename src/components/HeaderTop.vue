@@ -138,6 +138,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     height: 50px;
+    border-bottom: 1px solid rgb(200, 199, 199);
 }
 .left-container {
     margin-left: 20px;
@@ -180,10 +181,10 @@ export default {
 .noti-list-wrapper {
   
   position: fixed;
-  top: 10%;
+  top: 7vh;
   right: 0;
   width: 30%; /* 列表宽度占满父容器，可以根据需要进行调整 */
-  height: 90%;
+  height: 93vh;
   background-color: #fff;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
   overflow-y: auto; /* 添加纵向滚动条，如果内容过多时可滚动 */
