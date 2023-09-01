@@ -241,7 +241,15 @@ export default defineComponent({
     };
 
     const addConfirm = () => {
-      axios.post('/chat/group/create', { "name": addedGroupName.value, "team_id": curTeamId.value, "members": addedFriends.value })
+      // console.log(addedGroupName.value)
+      // if(addedGroupName.value===''){
+      //   ElMessage({
+      //         message: '群聊名称不能为空',
+      //         type: 'warning',
+      //       });
+      // }
+      // else{
+        axios.post('/chat/group/create', { "name": addedGroupName.value, "team_id": curTeamId.value, "members": addedFriends.value })
         .then((response) => {
           if (response.data.code != 200) {
             console.log(response.data.message);
@@ -263,6 +271,8 @@ export default defineComponent({
         .catch(err => {
           console.log(err);
         });
+      // }
+      
       showAddGroup.value = false;
     };
 

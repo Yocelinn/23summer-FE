@@ -34,10 +34,14 @@
                 width="30%"
                 :modal="false"
             >
-            <el-checkbox-group v-model="addedFriend" fill="#9E9CF4">
+            <el-radio-group v-model="addedFriend" v-for="friend in unAddedFriend" :key="friend" >
+                <el-radio :label="friend.user_id">{{friend.nickname}}</el-radio>
+            </el-radio-group>
+            <!-- <el-checkbox-group v-model="addedFriend" fill="#9E9CF4">
                     <el-checkbox  v-for="friend in friend_list" :key="friend.user_id" :label="friend.user_id">
-                     {{ friend.nickname }}</el-checkbox>
-                    </el-checkbox-group>
+                     {{ friend.nickname }}
+                    </el-checkbox>
+                </el-checkbox-group> -->
                     <div class="confirmButton">
                         <el-button color="#9E9CF4"  plain @click="addMember">确认邀请</el-button>
                     </div>
@@ -96,9 +100,13 @@ export default defineComponent({
         // onMounted(()=>{
         //     getAllMember();
         // });
+        onMounted(()=>{
+            getUnAddedFriend()
+        })
         const addedFriend=ref()
         const curChat=ref(props.curChat)
         const friend_list=ref(props.friend_list)
+        const unAddedFriend=ref([])
         const member_list=ref([]);
         const showAddModal=ref(false)
         const updateList = () => {
@@ -138,15 +146,16 @@ export default defineComponent({
            
         }
         function addMember(){
-            axios.post('/chat/group/add',{"user_id": addedFriend,"group_id": curChat.value.id})
+            console.log(addedFriend.value)
+            axios.post('/chat/group/add',{"user_id": addedFriend.value,"group_id": curChat.value.id})
             .then((res)=>{
                 if(res.data.code!=200){
                     ElMessage({
-                        message: res.data.message,
+                        message: res.data.error,
                         type: 'warning',
                     })
                     showAddModal.value=false;
-                    // console.log(res.data.error)
+                    console.log(res.data.error)
                 }
                 else{
                     ElMessage({
@@ -154,6 +163,7 @@ export default defineComponent({
                         type: 'success',
                     })
                     showAddModal.value=false;
+                    updateList();
                 }
             })
             .catch(err=>{
@@ -193,9 +203,31 @@ export default defineComponent({
                 }
             })
         }
+        function getUnAddedFriend(){
+            axios.post('chat/group/members',{"group_id": parseInt(curChat.value.id)})
+            .then((response)=>{
+                if(response.data.code!=200){
+                    console.log(response.data.error)
+                }
+                else{
+                    const groupMembers = response.data.res;
+    
+                    // 遍历 friend_list 检查是否在 groupMembers 中
+                    friend_list.value.forEach((friend) => {
+                    const isMemberInGroup = groupMembers.some((member) => member.user_id === friend.user_id);
+                    if (!isMemberInGroup) {
+                        unAddedFriend.value.push(friend); // 将不在群组中的成员添加到 UnAddedFriend 中
+                    }
+                    });
+                    console.log(unAddedFriend.value)
+                    
+                }
+            })
+        }
         return{
             quitGroup,addMember,handleSelectAddMem,addedFriend,updateList,deleteGroup,
             getAllMember,
+            unAddedFriend,
             InfoFilled,
             showAddModal,
             options: [

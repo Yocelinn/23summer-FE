@@ -34,7 +34,7 @@
             <n-list hoverable clickable class="noti-list"  v-for="(noti,index) in notifications" :key="index">
             <n-list-item   @mouseenter="setHover(index, true)" @mouseleave="setHover(index, false)">
                 <n-thing :title="noti.is_read ? '查看消息' : '您有一条新消息'" content-style="margin-top: 10px;"
-                @click="enterChatRoom()">  
+                @click="enterChatRoom(noti)">  
                 <div class="noti-list-item">
                     <div class="noti-list-content">
                         <div class="noti-avator">
@@ -184,9 +184,22 @@ export default defineComponent({
         const checkisShow=([]);
     //    const checkisShow=ref([]);
 
-        function enterChatRoom(){
+        function enterChatRoom(noti){
             // console.log('enterChatRoom')
-            router.push('/chat')
+            let url='/message/self/'+noti.msg_ig
+            axios.get(url)
+            .then((response)=>{
+                console.log(response.data)
+                if(response.data.code!=200){
+                    console.log(response.data.error)
+                }
+                else{
+                    router.push('/chat')
+                }
+            })
+            .catch(err=>{
+                console.log(err)
+            })
         }
        function checkNoti(id,index){
             axios.put('message/operate',{"msg_id":id})

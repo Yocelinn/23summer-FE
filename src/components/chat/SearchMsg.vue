@@ -1,11 +1,14 @@
 <template>
- <div class="searchMsg">
-    <el-input :class="{ 'sticky': true}"
-        v-model="searchInput"
-        placeholder="Please Input"
-        :suffix-icon="Search"
-        @keyup.enter="handleSearch"
-    />
+ <div class="sear chMsg">
+    <div class="search-bar">
+        <el-input :class="{ 'sticky': true}"
+            v-model="searchInput"
+            placeholder="Please Input"
+
+            @keyup.enter="handleSearch"
+        />
+        <el-button  :icon="Search" @click="handleSearch" class="search-button" />
+    </div>
     <n-list hoverable clickable v-for="(chatInfo,index) in searchResults" :key="index" class="MsgList">
         <!-- <div v-if="searchResults.length===0">
             什么都没搜到
@@ -175,6 +178,16 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+.search-bar{
+    display: flex;
+    justify-content: space-between;
+}
+:deep(.el-button ){
+    --el-button-hover-text-color:#8988f1 ; 
+--el-button-hover-bg-color: #9d9cf44b ;
+ --el-button-hover-border-color: #8988f1 ;
+ --el-button-active-border-color: #8988f1;
+}
 .chat-wrapper {
     display: flex;
     align-items: flex-start; /* 垂直上对齐头像和名字 */

@@ -8,13 +8,14 @@
                   <div class="header-text">全部</div>
               </div>
               <div class="list-header">
-                  <!-- <n-select class="chat-friend-selector"
-                  v-model:value="selectedValue" 
+                  <n-select class="chat-friend-selector"
                   filterable
+                  v-model:value="selectedValue"
                   placeholder="搜索"  
                   :options="select_options"
-                  @change="handleChatSelectChange"
-                  /> -->
+                  @update:value="handleUpdateValue"
+                  />
+                 
                   <div class="header-add">
                       <div class="add-icon" @click="handleAddGroup">+</div>
                       <n-modal 
@@ -75,14 +76,14 @@
                   <n-drawer v-model:show="drawer" :width="502" placement="right">
                       <GroupDetail :curChat="selectedChat" :friend_list="friend_list" @updateList="updateChatList" />
                   </n-drawer>
-                  <el-drawer
+                  <!-- <el-drawer
                       v-model="drawer"
                       :direction="direction"
                       
                   >
-              </el-drawer>
+              </el-drawer> -->
               </div>
-              <div class="chat-content" ref="chatContent">
+              <div class="chat-content" ref="chatContent" id="chatContent">
                   <div class="chat-window-content" v-for="record in records" :key="record.chat_id" >
                       <ChatFriend :chatInfo="record" v-if="record.sender_id!=user.user_id" />
                       <ChatMe :chatInfo="record" v-else />
@@ -136,7 +137,7 @@
 <script>
     import PersonCard from "@/components/chat/PersonCard.vue";
     import HeadPortrait from "@/components/chat/HeadPortrait.vue";
-    import { defineComponent,ref,h, onMounted } from "vue";
+    import { defineComponent,ref,h, onMounted ,nextTick} from "vue";
     import { NSelect,NMention,NList,NListItem,NTag,NAvatar,NModal,NDrawer } from "naive-ui";
     import ChatMe from "@/components/chat/ChatMe.vue"
     import ChatFriend from "@/components/chat/ChatFriend.vue"
@@ -155,32 +156,34 @@
     },
    
     setup(){
-      const dataLoaded = ref(false);
+      // const dataLoaded = ref(false);
+      // const scrollDom = ref(null);
+
       onMounted(()=>{
         // try {
         // // 使用异步函数加载数据
-        curTeamId=ref(window.sessionStorage.getItem('curTeamId'));
-         curTeamName=ref(window.sessionStorage.getItem('curTeamName'));
+        curTeamId=ref(parseInt(window.sessionStorage.getItem('curTeamId')));
+        curTeamName=ref(window.sessionStorage.getItem('curTeamName'));
         console.log(curTeamId)
         console.log(curTeamName)
         getChatList(); 
-       
-
+        getUserInfo();
         // 设置 dataLoaded 为 true 表示数据加载完成，相关内容可以渲染
        
         // getChatList();
         console.log(selectedChat.value.name)
         getAllRecord();
-        dataLoaded.value = true;
+        
+        getFriendList();
+        
+        // dataLoaded.value = true;
       
     })
         
-    
-     
         //     // TeamChat:{},
-        let curTeamId=ref(window.sessionStorage.getItem('curTeamId'));
+        let curTeamId=ref(parseInt(window.sessionStorage.getItem('curTeamId')));
         let  curTeamName=ref(window.sessionStorage.getItem('curTeamName'));
-        const websocketURL=ref('ws://'
+        var websocketURL=ref('ws://'
                 +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
                 + '/ws/chat/' 
                 + curTeamId.value //改成团队id 
@@ -195,7 +198,21 @@
                 team_id:''
             })
         let selectedChat=ref({"id":curTeamId.value,"type":"team","name":curTeamName.value})
-        const chatSocket=new WebSocket( 
+      //   let chatSocket;
+      //   function setupWebSocket(webSocketURL) {
+      //     chatSocket = new WebSocket(webSocketURL);
+
+      //     chatSocket.onmessage = function(e) {
+      //       const data = JSON.parse(e.data); 
+      //       receiveMessage(data);
+      //       console.log(data);
+      //       // 这里可以根据需要执行其他操作
+      //     };
+
+      //   // 返回 chatSocket，这样可以在其他地方关闭它
+      //   return chatSocket;
+      // }
+        var chatSocket=new WebSocket( 
                 websocketURL.value )
             chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data); 
@@ -226,8 +243,14 @@
         const getMsg=(val)=>{
             console.log("receiveChild" +val.content)
             showModal.value=false;
-            document.getElementById('record'+val.content).scrollIntoView({ behavior: "smooth",block:'start',inline:'start' })
+            try{
+              document.getElementById('record'+val.content).scrollIntoView({ behavior: "smooth",block:'start',inline:'start' })
             console.log(document.getElementById('record'+val.content))
+          }
+          catch(err){
+            console.log(err)
+          }
+            
 
             // console.log(val.content)
 
@@ -267,7 +290,7 @@
                 if(response.data.code!=200){
                     // console.log("seemember wrong")
                     // console.log("seemember wrong")
-                    console.log(response.data.messages);
+                    console.log(response.data.error);
                     // alert(response.data.msg);
                 }
                 else{
@@ -283,12 +306,15 @@
                     // chat_list.value.push(teamChat)
                     // selectedChat.value=teamChat;
                     // this.chat_list.push(...response.data.res.filter(item => item.user_id !== user.value.user_id) );
-                    friend_list.value=response.data.res;
+                    console.log("getFriendList");
+
+                    friend_list.value=response.data.res.filter(item => item.user_id !== user.value.user_id);
+                    console.log(friend_list.value)
                     const foundMe = friend_list.value.find(friend => friend.user_id === user.value.user_id);
                     // console.log(foundMe.perm)
                     if(foundMe){
                         if(foundMe.perm!=0){
-                            this.isPerm=true;
+                            isPerm.value=true;
                         }
                     }
                     // const foundFriend = friend_list.value.find(friend => friend.user_id === user.value.user_id);
@@ -325,7 +351,7 @@
                 }
                 else{
 
-                    console.log("getChatList成功")
+                    // console.log("getChatList成功")
                     // console.log(response.data.res)
                     chat_list.value=response.data.res;
                     select_options.value=response.data.res
@@ -337,12 +363,9 @@
                     selectedChat.value = response.data.res.find(item => item.type==='team');
                     console.log(selectedChat.value)
                     selectedValue.value=selectedChat.value.no;
-                    // select_options.value.push({value:teamChat.user_id,label:teamChat.nickname})
-                   
+                    // select_options.value.push({value:teamChat.user_id,label:teamChat.nickname}) 
                     // console.log("更新选择器")
                     console.log(select_options.value)
-                    
-                    
                 }
             })
             .catch(err=>{
@@ -352,7 +375,18 @@
         function handleShowClick(){
                 showModal.value=true;
             } 
-        function handleChatSelectChange(){
+        function handleUpdateValue(value){
+          // console.log(selectedValue.value)
+          // 
+          // // selectedChat=item
+          // choose_friend(item)
+          // console.log("changeChat")
+          // console.log(item)
+          const item=chat_list.value.find(chat_item => chat_item.no === value);
+          selectedValue.value=value;
+          console.log(item)
+          choose_friend(item)
+          // console.log(value)
         }
         function handleAddGroup(){
             showAddGroup.value=true;
@@ -394,11 +428,8 @@
         }
         function choose_friend(member){
             // console.log("choose"+member.nickname)
-            selectedValue.value.id=member.no;
-            selectedChat.value=member
-            console.log("selectedChat 正确")
-            // console.log
-            // console.log(selectedChat.value)
+            selectedValue.value=member.no;
+            selectedChat.value=member;
             if(selectedChat.value.type==='member'){
                 let hash=generateIdentifier(user.value.user_id,selectedChat.value.id)
                 websocketURL.value= 'ws://'+'81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
@@ -419,36 +450,27 @@
                 + '/ws/chat/' 
                 + curTeamId.value //改成团队id 
                 + '/';
-            }
-            
+            }  
             // console.log(selectedChat.value.type)
-            console.log("wb正确")
             console.log(websocketURL.value)
             if(chatSocket){
                 chatSocket.close();
                 // console.log("close last chatSocket")
             }
+            // chatSocket.close()
+            // setupWebSocket(websocketURL.value)
             const newChatSocket = new WebSocket( 
                 websocketURL.value )
             // const self = this;
-           
-            newChatSocket.onmessage = function(e) {
+           chatSocket=newChatSocket;
+           chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data); 
-                // console.log(data)   
+                // console.log(data)    
                 receiveMessage(data)
                 console.log(data)
                 // document.querySelector('#chat-log').value += (data.message + '\n'); 
             } 
             getAllRecord();
-            // console.log(websocketURL.value)
-                
-            // else{
-            //     websocketURL.value= 'ws://'
-            // +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
-            // + '/ws/chat/' 
-            // + curTeamId.value //改成团队id 
-            // + '/'
-                
             }
        function  atFriend(option){
             selectedMentionValue.value=option.label;
@@ -467,35 +489,33 @@
         function getAllRecord(){
             // chat=chat/all'+curTeamId
 
-            console.log("getAllRecord")
+            // console.log("getAllRecord")
             let url='/chat/all/'+curTeamId.value;
-            
-            // if(selectedChat.value.type==='member'){
-            //     url='/chat/all/pri/'+curTeamId.value+'/'+selectedChat.value.id;
-            // }
-            // else if(selectedChat.value.type==='group')
-            // {
-            //     url='/chat/all/group/'+selectedChat.value.id;
-            // }
-            // if(selectedChat.value.type==='team'){
-                console.log(url)
-                axios.get(url)
-                .then((response)=>{
-                    // console.log(response)
-                    if(response.data.code!=200){
-                        console.log(response.data.error);
-                    }
-                    else{
-                        // records.value=response.data.chats;
-                        records.value=response.data.chats;
-                        scrollBottom();
-                        // console.log(records.value)
-                    }
-                })
-            // }
-                .catch(error=>{
-                    console.log(error);
-                })
+            if(selectedChat.value.type==='member'){
+                url='/chat/all/pri/'+curTeamId.value+'/'+selectedChat.value.id;
+            }
+            else if(selectedChat.value.type==='group')
+            {
+                url='/chat/all/group/'+selectedChat.value.id;
+            }
+            // console.log(url)
+            axios.get(url)
+            .then((response)=>{
+                // console.log(response)
+                if(response.data.code!=200){
+                    console.log(response.data.error);
+                }
+                else{
+                    // records.value=response.data.chats;
+                    records.value=response.data.chats;
+                    scrollBottom();
+                    // console.log(records.value)
+                }
+            })
+        // }
+            .catch(error=>{
+                console.log(error);
+            })
           
         }     
         function getUserInfo(){
@@ -506,12 +526,28 @@
             })
         }
         function scrollBottom() {
-            this.$nextTick(() => {
-            const scrollDom = this.$refs.chatContent;
-            if (scrollDom) {
-                animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight);
-            }
+            nextTick(() => {
+              let chatContent = document.getElementById('chatContent');
+              // console.log( document.getElementById('chatContent'))
+              if(chatContent){  
+                  animation(chatContent,chatContent.scrollHeight - chatContent.offsetHeight)
+                }
+          
+              // chatContent.scrollTop = chatContent.scrollHeight - chatContent.offsetHeight   
+            // const scrollDom = this.$refs.chatContent;
+            // if (scrollDom) {
+            //     animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight);
+            // }
         });
+        // const lastChat=records.value[records.value.length-3];
+        //   console.log(lastChat.chat_id)
+        // document.getElementById('record'+lastChat.chat_id).scrollIntoView({ behavior: "smooth",block:'start',inline:'start' })
+        // console.log(document.getElementById('record'+lastChat.chat_id))
+        // const element = document.getElementByName('chat-window-content');
+          // if (element) {
+          //   element.scrollTop = element.scrollHeight;
+          // }
+
         }
         function receiveMessage(data){
             // const date=new Date()
@@ -535,9 +571,10 @@
                 }
             }
             // console.log(this.records);
-            this.records.push(receiveMsg)
+            console.log("receive")
+            records.value.push(receiveMsg)
             // console.log(this.records);
-            this.scrollBottom();
+            scrollBottom();
 
         }
         function sendText(){
@@ -570,26 +607,26 @@
                     // console.log("postData "+postData)  
                     axios.post(sendUrl,JSON.stringify(postData))
                     .then((response)=>{
-                        // console.log("发送消息")
-                        // console.log(response.data)
+                        console.log("发送消息")
+                        console.log(response.data)
                         if(response.data.code!=200){
                             console.log(response.data.error)
                         }
                         else{  
-                            this.chatSocket.send(JSON.stringify({
+                            chatSocket.send(JSON.stringify({
                                 'id': response.data.sender, 
                                 'name':user.value.nickname,
                                 'message': text_content.value,
                                 'time': response.data.send_time,
                                 'is_file':0
                             })); 
-                            console.log(this.mentionedMembers);
+                            console.log(mentionedMembers.value);
                             // this.mentionedMembers = this.mentionedMembers.filter(member => {
                             // // 假设 member 是一个成员对象，成员对象有一个属性比如 name，用于表示成员名字
                             // return text_content.value.includes(member.nickname)})
                             
 
-                            this.sendNotiToMembers(this.mentionedMembers,response.data.chat_id);
+                            sendNotiToMembers(mentionedMembers.value,response.data.chat_id);
                             // this.scrollBottom();
                             text_content.value="";
                         }
@@ -602,15 +639,15 @@
                     console.log("发送消息不能为空！")
                 }
             }
-          function sendImg(image){
+      function sendImg(image){
             let sendUrl='/chat/file'
             let imgData=new FormData();
             if(selectedChat.value.type==='group'){
                 sendUrl='/chat/file/group'
-                imgData.append("grouup_id",selectedChat.value.id);
+                imgData.append("group_id",selectedChat.value.id);
             }
             else{
-                imgData.append("team_id",parseInt(curTeamId.value));
+                imgData.append("team_id",curTeamId.value);
             }
             
             imgData.append("file",image.raw);
@@ -622,11 +659,13 @@
             axios.post(sendUrl,imgData)
             .then((response)=>{
                 // console.log(response.data)
+                console.log("sendIMG")
+                console.log(response.data)
                 if(response.data.code!=200){
-                    console.log(response.data.message)
+                    console.log(response.data.error)
                 }
                 else{
-                    this.chatSocket.send(JSON.stringify({
+                    chatSocket.send(JSON.stringify({
                         'id': response.data.sender, 
                         'name':user.value.nickname,
                         'message': response.data.file,
@@ -666,7 +705,7 @@
                     console.log(response.data.message)
                 }
                 else{
-                    this.chatSocket.send(JSON.stringify({
+                    chatSocket.send(JSON.stringify({
                         'id': response.data.sender, 
                         'name':user.value.nickname,
                         'message': response.data.file,
@@ -704,6 +743,8 @@
             })
     }
         return{
+          // handleChatSelectChange,
+          handleUpdateValue,
           choose_friend,sendNotiToMembers,sendFile,sendText,sendImg,receiveMessage,scrollBottom,getUserInfo,getAllRecord,
           atFriend,
             updateChatList,
