@@ -158,6 +158,7 @@ export default defineComponent({
     },
     setup(){
        const notifications=ref([]);
+       const curTeamId=ref()
        const router = useRouter()
        const notiNotRead=ref([]);
        const notiHasRead=ref([]);
@@ -243,7 +244,8 @@ export default defineComponent({
             })
         }
         function allNotiFinished(){
-            axios.put('/message/operate_all',{})
+            curTeamId.value=window.sessionStorage.getItem('curTeamId')
+            axios.put('/message/operate_all',{"team_id":parseInt(curTeamId)})
             .then((response)=>{
                 // console.log(response)
                 if(response.data.code!=200){
@@ -269,7 +271,8 @@ export default defineComponent({
             })
         }
         function allNotiDeleted(){
-            axios.delete('/message/operate_all',{})
+            curTeamId.value=window.sessionStorage.getItem('curTeamId')
+            axios.delete('/message/operate_all',{"team_id":parseInt(curTeamId)})
             .then((response)=>{
                 // console.log(response)
                 if(response.data.code!=200){
@@ -293,7 +296,9 @@ export default defineComponent({
             })
         }
         function fetchNotifications() {
-            axios.post('/message/all',{})
+            curTeamId.value=window.sessionStorage.getItem('curTeamId')
+            console.log("teamId:"+curTeamId.value)
+            axios.post('/message/all',{"team_id":parseInt(curTeamId.value)})
             .then((response)=>{
                 // console.log(response)
                 if(response.data.code!=200){
@@ -302,8 +307,7 @@ export default defineComponent({
                 }
                 else{
                     notifications.value = response.data.messages;
-                    // console.log(response.data.messages);
-                    // this.checkisShow=j
+                    console.log(response.data.messages);
                     // this.checkisShow = this.notifications.map((message) => !message.is_read);
 
                     // console.log(this.checkisShow);
@@ -320,7 +324,8 @@ export default defineComponent({
             })
         }
          function getNotiNotRead(){
-                axios.post('/message/all',{"is_read":0})
+            curTeamId.value=window.sessionStorage.getItem('curTeamId')
+                axios.post('/message/all',{"team_id":parseInt(curTeamId.value),"is_read":0})
                 .then((response)=>{
                 // console.log(response)
                 if(response.data.code!=200){
@@ -342,7 +347,8 @@ export default defineComponent({
             })
        }
        function getNotiHasRead() {
-            axios.post('/message/all',{"is_read":1})
+            curTeamId.value=window.sessionStorage.getItem('curTeamId')
+            axios.post('/message/all',{"team_id":parseInt(curTeamId.value),"is_read":1})
             .then((response)=>{
             // console.log(response)
             if(response.data.code!=200){
@@ -409,10 +415,11 @@ export default defineComponent({
         }
        onMounted(()=>{
         fetchNotifications();
+       
        });
        return{
         notifications,notiNotRead,notiHasRead,isHovered_all,noti_options,circleUrl,value, isHovered_not,
-        isHovered_read,checkisShow,
+        isHovered_read,checkisShow,curTeamId,
         // checkisShow,
         CheckmarkCircle,
         checkNoti,deleteNoti,allNotiDeleted,allNotiFinished,

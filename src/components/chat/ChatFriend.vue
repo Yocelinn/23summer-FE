@@ -1,46 +1,46 @@
 <template>
-     <div class="chat-friend" >
+     <div class="chat-friend" :id="'record'+chatInfo.chat_id">
       <div class="info-time">
-        <n-avatar round>{{ chatInfo.sender.slice(-2) }}</n-avatar>
-        <span>{{ chatInfo.sender }}</span>
-        
-          
+        <n-avatar >{{ chatInfo.sender.slice(-2) }}</n-avatar>
       </div>
-      <div class="chat-record">
-        <div class="chat-text" v-if="chatInfo.type==='text'">
-            {{chatInfo.content}}
-        </div>
-        <div v-else-if="chatInfo.type==='image'">
-          <div class="img-wrapper">
-            <el-image
-              style="width: 150px; height: 150px;z-index: 2;"
-              lazy
-              :src="'http://81.70.184.77:8000'+ chatInfo.file"
-              :zoom-rate="1.2"
-              :preview-src-list="['http://81.70.184.77:8000' + chatInfo.file]"
-              :initial-index="1"
-              fit="cover"
-            />
+      <div class="right-info">
+        <span>{{ chatInfo.sender }}</span>
+        <div class="chat-record">
+          <div class="chat-text" v-if="chatInfo.type==='text'">
+              {{chatInfo.content}}
           </div>
-          <!-- <img :src="'http://81.70.184.77:8000'+ chatInfo.file"> -->
-        </div>
-        <div v-else-if="chatInfo.type==='file'">
-          <a :href="'http://81.70.184.77:8000'+chatInfo.file" download style="text-decoration: none;">
-            <div class="file-wrapper" >
-              <div class="file-data" >
-                <img src="@/assets/file.png" >
-                <div class="file-info">
-                  <div class="file-name">
-                    {{ chatInfo.file.split('/')[3] }}
+          <div v-else-if="chatInfo.type==='image'">
+            <div class="img-wrapper">
+              <el-image
+                style="width: 150px; height: 150px;z-index: 2;"
+                lazy
+                :src="'http://81.70.184.77:8000'+ chatInfo.file"
+                :zoom-rate="1.2"
+                :preview-src-list="['http://81.70.184.77:8000' + chatInfo.file]"
+                :initial-index="1"
+                fit="cover"
+              />
+            </div>
+            <!-- <img :src="'http://81.70.184.77:8000'+ chatInfo.file"> -->
+          </div>
+          <div v-else-if="chatInfo.type==='file'">
+            <a :href="'http://81.70.184.77:8000'+chatInfo.file" download style="text-decoration: none;">
+              <div class="file-wrapper" >
+                <div class="file-data" >
+                  <img src="@/assets/file.png" >
+                  <div class="file-info">
+                    <div class="file-name">
+                      {{ chatInfo.file.split('/')[3] }}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </a>
+            </a>
+          </div>
         </div>
-      </div>
-      <div class="info-time">
-          <span>{{ formattedTime(chatInfo.send_time) }}</span>
+        <div class="info-time">
+            <span>{{ formattedTime(chatInfo.send_time) }}</span>
+        </div>
       </div>
     </div>
 </template>
@@ -105,23 +105,44 @@ export default defineComponent({
 <style lang="scss" scoped>
 .chat-friend {
           width: 100%;
-          float: left;
-          // margin-bottom: 20px;
+          float: right;
+          margin-bottom: 10px;
+          position: relative;
           display: flex;
-          flex-direction: column;
+          // flex-direction: column;
           justify-content: flex-start;
-          align-items: flex-start;
+           .right-info{
+            display:flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-left:10px;
+            color:#48464C
+          }
+          .chat-record{
+            flex:1;
+          }
           .chat-text {
+            
+            float: left;
             // max-width: 90%;
-            padding: 15px;
-            font-size: 18px;
-            border-radius: 5px 20px 20px 20px;
+            max-width:500px;
+            text-align:left;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 1px 10px 10px 10px;
             background-color: rgba(#FACCCC ,0.7)  ;
+            word-wrap:break-word;
             color: #48464C;
             &:hover {
               background-color:   #FACCCC ;
             }
           }
+          // .chat-text {
+          //   // max-width: 90%;
+          //   padding: 15px;
+          //   font-size: 18px;
+          //   border-radius: 5px 20px 20px 20px;
+            
           .img-wrapper{
             height:180px;
             width:180px;
@@ -167,16 +188,12 @@ export default defineComponent({
             text-overflow: ellipsis;
           }
           .info-time {
-            margin: 10px 0;
-            color: black;
-            font-size: 14px;
-            .avator {
-              width: 30px;
-              height: 30px;
-              border-radius: 50%;
-              vertical-align: middle;
-              margin-right: 10px;
-            }
+            // flex:1;
+            color: #48464C;
+            font-size: 12px;
+            display: flex;
+            justify-content: flex-end;
+
             span:last-child {
               color: rgb(101, 104, 115);
               margin-left: 10px;

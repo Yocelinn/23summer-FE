@@ -1,137 +1,138 @@
 <template>
-    <div id="chatUI">
-        <div class="chat-wrapper">  
-            <div class="chat-friend-list">
-                
-                <div class="header-item">
-                    <el-icon class="header-icon"><ChatDotRound /></el-icon>
-                    <div class="header-text">全部</div>
-                </div>
-                <div class="list-header">
-                    <!-- <n-select class="chat-friend-selector"
-                    v-model:value="selectedValue" 
-                    filterable
-                    placeholder="搜索"  
-                    :options="select_options"
-                    @change="handleChatSelectChange"
-                    /> -->
-                    <div class="header-add">
-                        <div class="add-icon" @click="handleAddGroup">+</div>
-                        <n-modal 
-                            v-model:show="showAddGroup"
-                            class="custom-card"
-                            preset="card"
-                            :style="bodyStyle"
-                            size="huge"
-                            :bordered="false"
-                            :segmented="segmented"
-                            :mask-closable="false">
-                            <template #header>
-                                <div class="addGroupNameTip">
-                                    创建群聊
-                                </div>
-                                <el-input  placeholder="请输入群聊名称" v-model="addedGroupName" style="margin-top:10px">
-                                </el-input>
-                            </template>
-                            <div class="addMemberTip">
-                                请选择邀请成员
-                            </div>
-                            <el-checkbox-group v-model="addedFriends" fill="#9E9CF4">
-                                <el-checkbox  v-for="friend in friend_list" :key="friend.user_id" :label="friend.user_id">
-                                {{ friend.nickname }}</el-checkbox>
-                            </el-checkbox-group>
-                            <div class="confirmButton">
-                                <el-button color="#9E9CF4"  plain @click="addConfirm">确认创建</el-button>
-                            </div>
-                            <!-- <div class="addFriend" v-for="friend in friend_list">
-                            </div> -->
-                        </n-modal>
-                    </div>
-                </div>
-                <n-list hoverable clickable v-for="(member,index) in chat_list" :key="index" class="chat-list">
-                    <n-list-item class="chat-list-item" @click="choose_friend(member)" :class="{'isSelected' :selectedValue===member.no}">
-                        <!-- <HeadPortrait/> -->
-                        <div class="chat-item-info">
-                            <div class="avatar">
-                                <el-avatar shape="square" :size="30" :src="circleUrl" />
-                            </div>
-                            <div class="chat-info">
-                                <div class="info-name" >{{ member.name }}</div>
-                                <!-- <div class="detail">{{member.email}}</div> -->
-                            </div>
-                        </div>
-                    </n-list-item>
-                </n-list>
-            </div>
-            <div class="chat-window">
-                <!-- <div class="chat-window-header">{{this.curTeamName}}({{ friend_list.length }})</div> -->
-                <div class="chat-window-header">
-                    <div class="chat-name">{{this.selectedChat.name}}</div>
-                    <div class="window-header-icon">
-                        <el-icon class="header-icon"><Back /></el-icon>
-                        <el-icon @click="drawer=true" v-if="this.selectedChat.type==='group'"><MoreFilled /></el-icon>
-                        
-                    </div>
-                    <n-drawer v-model:show="drawer" :width="502" placement="right">
-                        <GroupDetail :curChat="this.selectedChat" :friend_list="friend_list" @updateList="updateChatList" />
-                    </n-drawer>
-                    <!-- <el-drawer
-                        v-model="drawer"
-                        :direction="direction"
-                        
-                    > -->
-                <!-- </el-drawer> -->
-                </div>
-                <div class="chat-content" ref="chatContent">
-                    <div class="chat-window-content" v-for="record in this.records" :key="record.chat_id" >
-                        <ChatFriend :chatInfo="record" v-if="record.sender_id!=this.user.user_id" />
-                        <ChatMe :chatInfo="record" v-else />
-                    </div>
-                    <!-- <ChatFriend/>
-                    <ChatMe/> -->
-                </div>
-                <div class="chat-window-text">
-                    <div class="toolbar">
-                            <el-upload ref="uploadRef" class="upload-demo" accept="image/png, image/jpeg,image.jpg" :auto-upload="false"
-                            :on-change="sendImg">
-                                <template #trigger>
-                                    <el-icon class="tool-icon"><Picture /></el-icon>
-                                </template>
-                            </el-upload>
-                            <el-upload ref="uploadRef" class="upload-demo" accept=".doc,.docx,.pdf,.zip,.pptx" :auto-upload="false" :on-change="sendFile">
-                                <template #trigger>
-                                    <el-icon class="tool-icon" ><FolderOpened /></el-icon>
-                                </template>
-                            </el-upload>
-                            <el-icon class="tool-icon"  @click="handleShowClick"><Search /></el-icon>
-                            <n-modal
-                                v-model:show="showModal"
-                                class="custom-card"
-                                preset="card"
-                                :style="bodyStyle"
-                                size="huge"
-                                :bordered="false"
-                                :segmented="segmented"
-                            >
-                            <template #header>
-                                聊天记录
-                            </template>
-                            <SearchMsg :curTeamId="this.curTeamId" :selectedMember="this.selectedChat" @sendMsg="getMsg"/>
-                            </n-modal>
-                    </div>
-                    <!-- <Editor/> -->
-                    
-                    <n-mention v-if="isPerm" type="textarea" :options="manager_friend_options" :render-label="renderLabel"  v-model:value="text_content" 
-                    class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendText()"/>
-                    <n-mention v-else type="textarea" :options="friend_options" :render-label="renderLabel" v-model:value="text_content" 
-                    class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendText()"/>
-                   
-                    <!-- <button class="send-button" @click="sendMessage">发送</button> -->
-                </div> 
-            </div>
-        </div>
-    </div>
+  <div id="chatUI" >
+      <div class="chat-wrapper">  
+          <div class="chat-friend-list">
+              
+              <div class="header-item">
+                  <el-icon class="header-icon"><ChatDotRound /></el-icon>
+                  <div class="header-text">全部</div>
+              </div>
+              <div class="list-header">
+                  <!-- <n-select class="chat-friend-selector"
+                  v-model:value="selectedValue" 
+                  filterable
+                  placeholder="搜索"  
+                  :options="select_options"
+                  @change="handleChatSelectChange"
+                  /> -->
+                  <div class="header-add">
+                      <div class="add-icon" @click="handleAddGroup">+</div>
+                      <n-modal 
+                          v-model:show="showAddGroup"
+                          class="custom-card"
+                          preset="card"
+                          :style="bodyStyle"
+                          size="huge"
+                          :bordered="false"
+                          :segmented="segmented"
+                          :mask-closable="false">
+                          <template #header>
+                              <div class="addGroupNameTip">
+                                  创建群聊
+                              </div>
+                              <el-input  placeholder="请输入群聊名称" v-model="addedGroupName" style="margin-top:10px">
+                              </el-input>
+                          </template>
+                          <div class="addMemberTip">
+                              请选择邀请成员
+                          </div>
+                          <el-checkbox-group v-model="addedFriends" fill="#9E9CF4">
+                              <el-checkbox  v-for="friend in friend_list" :key="friend.user_id" :label="friend.user_id">
+                              {{ friend.nickname }}</el-checkbox>
+                          </el-checkbox-group>
+                          <div class="confirmButton">
+                              <el-button color="#9E9CF4"  plain @click="addConfirm">确认创建</el-button>
+                          </div>
+                          <!-- <div class="addFriend" v-for="friend in friend_list">
+                          </div> -->
+                      </n-modal>
+                  </div>
+              </div>
+              <n-list hoverable clickable v-for="(member,index) in chat_list" :key="index" class="chat-list">
+                  <n-list-item class="chat-list-item" @click="choose_friend(member)" :class="{'isSelected' :selectedValue===member.no}">
+                      <!-- <HeadPortrait/> -->
+                      <div class="chat-item-info">
+                          <div class="avatar">
+                              <el-avatar shape="square" :size="30" :src="circleUrl" />
+                          </div>
+                          <div class="chat-info">
+                              <div class="info-name" >{{ member.name }}</div>
+                              <!-- <div class="detail">{{member.email}}</div> -->
+                          </div>
+                      </div>
+                  </n-list-item>
+              </n-list>
+          </div>
+          <div class="chat-window">
+              <!-- <div class="chat-window-header">{{this.curTeamName}}({{ friend_list.length }})</div> -->
+              <div class="chat-window-header">
+                  <div class="chat-name">{{selectedChat.name}}</div>
+                  <div class="window-header-icon">
+                      <el-icon class="header-icon"><Back /></el-icon>
+                      <el-icon @click="drawer=true" v-if="selectedChat.type==='group'"><MoreFilled /></el-icon>
+                      
+                  </div>
+                  <n-drawer v-model:show="drawer" :width="502" placement="right">
+                      <GroupDetail :curChat="selectedChat" :friend_list="friend_list" @updateList="updateChatList" />
+                  </n-drawer>
+                  <el-drawer
+                      v-model="drawer"
+                      :direction="direction"
+                      
+                  >
+              </el-drawer>
+              </div>
+              <div class="chat-content" ref="chatContent">
+                  <div class="chat-window-content" v-for="record in records" :key="record.chat_id" >
+                      <ChatFriend :chatInfo="record" v-if="record.sender_id!=user.user_id" />
+                      <ChatMe :chatInfo="record" v-else />
+                  </div> 
+                  <!-- <ChatFriend/>
+                  <ChatMe/>-->
+              </div>
+              <div class="chat-window-text">
+                  <div class="toolbar">
+                          <el-upload ref="uploadRef" class="upload-demo" accept="image/png, image/jpeg,image.jpg" :auto-upload="false"
+                          :on-change="sendImg">
+                              <template #trigger>
+                                  <el-icon class="tool-icon"><Picture /></el-icon>
+                              </template>
+                          </el-upload>
+                          <el-upload ref="uploadRef" class="upload-demo" accept=".doc,.docx,.pdf,.zip,.pptx" :auto-upload="false" :on-change="sendFile">
+                              <template #trigger>
+                                  <el-icon class="tool-icon" ><FolderOpened /></el-icon>
+                              </template>
+                          </el-upload>
+                          <el-icon class="tool-icon"  @click="handleShowClick"><Search /></el-icon>
+                          <n-modal
+                              v-model:show="showModal"
+                              class="custom-card"
+                              preset="card"
+                              :style="bodyStyle"
+                              size="huge"
+                              :bordered="false"
+                              :segmented="segmented"
+                          >
+                          <template #header>
+                              聊天记录
+                          </template>
+                          <SearchMsg :curTeamId="curTeamId" :selectedMember="selectedChat" @sendMsg="getMsg"/>
+                          </n-modal>
+                  </div>
+                 <!-- <Editor/>   -->
+                  
+                  <n-mention v-if="isPerm" type="textarea" :options="manager_friend_options" :render-label="renderLabel"  v-model:value="text_content" 
+                  class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendText()"/>
+                  <n-mention v-else type="textarea" :options="friend_options" :render-label="renderLabel" v-model:value="text_content" 
+                  class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendText()"/>
+                 
+                  <!-- <button class="send-button" @click="sendMessage">发送</button> -->
+              </div> 
+          </div>
+      </div>
+  </div>
 </template>
+
 <script>
     import PersonCard from "@/components/chat/PersonCard.vue";
     import HeadPortrait from "@/components/chat/HeadPortrait.vue";
@@ -152,31 +153,58 @@
        NSelect,NMention,ChatMe,ChatFriend,PersonCard,HeadPortrait,NList,NListItem,NAvatar,NTag,NModal,NDrawer,
        SearchMsg,GroupDetail
     },
-    mounted(){
+   
+    setup(){
+      const dataLoaded = ref(false);
+      onMounted(()=>{
+        // try {
+        // // 使用异步函数加载数据
+        curTeamId=ref(window.sessionStorage.getItem('curTeamId'));
+         curTeamName=ref(window.sessionStorage.getItem('curTeamName'));
+        console.log(curTeamId)
+        console.log(curTeamName)
+        getChatList(); 
+       
+
+        // 设置 dataLoaded 为 true 表示数据加载完成，相关内容可以渲染
+       
+        // getChatList();
+        console.log(selectedChat.value.name)
+        getAllRecord();
+        dataLoaded.value = true;
+      
+    })
         
-        this.curTeamId=parseInt(window.sessionStorage.getItem('curTeamId'));
-            this.curTeamName=window.sessionStorage.getItem('curTeamName');
-            this.websocketURL= 'ws://'
+    
+     
+        //     // TeamChat:{},
+        let curTeamId=ref(window.sessionStorage.getItem('curTeamId'));
+        let  curTeamName=ref(window.sessionStorage.getItem('curTeamName'));
+        const websocketURL=ref('ws://'
                 +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
                 + '/ws/chat/' 
-                + this.curTeamId //改成团队id 
-                + '/';
-            this.getUserInfo();
-            this.getFriendList();
-            this.getChatList(this.curTeamId);
-            this.getAllRecord();
-            const self = this;
-            this.chatSocket = new WebSocket( 
-                this.websocketURL ),
-            this.chatSocket.onmessage = function(e) {
+                + curTeamId.value //改成团队id 
+                + '/');
+         const   user=ref('')
+        const    records=ref([])
+        const    isPerm=ref(false)
+        const    mentionedMembers=ref([]) // 被 @ 的成员列表
+        const    selectedMentionValue=ref('')
+        const    form=ref({
+                file:'',
+                team_id:''
+            })
+        let selectedChat=ref({"id":curTeamId.value,"type":"team","name":curTeamName.value})
+        const chatSocket=new WebSocket( 
+                websocketURL.value )
+            chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data); 
                 // console.log(data)   
-                self.receiveMessage(data)
+                receiveMessage(data)
                 console.log(data)
                 // document.querySelector('#chat-log').value += (data.message + '\n'); 
             } 
-    },
-    setup(){
+            
         // onMounted(()=>{
         //    loading.value=false;
         // })
@@ -204,15 +232,16 @@
             // console.log(val.content)
 
         }
+        
         const updateChatList=(val)=>{
             console.log("receiveChild:UPDATE")
             console.log(val.value)
 
-            let curTeamId=window.sessionStorage.getItem('curTeamId')
+            // let curTeamId=window.sessionStorage.getItem('curTeamId')
             // selectedValue.value=chat_list.value[0].no;
             
             drawer.value=false;
-            getChatList(curTeamId)
+            getChatList()
         }
         // const crypto = require('crypto-js');
         function generateIdentifier(num1, num2) {
@@ -230,10 +259,10 @@
 
         }
          function getFriendList(){
-            // console.log(this.curTeamId)
-            axios.post('/team/seemember',{ "team_id":this.curTeamId})
+            // console.log(curTeamId.value)
+            axios.post('/team/seemember',{ "team_id":curTeamId.value})
             .then((response)=>{
-                // console.log(this.curTeamId)
+                // console.log(curTeamId.value)
                 // console.log(response)
                 if(response.data.code!=200){
                     // console.log("seemember wrong")
@@ -252,31 +281,31 @@
                     // }
                     // friend_list.value=response.data.res;
                     // chat_list.value.push(teamChat)
-                    // this.selectedChat=teamChat;
-                    // this.chat_list.push(...response.data.res.filter(item => item.user_id !== this.user.user_id) );
+                    // selectedChat.value=teamChat;
+                    // this.chat_list.push(...response.data.res.filter(item => item.user_id !== user.value.user_id) );
                     friend_list.value=response.data.res;
-                    const foundMe = friend_list.value.find(friend => friend.user_id === this.user.user_id);
+                    const foundMe = friend_list.value.find(friend => friend.user_id === user.value.user_id);
                     // console.log(foundMe.perm)
                     if(foundMe){
                         if(foundMe.perm!=0){
                             this.isPerm=true;
                         }
                     }
-                    // const foundFriend = friend_list.value.find(friend => friend.user_id === this.user.user_id);
+                    // const foundFriend = friend_list.value.find(friend => friend.user_id === user.value.user_id);
                     // console.log(foundFriend)
                     // if (foundFriend && foundFriend.perm !== 1) {
                     //     this.isPerm = true;
                     // }
                    
                     friend_options.value = response.data.res
-                    .filter(item => item.user_id !== this.user.user_id) 
+                    .filter(item => item.user_id !== user.value.user_id) 
                     .map(item => ({
                         value: item.nickname,  // 假设 id 为 value
                         label: item.user_id  // 假设 name 为 label
                     }));
                     manager_friend_options.value.push(
                         ...response.data.res
-                        .filter(item => item.user_id !== this.user.user_id) 
+                        .filter(item => item.user_id !== user.value.user_id) 
                         .map(item => ({
                             value: item.nickname,
                             label: item.user_id
@@ -285,13 +314,14 @@
             })
             
         }   
-        function getChatList(id){
-            // console.log("curTeamId"+this.curTeamId)
+        function getChatList(){
+            console.log(curTeamId.value)
             // console.log("id"+id.value)
-            axios.post('chat/list',{"team_id":parseInt(id)})
+            
+            axios.post('chat/list',{"team_id":parseInt(curTeamId.value)})
             .then((response)=>{
                 if(response.data.code!=200){
-                    console.log(response.data.message);
+                    console.log(response.data.error);
                 }
                 else{
 
@@ -303,13 +333,13 @@
                         value: item.no,  // 假设 id 为 value
                         label: item.name  // 假设 name 为 label
                     }))
-                    // console.log(this.selectedChat)
-                    this.selectedChat = response.data.res.find(item => item.type==='team');
-                    // console.log(this.selectedChat)
-                    selectedValue.value=this.selectedChat.no;
+                    // console.log(selectedChat.value)
+                    selectedChat.value = response.data.res.find(item => item.type==='team');
+                    console.log(selectedChat.value)
+                    selectedValue.value=selectedChat.value.no;
                     // select_options.value.push({value:teamChat.user_id,label:teamChat.nickname})
                    
-                    console.log("更新选择器")
+                    // console.log("更新选择器")
                     console.log(select_options.value)
                     
                     
@@ -340,13 +370,13 @@
                         message: '创建群聊成功',
                         type: 'success',
                     })
-                    // getChatList(curTeamId);
+                    getChatList();
                     console.log(chat_list.value)
-                    const LastChat= chat_list.value[chat_list.value.length - 1];
+                    // const LastChat= chat_list.value[chat_list.value.length - 1];
                     // console.log(LastChat.no)
-                    chat_list.value.push({"no":LastChat.no+1,"type":"group","id":response.data.group_team,"name": addedGroupName.value})
-                    select_options.value.push({value: LastChat.no+1,  // 假设 id 为 value
-                        label: addedGroupName.value })
+                    // chat_list.value.push({"no":LastChat.no+1,"type":"group","id":response.data.group_team,"name": addedGroupName.value})
+                    // select_options.value.push({value: LastChat.no+1,  // 假设 id 为 value
+                        // label: addedGroupName.value })
                     // getChatList(curTeamId)
                     // window.location.reload()
                     // this.$root.reloadPage();
@@ -362,7 +392,320 @@
             console.log(addedFriends)
             
         }
+        function choose_friend(member){
+            // console.log("choose"+member.nickname)
+            selectedValue.value.id=member.no;
+            selectedChat.value=member
+            console.log("selectedChat 正确")
+            // console.log
+            // console.log(selectedChat.value)
+            if(selectedChat.value.type==='member'){
+                let hash=generateIdentifier(user.value.user_id,selectedChat.value.id)
+                websocketURL.value= 'ws://'+'81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
+            + '/ws/chat/pri/' 
+            + hash //hash标识
+            + '/'  }
+            else if(selectedChat.value.type==='group'){
+                // let hash=this.generateIdentifier(user.value.user_id,selectedChat.value.user_id)
+                websocketURL.value= 'ws://'
+            +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
+            + '/ws/chat/group/' 
+            + selectedChat.value.id 
+            + '/' 
+            }
+            else{
+                websocketURL.value= 'ws://'
+                +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
+                + '/ws/chat/' 
+                + curTeamId.value //改成团队id 
+                + '/';
+            }
+            
+            // console.log(selectedChat.value.type)
+            console.log("wb正确")
+            console.log(websocketURL.value)
+            if(chatSocket){
+                chatSocket.close();
+                // console.log("close last chatSocket")
+            }
+            const newChatSocket = new WebSocket( 
+                websocketURL.value )
+            // const self = this;
+           
+            newChatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data); 
+                // console.log(data)   
+                receiveMessage(data)
+                console.log(data)
+                // document.querySelector('#chat-log').value += (data.message + '\n'); 
+            } 
+            getAllRecord();
+            // console.log(websocketURL.value)
+                
+            // else{
+            //     websocketURL.value= 'ws://'
+            // +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
+            // + '/ws/chat/' 
+            // + curTeamId.value //改成团队id 
+            // + '/'
+                
+            }
+       function  atFriend(option){
+            selectedMentionValue.value=option.label;
+            // text_content.value=text_content.value+option.label+' '
+            // console.log(this.selectedValue);
+            if(selectedMentionValue.value==='所有人'){
+                mentionedMembers.value=friend_list.value.filter(member => member.user_id !== user.value.user_id);
+            }
+            else{
+                if (!mentionedMembers.value.includes(selectedMentionValue.value)) {
+                    mentionedMembers.value.push(selectedMentionValue.value);
+                }
+            }
+            // console.log(this.mentionedMembers)
+        }
+        function getAllRecord(){
+            // chat=chat/all'+curTeamId
+
+            console.log("getAllRecord")
+            let url='/chat/all/'+curTeamId.value;
+            
+            // if(selectedChat.value.type==='member'){
+            //     url='/chat/all/pri/'+curTeamId.value+'/'+selectedChat.value.id;
+            // }
+            // else if(selectedChat.value.type==='group')
+            // {
+            //     url='/chat/all/group/'+selectedChat.value.id;
+            // }
+            // if(selectedChat.value.type==='team'){
+                console.log(url)
+                axios.get(url)
+                .then((response)=>{
+                    // console.log(response)
+                    if(response.data.code!=200){
+                        console.log(response.data.error);
+                    }
+                    else{
+                        // records.value=response.data.chats;
+                        records.value=response.data.chats;
+                        scrollBottom();
+                        // console.log(records.value)
+                    }
+                })
+            // }
+                .catch(error=>{
+                    console.log(error);
+                })
+          
+        }     
+        function getUserInfo(){
+            axios.get('user/myself/')
+            .then((response)=>{
+                user.value=response.data;
+                // console.log(user.value)
+            })
+        }
+        function scrollBottom() {
+            this.$nextTick(() => {
+            const scrollDom = this.$refs.chatContent;
+            if (scrollDom) {
+                animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight);
+            }
+        });
+        }
+        function receiveMessage(data){
+            // const date=new Date()
+            let receiveMsg=ref({});
+            if(data.is_file===0){
+                receiveMsg={
+                    sender_id:data.id,
+                    content:data.message,
+                    send_time:data.time,
+                    sender:data.name,
+                    type:"text"
+             }   
+            }
+            else {
+                receiveMsg={
+                    sender_id:data.id,
+                    file:data.message,
+                    send_time:data.time,
+                    sender:data.name,
+                    type:data.is_file===1?"image":"file"
+                }
+            }
+            // console.log(this.records);
+            this.records.push(receiveMsg)
+            // console.log(this.records);
+            this.scrollBottom();
+
+        }
+        function sendText(){
+                // console.log(text_content.value)
+                // const now=new Date()
+                // console.log(now.toISOString())
+                let sendUrl='/chat/create'
+                let postData = {
+                    team_id: parseInt(curTeamId.value),
+                    content: text_content.value
+                    };
+                if(selectedChat.value.type==='member'){
+                    sendUrl='/chat/create/pri';
+                    postData={
+                        team_id: parseInt(curTeamId.value),
+                        content:text_content.value,
+                        rec_id:selectedChat.value.id
+                    }
+                }
+                else if(selectedChat.value.type==='group'){
+                    sendUrl='/chat/create/group';
+                    postData={
+                        group_id:selectedChat.value.id,
+                        content: text_content.value,
+                        
+                    }
+                }
+                 if(text_content.value){    
+                    // console.log("sendUrl "+sendUrl)
+                    // console.log("postData "+postData)  
+                    axios.post(sendUrl,JSON.stringify(postData))
+                    .then((response)=>{
+                        // console.log("发送消息")
+                        // console.log(response.data)
+                        if(response.data.code!=200){
+                            console.log(response.data.error)
+                        }
+                        else{  
+                            this.chatSocket.send(JSON.stringify({
+                                'id': response.data.sender, 
+                                'name':user.value.nickname,
+                                'message': text_content.value,
+                                'time': response.data.send_time,
+                                'is_file':0
+                            })); 
+                            console.log(this.mentionedMembers);
+                            // this.mentionedMembers = this.mentionedMembers.filter(member => {
+                            // // 假设 member 是一个成员对象，成员对象有一个属性比如 name，用于表示成员名字
+                            // return text_content.value.includes(member.nickname)})
+                            
+
+                            this.sendNotiToMembers(this.mentionedMembers,response.data.chat_id);
+                            // this.scrollBottom();
+                            text_content.value="";
+                        }
+                    })
+                    .catch(error=>{
+                        console.log(error);
+                    })
+                }
+                else{
+                    console.log("发送消息不能为空！")
+                }
+            }
+          function sendImg(image){
+            let sendUrl='/chat/file'
+            let imgData=new FormData();
+            if(selectedChat.value.type==='group'){
+                sendUrl='/chat/file/group'
+                imgData.append("grouup_id",selectedChat.value.id);
+            }
+            else{
+                imgData.append("team_id",parseInt(curTeamId.value));
+            }
+            
+            imgData.append("file",image.raw);
+            // console.log(image.raw)
+            if(selectedChat.value.type==='member'){
+                sendUrl='/chat/file/pri';
+                imgData.append("rec_id",selectedChat.value.id)
+            }
+            axios.post(sendUrl,imgData)
+            .then((response)=>{
+                // console.log(response.data)
+                if(response.data.code!=200){
+                    console.log(response.data.message)
+                }
+                else{
+                    this.chatSocket.send(JSON.stringify({
+                        'id': response.data.sender, 
+                        'name':user.value.nickname,
+                        'message': response.data.file,
+                        'time': response.data.send_time,
+                        'is_file':1
+                    })); 
+                    // console.log(imgData.get('file'))
+                    // console.log('http://81.70.184.77:8000'+response.data.file)
+                }
+            })
+            .catch(error=>{
+                console.log(error);
+            })  
+        }
+
+        function sendFile(file){
+            let sendUrl='/chat/file'
+            let fileData=new FormData();
+            if(selectedChat.value.type==='group'){
+                sendUrl='/chat/file/group'
+                fileData.append("grouup_id",selectedChat.value.id);
+            }
+            else{
+                fileData.append("team_id",parseInt(curTeamId.value));
+            }
+            
+            fileData.append("file",file.raw);
+            // console.log(image.raw)
+            if(selectedChat.value.type==='member'){
+                sendUrl='/chat/file/pri';
+                fileData.append("rec_id",selectedChat.value.id)
+            }
+            axios.post(sendUrl,fileData)
+            .then((response)=>{
+                // console.log(response.data)
+                if(response.data.code!=200){
+                    console.log(response.data.message)
+                }
+                else{
+                    this.chatSocket.send(JSON.stringify({
+                        'id': response.data.sender, 
+                        'name':user.value.nickname,
+                        'message': response.data.file,
+                        'time': response.data.send_time,
+                        'is_file':2
+                    })); 
+                    // console.log(fileData.get('file'))
+                    // console.log('http://81.70.184.77:8000'+response.data.file)
+                }
+            })
+            .catch(error=>{
+                console.log(error);
+            })  
+        }
+
+        function sendNotiToMembers(members,chat_id){
+            members.forEach((member)=>{
+                const NotiContent = {
+                            rec_id: member, // member是接收者的 id
+                            content:"@了你", // 通知内容可以根据需求自定义
+                            team_id:curTeamId.value,
+                            ref_type:"chat",
+                            ref_id:chat_id
+
+                        }
+                axios.post('message/create',JSON.stringify(NotiContent))
+                .then((response)=>{
+                    console.log("sendMsg")
+                    console.log(JSON.stringify(NotiContent))
+                    console.log(response.data.message)
+                })
+                .catch(error=>{
+                    console.log(error);
+                })
+            })
+    }
         return{
+          choose_friend,sendNotiToMembers,sendFile,sendText,sendImg,receiveMessage,scrollBottom,getUserInfo,getAllRecord,
+          atFriend,
             updateChatList,
             addedGroupName,
             drawer,
@@ -397,346 +740,23 @@
                 content: "soft",
                 footer: "soft"
             },
+            selectedChat,
+            websocketURL,
+            // TeamChat:{},
+            curTeamId,
+            curTeamName,
+            user,
+            records,
+            isPerm,
+            mentionedMembers, // 被 @ 的成员列表
+            selectedMentionValue,
+            form,
+            circleUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
         }
     },  
-    watch: {
-    pcCurrent: function() {
-      this.isActive()
-    }
-  },  
-    methods:{
-        isActive() {
-      this.current = this.pcCurrent
-    }, 
-      choose_friend(member){
-            // console.log("choose"+member.nickname)
-            this.selectedValue=member.no;
-            this.selectedChat=member
-            // console.log
-            // console.log(this.selectedChat)
-            if(this.selectedChat.type==='member'){
-                let hash=this.generateIdentifier(this.user.user_id,this.selectedChat.id)
-                this.websocketURL= 'ws://'
-            +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
-            + '/ws/chat/pri/' 
-            + hash //hash标识
-            + '/'  }
-            else if(this.selectedChat.type==='group'){
-                // let hash=this.generateIdentifier(this.user.user_id,this.selectedChat.user_id)
-                this.websocketURL= 'ws://'
-            +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
-            + '/ws/chat/group/' 
-            + this.selectedChat.id 
-            + '/' 
-            }
-            else{
-                this.websocketURL= 'ws://'
-                +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
-                + '/ws/chat/' 
-                + this.curTeamId //改成团队id 
-                + '/';
-            }
-            // console.log(this.selectedChat.type)
-            // console.log(this.curTeamId)
-            console.log(this.websocketURL)
-            if(this.chatSocket){
-                this.chatSocket.close();
-                // console.log("close last chatSocket")
-            }
-            this.chatSocket = new WebSocket( 
-                this.websocketURL )
-            const self = this;
-            this.chatSocket.onmessage = function(e) {
-                const data = JSON.parse(e.data); 
-                // console.log(data)   
-                self.receiveMessage(data)
-                console.log(data)
-                // document.querySelector('#chat-log').value += (data.message + '\n'); 
-            } 
-            this.getAllRecord();
-            // console.log(this.websocketURL)
-                
-            // else{
-            //     this.websocketURL= 'ws://'
-            // +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
-            // + '/ws/chat/' 
-            // + this.curTeamId //改成团队id 
-            // + '/'
-                
-            }
-        ,
-        atFriend(option){
-            this.selectedMentionValue=option.label;
-            // this.text_content=this.text_content+option.label+' '
-            // console.log(this.selectedValue);
-            if(this.selectedMentionValue==='所有人'){
-                this.mentionedMembers=this.friend_list.filter(member => member.user_id !== this.user.user_id);
-            }
-            else{
-                if (!this.mentionedMembers.includes(this.selectedMentionValue)) {
-                    this.mentionedMembers.push(this.selectedMentionValue);
-                }
-            }
-            // console.log(this.mentionedMembers)
-        },
-        getAllRecord(){
-            // chat=chat/all'+curTeamId
-
-            console.log("getAllRecord")
-            let url='/chat/all/'+this.curTeamId;
-            if(this.selectedChat.type==='member'){
-                url='/chat/all/pri/'+this.curTeamId+'/'+this.selectedChat.id;
-            }
-            else if(this.selectedChat.type==='group')
-            {
-                url='/chat/all/group/'+this.selectedChat.id;
-            }
-            // if(this.selectedChat.type==='team'){
-                console.log(url)
-                axios.get(url)
-                .then((response)=>{
-                    // console.log(response)
-                    if(response.data.code!=200){
-                        console.log(response.data.error);
-                    }
-                    else{
-                        // records.value=response.data.chats;
-                        this.records=response.data.chats;
-                        this.scrollBottom();
-                        // console.log(records.value)
-                    }
-                })
-            // }
-                .catch(error=>{
-                    console.log(error);
-                })
-          
-        },      
-        getUserInfo(){
-            axios.get('user/myself/')
-            .then((response)=>{
-                this.user=response.data;
-                // console.log(this.user)
-            })
-        },
-        scrollBottom() {
-            this.$nextTick(() => {
-            const scrollDom = this.$refs.chatContent;
-            if (scrollDom) {
-                animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight);
-            }
-        });
-        },
-        receiveMessage(data){
-            // const date=new Date()
-            let receiveMsg=ref({});
-            if(data.is_file===0){
-                receiveMsg={
-                    sender_id:data.id,
-                    content:data.message,
-                    send_time:data.time,
-                    sender:data.name,
-                    type:"text"
-             }   
-            }
-            else {
-                receiveMsg={
-                    sender_id:data.id,
-                    file:data.message,
-                    send_time:data.time,
-                    sender:data.name,
-                    type:data.is_file===1?"image":"file"
-                }
-            }
-            // console.log(this.records);
-            this.records.push(receiveMsg)
-            // console.log(this.records);
-            this.scrollBottom();
-
-        },
-        sendText(){
-                // console.log(this.text_content)
-                // const now=new Date()
-                // console.log(now.toISOString())
-                let sendUrl='/chat/create'
-                let postData = {
-                    team_id: parseInt(this.curTeamId),
-                    content: this.text_content
-                    };
-                if(this.selectedChat.type==='member'){
-                    sendUrl='/chat/create/pri';
-                    postData={
-                        team_id: parseInt(this.curTeamId),
-                        content: this.text_content,
-                        rec_id:this.selectedChat.id
-                    }
-                }
-                else if(this.selectedChat.type==='group'){
-                    sendUrl='/chat/create/group';
-                    postData={
-                        group_id:this.selectedChat.id,
-                        content: this.text_content,
-                        
-                    }
-                }
-                 if(this.text_content){    
-                    // console.log("sendUrl "+sendUrl)
-                    // console.log("postData "+postData)  
-                    axios.post(sendUrl,JSON.stringify(postData))
-                    .then((response)=>{
-                        // console.log("发送消息")
-                        // console.log(response.data)
-                        if(response.data.code!=200){
-                            console.log(response.data.error)
-                        }
-                        else{  
-                            this.chatSocket.send(JSON.stringify({
-                                'id': response.data.sender, 
-                                'name':this.user.nickname,
-                                'message': this.text_content,
-                                'time': response.data.send_time,
-                                'is_file':0
-                            })); 
-                            console.log(this.mentionedMembers);
-                            // this.mentionedMembers = this.mentionedMembers.filter(member => {
-                            // // 假设 member 是一个成员对象，成员对象有一个属性比如 name，用于表示成员名字
-                            // return this.text_content.includes(member.nickname)})
-                            
-
-                            this.sendNotiToMembers(this.mentionedMembers,response.data.chat_id);
-                            // this.scrollBottom();
-                            this.text_content="";
-                        }
-                    })
-                    .catch(error=>{
-                        console.log(error);
-                    })
-                }
-                else{
-                    console.log("发送消息不能为空！")
-                }
-            },
-        sendImg(image){
-            let sendUrl='/chat/file'
-            let imgData=new FormData();
-            if(this.selectedChat.type==='group'){
-                sendUrl='/chat/file/group'
-                imgData.append("grouup_id",this.selectedChat.id);
-            }
-            else{
-                imgData.append("team_id",parseInt(this.curTeamId));
-            }
-            
-            imgData.append("file",image.raw);
-            // console.log(image.raw)
-            if(this.selectedChat.type==='member'){
-                sendUrl='/chat/file/pri';
-                imgData.append("rec_id",this.selectedChat.id)
-            }
-            axios.post(sendUrl,imgData)
-            .then((response)=>{
-                // console.log(response.data)
-                if(response.data.code!=200){
-                    console.log(response.data.message)
-                }
-                else{
-                    this.chatSocket.send(JSON.stringify({
-                        'id': response.data.sender, 
-                        'name':this.user.nickname,
-                        'message': response.data.file,
-                        'time': response.data.send_time,
-                        'is_file':1
-                    })); 
-                    // console.log(imgData.get('file'))
-                    // console.log('http://81.70.184.77:8000'+response.data.file)
-                }
-            })
-            .catch(error=>{
-                console.log(error);
-            })  
-        },
-        sendFile(file){
-            let sendUrl='/chat/file'
-            let fileData=new FormData();
-            if(this.selectedChat.type==='group'){
-                sendUrl='/chat/file/group'
-                fileData.append("grouup_id",this.selectedChat.id);
-            }
-            else{
-                fileData.append("team_id",parseInt(this.curTeamId));
-            }
-            
-            fileData.append("file",file.raw);
-            // console.log(image.raw)
-            if(this.selectedChat.type==='member'){
-                sendUrl='/chat/file/pri';
-                fileData.append("rec_id",this.selectedChat.id)
-            }
-            axios.post(sendUrl,fileData)
-            .then((response)=>{
-                // console.log(response.data)
-                if(response.data.code!=200){
-                    console.log(response.data.message)
-                }
-                else{
-                    this.chatSocket.send(JSON.stringify({
-                        'id': response.data.sender, 
-                        'name':this.user.nickname,
-                        'message': response.data.file,
-                        'time': response.data.send_time,
-                        'is_file':2
-                    })); 
-                    // console.log(fileData.get('file'))
-                    // console.log('http://81.70.184.77:8000'+response.data.file)
-                }
-            })
-            .catch(error=>{
-                console.log(error);
-            })  
-        },
-        sendNotiToMembers(members,chat_id){
-            members.forEach((member)=>{
-                const NotiContent = {
-                            rec_id: member, // member是接收者的 id
-                            content:"@了你", // 通知内容可以根据需求自定义
-                            team_id:this.curTeamId,
-                            ref_type:"chat",
-                            ref_id:chat_id
-
-                        }
-                axios.post('message/create',JSON.stringify(NotiContent))
-                .then((response)=>{
-                    console.log("sendMsg")
-                    console.log(JSON.stringify(NotiContent))
-                    console.log(response.data.message)
-                })
-                .catch(error=>{
-                    console.log(error);
-                })
-            })
-    },
-},
-    data(){
-        return{
-            // crypto: require('crypto'),
-            circleUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-            current:'',
-            selectedChat:'',
-            websocketURL:'',
-            // TeamChat:{},
-            curTeamId:'',
-            curTeamName:'',
-            user:'',
-            records:[],
-            isPerm:false,
-            mentionedMembers: [], // 被 @ 的成员列表
-            selectedMentionValue:'',
-            form:{
-                file:'',
-                team_id:''
-            }
-        }
-    }
+   
+   
+   
   })
 </script>
 
