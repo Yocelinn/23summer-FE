@@ -9,7 +9,7 @@
         @close="handleClose"
       >
         <h2>文档管理</h2>
-        <router-link to="/person/protectCenter">
+        <router-link to="/documentadmin">
           <el-menu-item index="3">
           <el-icon><document /></el-icon>
           <span>返回项目</span>

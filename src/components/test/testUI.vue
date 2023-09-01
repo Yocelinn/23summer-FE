@@ -1,847 +1,283 @@
 <template>
-    <div class="flex-container-pl">
-        <span>
-            <div style="font-size: 22px">团队项目</div>
-        </span>
-
-        <div class="align-right-pl">
-            <el-icon style="margin-right: 5px" @click="openDelete"><Delete /></el-icon>
-            <d-modal v-model="deleteTable" style="display: inline-block; max-width: 100%; width: 650px; height: 450px">
+    <div class="flex-container">
+        <div class="flex-descriptions">
+            <d-modal v-model="updateVisable">
                 <template #header>
                     <d-modal-header>
-                        <span>回收站</span>
+                        <!--                <d-icon name="like"></d-icon>-->
+                        <span>修改个人信息</span>
                     </d-modal-header>
                 </template>
 
-                <el-table class="table-pl" :data="deletedData" style="width: 100%; height: 310px" stripe="true" fit="true">
-                    <el-table-column>
-                        <template #header>
-                                项目名称
-                        </template>
-                        <template #default="scope">
-                            <el-checkbox v-model="scope.row.checked" size="large" >
-                                <div style="display: flex; align-items: center">
-                                    <span>{{ scope.row.projectName }}</span>
-                                </div>
-                            </el-checkbox>
-                        </template>
-                    </el-table-column>
-                    <el-table-column>
-                        <template #header>
-                                创建时间
-                        </template>
-                        <template #default="scope">
-                            <div style="display: flex; align-items: center">
-                                <span>{{ scope.row.created_time }}</span>
-                            </div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column>
-                        <template #header>
-                                最后修改时间
-                        </template>
-                        <template #default="scope">
-                            <div style="display: flex; align-items: center">
-                                <span>{{ scope.row.updated_time }}</span>
-                            </div>
-                        </template>
-                    </el-table-column>
-                </el-table>
+                <!--                <div class="text">昵称：</div>-->
+                <div class="tl-div-input">
+                    <el-input
+                            v-model="curNitName"
+                            placeholder=我的昵称
+                            clearable
+                            class="tl-input1"
+                            @input="updateCurNitName"
+                    />
+                </div>
 
+                <!--                <div class="text">描述：</div>-->
+                <div class="tl-div-input">
+                    <el-input
+                            v-model="curDescription"
+                            placeholder="描述"
+                            clearable
+                            class="tl-input4"
+                            @input="updateCurDescription"
+                    />
+                </div>
+
+                <!--                <div class="text">旧密码：</div>-->
+                <div class="tl-div-input">
+                    <el-input
+                            v-model="passwordO"
+                            type="password"
+                            placeholder="Please input password"
+                            show-password
+                            clearable
+                            class="tl-input2"
+                            @input="updatePasswordO"
+                    />
+                </div>
+
+                <!--                <div class="text">新密码：</div>-->
+                <div class="tl-div-input">
+                    <el-input
+                            v-model="passwordN"
+                            type="password"
+                            placeholder="Please input password"
+                            show-password
+                            clearable
+                            class="tl-input3"
+                            @input="updatePasswordN"
+                    />
+                </div>
 
                 <template #footer>
-                    <d-modal-footer class="pl-button-container-d" style="padding-right: 20px; width: 100%">
-                        <d-button class="pl-button-d-i" @click="trueDelete" style="text-align: left;">删除</d-button>
-                        <d-button class="pl-button-d-c" @click="pullBack" style="text-align: right;">恢复</d-button>
+                    <d-modal-footer class="tl-button-container" style="text-align: right; padding-right: 20px;">
+                        <d-button class="custom-button-i" @click="updateSelfInform">修改信息</d-button>
+                        <d-button class="custom-button-i" @click="updatePassword">修改密码</d-button>
+                        <d-button class="custom-button" @click="cutInput">取消</d-button>
                     </d-modal-footer>
                 </template>
             </d-modal>
-            <div class="button-select">
-                <button class="selected-button" @click="toggleDropdown">{{ selectedOption || placeholder }}</button>
-                <div v-if="isDropdownVisible" class="dropdown" @click.stop>
-                    <button
-                            v-for="(option, index) in options"
-                            :key="index"
-                            class="option-button"
-                            @click="selectOption(option)"
-                    >
-                        {{ option }}
-                    </button>
-                </div>
-            </div>
-            <div class="selevt-input">
-                <d-input v-model="selectInputValue" autofocus @input="selectFor"></d-input>
-            </div>
-            <d-button class="newProject-pl" @click="plNewPjVisable=true">
-                新建项目
-            </d-button>
+
+            <el-descriptions class="main-descriptions" title="个人信息">
+                <el-descriptions-item label="昵称：">{{nitName}}</el-descriptions-item>
+                <el-descriptions-item label="邮箱：">{{email}}</el-descriptions-item>
+                <el-descriptions-item label="id：">{{uid}}</el-descriptions-item>
+                <el-descriptions-item label="姓名：">{{name}}</el-descriptions-item>
+                <el-descriptions-item label="描述：">{{description}}</el-descriptions-item>
+                <el-descriptions-item>
+                    <el-button class="custom-save-button-tl" type="primary" plain style="margin-top: 23px" @click="updateVisable=true">更改</el-button>
+                </el-descriptions-item>
+            </el-descriptions>
         </div>
-
-        <d-modal v-model="plNewPjVisable">
-            <template #header>
-                <d-modal-header>
-                    <!--                <d-icon name="like"></d-icon>-->
-                    <span>新建项目</span>
-                </d-modal-header>
-            </template>
-
-            <!--                <div class="text">昵称：</div>-->
-            <div class="pl-div-input-d">
-                <el-input
-                        v-model="newPjName"
-                        placeholder=新项目名称
-                        clearable
-                        class="pl-input-d"
-                />
-                <!--                @input="cNewPjName"-->
-                <el-input
-                        v-model="newPjDes"
-                        placeholder=项目描述
-                        clearable
-                        class="pl-input-d"
-                />
-                <!--                @input="cNewPjDes"-->
-            </div>
-
-            <template #footer>
-                <d-modal-footer class="pl-button-container-d" style="text-align: right; padding-right: 20px;">
-                    <d-button class="pl-button-d-i" @click="createNewProject">确认</d-button>
-                    <d-button class="pl-button-d-c" @click="plNewPjVisable=false">取消</d-button>
-                </d-modal-footer>
-            </template>
-        </d-modal>
-
-    </div>
-    <div class="table-container-pl">
-        <el-table class="table-pl" :data="projectData" style="width: 100%" stripe="true" fit="true">
-            <el-table-column>
+        <div class="card-container">
+            <el-card class="box-card" >
                 <template #header>
-                    <el-button class="sortB1" @click="clickSortB1">
-                        项目名称
-                        <el-icon v-if="arrow11"><ArrowUp/></el-icon>
-                        <el-icon v-if="arrow1"><ArrowDown/></el-icon>
-                    </el-button>
-                </template>
-                <template #default="scope">
-                    <div style="display: flex; align-items: center">
-                        <span>{{ scope.row.projectName }}</span>
+                    <div class="card-header">
+                        <span class="text"><b>选择团队</b></span>
+                        <el-button class="custom-button" @click="handleClick">创建团队</el-button>
+                        <d-modal v-model="visible">
+                            <template #header>
+                                <d-modal-header>
+                                    <!--                <d-icon name="like"></d-icon>-->
+                                    <span>创建团队</span>
+                                </d-modal-header>
+                            </template>
+                            <div class="text"><b>团队名称：</b></div>
+                            <d-input class="custom-input" v-model="valueBasic1" clearable @clear="handleClear" placeholder="你的新团队名称"></d-input>
+                            <template #footer>
+                                <d-modal-footer style="text-align: right; padding-right: 20px;">
+                                    <d-button class="custom-button" @click="hidden">取消</d-button>
+                                    <d-button class="custom-button-i" @click="newTeam">确认</d-button>
+                                </d-modal-footer>
+                            </template>
+                        </d-modal>
                     </div>
                 </template>
-            </el-table-column>
-            <!--            <el-table-column>-->
-            <!--                <template #header>-->
-            <!--                    <el-button class="sortB2" @click="clickSortB2">-->
-            <!--                        项目创建者-->
-            <!--                        <el-icon :name="arrow2"></el-icon>-->
-            <!--                    </el-button>-->
-            <!--                </template>-->
-            <!--                <template #default="scope">-->
-            <!--                    <div style="display: flex; align-items: center">-->
-            <!--                        <span>{{ scope.row.creator_name }}</span>-->
-            <!--                    </div>-->
-            <!--                </template>-->
-            <!--            </el-table-column>-->
-            <el-table-column>
-                <template #header>
-                    <el-button class="sortB2" @click="clickSortB2">
-                        创建时间
-                        <el-icon v-if="arrow21"><ArrowUp/></el-icon>
-                        <el-icon v-if="arrow2"><ArrowDown/></el-icon>
-                    </el-button>
-                </template>
-                <template #default="scope">
-                    <div style="display: flex; align-items: center">
-                        <span>{{ scope.row.created_time }}</span>
-                    </div>
-                </template>
-            </el-table-column>
-            <el-table-column>
-                <template #header>
-                    <el-button class="sortB3" @click="clickSortB3">
-                        最后修改时间
-                        <el-icon v-if="arrow31"><ArrowUp/></el-icon>
-                        <el-icon v-if="arrow3"><ArrowDown/></el-icon>
-                    </el-button>
-                </template>
-                <template #default="scope">
-                    <div style="display: flex; align-items: center">
-                        <span>{{ scope.row.updated_time }}</span>
-                    </div>
-                </template>
-            </el-table-column>
-            <el-table-column label="操作">
-                <template #default="scope">
-                    <d-button
-                            class="copy"
-                            size="small"
-                            @click="copyProject(scope.$index, scope.row)"
-                    >
-                        复制项目
-                    </d-button>
-                    <d-button
-                            class="access-pl"
-                            size="small"
-                            @click="handleEdit(scope.$index, scope.row)">
-                        进入项目
-                    </d-button>
-                    <d-button
-                            class="delete"
-                            size="small"
-                            type="danger"
-                            @click="handleDelete(scope.$index, scope.row)"
-                    >
-                        删除项目
-                    </d-button>
-                </template>
-            </el-table-column>
-        </el-table>
+                <el-table class="tl-card-table" :data="tableData" style="width: 100%" flex="1" :show-header="false">
+                    <el-table-column label="Name" fit="true" align="center">
+                        <template #default="scope">
+                            <d-button class="custom-button-w"  v-ripple="{ duration: 300 }" @click="chooseCurTeam(scope.row.team_id, scope.row.team_name)">
+                                {{scope.row.team_name}}
+                            </d-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-card>
+        </div>
+        <div class="in-button-container">
+            <el-button class="in-custom-button" @click="inClick">进入团队</el-button>
+        </div>
     </div>
 </template>
 
-<script>
-import { ref, onMounted, computed } from 'vue';
-import { ElMessage } from 'element-plus';
-import axios from "axios";
-import router from "@/router";
-import {mapState, useStore, mapActions } from 'vuex';
-import {ArrowUp, ArrowDown} from "@element-plus/icons";
-// import {color} from "vue-devui/types/color-picker/src/utils/color";
-// import message from "@element-plus/icons/lib/Message";
-
-export default {
-    name: 'ProjectList',
-    components: {ArrowUp, ArrowDown},
-    computed: {
-        ...mapState(['projectData']),
-        // 其他 computed properties
-    },
-
-    setup() {
-        const store = useStore();
-        const user = store.state.user;
-        const curTeamId = window.sessionStorage.getItem('curTeamId');
-        const curProjectId = ref('');
-        const plNewPjVisable = ref(false);
-        const projectData = computed(() => {
-            return store.state.projectData;
-        });
-        const newPjName = ref('');
-        const newPjDes = ref('');
-
-        const { fetchProjectList } = mapActions(['fetchProjectList']);
-        const callFetchInProjectList = () => {
-            console.log('PL', window.sessionStorage.getItem('curTeamId'));
-            store.dispatch('fetchProjectList', window.sessionStorage.getItem('curTeamId'));
-            console.log('PL检查', projectData);
-        };
-        const createNewProject = () => {
-            if (window.sessionStorage.getItem('curTeamId').value === -1) {
-                ElMessage({
-                    message: '当前未选择团队',
-                    type:'error'
-                });
-                plNewPjVisable.value = false;
-            }
-            else {
-                console.log(' 团队', window.sessionStorage.getItem('curTeamId'), store.state.isLoggedIn);
-                axios.post('/project/create', {
-                    team_id: window.sessionStorage.getItem('curTeamId'),
-                    projectName: newPjName.value,
-                    projectDescription: newPjDes.value
-                })
-                    .then((response) => {
-                        console.log(response.config.data);
-                        if (response.data.code === 200) {
-                            ElMessage({
-                                message: '新建成功',
-                                type:'success'
-                            })
-                            console.log(response.data);
-                            plNewPjVisable.value = false;
-// 未完成                            curProjectId.value = response.data.id;
-                            window.sessionStorage.setItem('curProjectId', response.data.project_id);
-                            window.sessionStorage.setItem('curProjectName', newPjName.value);
-                            window.sessionStorage.setItem('curProjectDes', newPjDes.value);
-                            router.push('/prototype');
-                        }
-                        else {
-                            ElMessage({
-                                message: response.data.error,
-                                type:'error'
-                            });
-                            console.log('一次新建', response.data);
-                            plNewPjVisable.value = false;
-                        }
-                    })
-                    .catch((error) => {
-                        ElMessage ({
-                            message: '新建项目失败，请重试',
-                            type:'error'
-                        })
-                        console.log('POST request error:', error);
-                        plNewPjVisable.value = false;
-                    });
-            }
-            callFetchInProjectList();
-        };
-
-
-        const isDropdownVisible = ref(false);
-
-        // 操作
-
-        const handleEdit = (index, data) => {
-            curProjectId.value = data.project_id;
-            // store.commit('setCurProjectId', data.project_id);
-            window.sessionStorage.setItem('curProjectId', data.project_id);
-            window.sessionStorage.setItem('curProjectName', data.projectName);
-            window.sessionStorage.setItem('curProjectDes', data.projectDescription);
-
-            router.push('/person/protectCenter');
-        }
-
-        const handleDelete = (index, data) => {
-            axios.post('/project/delete', {
-                project_id: data.project_id
-            })
-                .then((response) => {
-                    if (response.data.code === 200) {
-                        ElMessage ({
-                            message: '删除成功',
-                            type: 'success'
-                        });
-                        console.log(response.data);
-                        callFetchInProjectList();
-                    }
-                    else {
-                        ElMessage ({
-                            message: response.data.error,
-                            type: 'error'
-                        });
-                        console.log(response.data);
-                    }
-                })
-                .catch((error) => {
-                    ElMessage ({
-                        message: '删除项目失败，请重试',
-                        type: 'error'
-                    });
-                    console.log('POST request error:', error);
-                });
-        }
-
-        const copyProject = (index, data) => {
-            axios.post('/project/copy', {
-                project_id: data.project_id
-            })
-                .then((response) => {
-                    if (response.data.code === 200) {
-                        ElMessage({
-                            message: response.data.message,
-                            type: 'success'
-                        });
-                        callFetchInProjectList();
-                    }
-                    else {
-                        ElMessage({
-                            message: response.data.error,
-                            type: 'error'
-                        });
-                        console.log(response.config.data);
-                        console.log(response.data);
-                    }
-                })
-                .catch((error) => {
-                    ElMessage({
-                        message: '复制项目失败，请重试',
-                        type: 'error'
-                    });
-                    console.log(error.config.data);
-                })
-        }
-
-        // 排序
-
-        const sortFlag = ref('0');
-        const sortOption = ref('0');
-        const arrow1 = ref(false);
-        const arrow11 = ref(false);
-        const arrow2 = ref(false);
-        const arrow21 = ref(false);
-        const arrow3 = ref(false);
-        const arrow31 = ref(false);
-        // const arrow4 = ref('');
-        const clickSortB1 = () => {
-            // 处理flag
-            if (!(sortFlag.value === 2)) {
-                sortFlag.value = 2;
-                sortOption.value = 0;
-                arrow1.value = true;
-                arrow11.value = !arrow1.value;
-                arrow2.value = false;
-                arrow21.value = false;
-                arrow3.value = false;
-                arrow31.value = false;
-            }
-            else {
-                sortOption.value = (sortOption.value + 1) % 2;
-                arrow11.value = arrow1.value;
-                arrow1.value = !arrow1.value;
-            }
-            axios.post('/project/order', {
-                team_id: window.sessionStorage.getItem('curTeamId'),
-                type: sortFlag.value,
-                option: sortOption.value
-            })
-                .then((response) => {
-                    if (response.data.code === 200) {
-                        ElMessage({
-                            message: response.data.message,
-                            type: 'success'
-                        });
-                        store.commit('setProjectData', response.data.projects);
-                    }
-                    else {
-                        ElMessage({
-                            message: response.data.error,
-                            type: 'error'
-                        });
-                        console.log(response.config.data);
-                        console.log(response.data);
-                    }
-                })
-                .catch((error) => {
-                    ElMessage({
-                        message: "排序错误，请重试",
-                        type: 'error'
-                    });
-                    console.log(error.config.data);
-                    console.log(error.data);
-                })
-        };
-        const clickSortB2 = () => {
-            // 处理flag
-            if (!(sortFlag.value === 0)) {
-                sortFlag.value = 0;
-                sortOption.value = 0;
-                arrow1.value = false;
-                arrow11.value = false;
-                arrow2.value = true;
-                arrow21.value = !arrow2.value;
-                arrow3.value = false;
-                arrow31.value = false;
-            }
-            else {
-                sortOption.value = (sortOption.value + 1) % 2;
-                arrow2.value = !arrow2.value;
-                arrow21.value = !arrow2.value;
-            }
-            axios.post('/project/order', {
-                team_id: window.sessionStorage.getItem('curTeamId'),
-                type: sortFlag.value,
-                option: sortOption.value
-            })
-                .then((response) => {
-                    if (response.data.code === 200) {
-                        ElMessage({
-                            message: response.data.message,
-                            type: 'success'
-                        });
-                        store.commit('setProjectData', response.data.projects);
-                    }
-                    else {
-                        ElMessage({
-                            message: response.data.error,
-                            type: 'error'
-                        });
-                        console.log(response.config.data);
-                        console.log(response.data);
-                    }
-                })
-                .catch((error) => {
-                    ElMessage({
-                        message: "排序错误，请重试",
-                        type: 'error'
-                    });
-                    console.log(error.config.data);
-                    console.log(error.data);
-                })
-        };
-        const clickSortB3 = () => {
-            // 处理flag
-            if (!(sortFlag.value === 1)) {
-                sortFlag.value = 1;
-                sortOption.value = 0;
-                arrow1.value = false;
-                arrow11.value = false;
-                arrow2.value = false;
-                arrow21.value = false;
-                arrow3.value = true;
-                arrow31.value = !arrow3.value;
-            }
-            else {
-                sortOption.value = (sortOption.value + 1) % 2;
-                arrow3.value = !arrow3.value;
-                arrow31.value = !arrow3.value;
-            }
-            axios.post('/project/order', {
-                team_id: window.sessionStorage.getItem('curTeamId'),
-                type: sortFlag.value,
-                option: sortOption.value
-            })
-                .then((response) => {
-                    if (response.data.code === 200) {
-                        ElMessage({
-                            message: response.data.message,
-                            type: 'success'
-                        });
-                        store.commit('setProjectData', response.data.projects);
-                    }
-                    else {
-                        ElMessage({
-                            message: response.data.error,
-                            type: 'error'
-                        });
-                        console.log(response.config.data);
-                        console.log(response.data);
-                    }
-                })
-                .catch((error) => {
-                    ElMessage({
-                        message: "排序错误，请重试",
-                        type: 'error'
-                    });
-                    console.log(error.config.data);
-                    console.log(error.data);
-                })
-        };
-        // const clickSortB1 = (1) => {
-        //
-        // };
-
-        //搜索
-        const selectedOption = ref(null);
-        const options = ref([
-            "区分大小写",
-            "不区分大小写"
-        ]);
-        const placeholder = ref('大小写');
-
-        const checkType = ref(1);
-        const toggleDropdown = () => {
-            isDropdownVisible.value = !isDropdownVisible.value;
-        };
-
-        const selectOption = (option) => {
-            if (isDropdownVisible.value === true) {
-                selectedOption.value = option;
-                if (option === "区分大小写") {
-                    checkType.value = 0;
-                }
-                else {
-                    checkType.value = 1;
-                }
-                isDropdownVisible.value = false;
-            }
-        };
-
-        const selectInputValue = ref('');
-        const selectFor = (newValue) => {
-            selectInputValue.value = newValue;
-            console.log('检查输入', selectInputValue.value, newValue);
-            axios.post('/project/find', {
-                team_id: Number(window.sessionStorage.getItem('curTeamId')),
-                key_word: selectInputValue.value,
-                options: checkType.value
-            })
-                .then((response) => {
-                    if (response.data.code === 200) {
-                        ElMessage({
-                            message: response.data.message,
-                            type: 'success'
-                        });
-                        store.commit('setProjectData', response.data.projects);
-                    }
-                    else {
-                        ElMessage({
-                            message: response.data.error,
-                            type: 'error'
-                        });
-                        console.log(response.config.data);
-                        console.log(response.data);
-                    }
-                })
-                .catch((error) => {
-                    ElMessage({
-                        message: "查询失败，请重试",
-                        type: 'error'
-                    });
-                    console.log(error.config.data);
-                    console.log(error.data);
-                })
-        }
-
-        const openDelete = () => {
-            deleteTable.value = true;
-            axios.post('/project/recyclebin', {
-                team_id: Number(window.sessionStorage.getItem('curTeamId'))
-            })
-                .then((response) => {
-                    if (response.data.code === 200) {
-                        ElMessage ({
-                            message: response.data.message,
-                            type: 'success'
-                        });
-                        deletedData.value = response.data.recycle_bin;
-                    }
-                    else {
-                        ElMessage ({
-                            message: response.data.error,
-                            type: 'error'
-                        });
-                        console.log(response.config.data);
-                        console.log(response.data);
-                    }
-                })
-                .catch((error) => {
-                    ElMessage ({
-                        message: '访问回收站失败，请重试',
-                        type: 'error'
-                    });
-                    console.log(error.config.data);
-                    console.log(error.data);
-                })
-        }
-
-        const deleteTable = ref(false);
-
-        const checkedDelete = ref([]);
-
-        const deletedData = ref([]);
-
-
-        const trueDelete = () => {
-            const selectedRows = deletedData.value.filter(row => row.checked);
-            console.log("选中的行数据：", selectedRows);
-
-            checkedDelete.value = [];
-            deleteTable.value = false;
-        }
-
-        const pullBack = () => {
-            const selectedRows = deletedData.value.filter(row => row.checked);
-            console.log("选中的行数据：", selectedRows);
-            const flag = ref(0);
-            for (let i = 0; i < selectedRows.value.length; i++) {
-                if (flag.value === 1) {
-                    break;
-                }
-                axios.post('/project/recycle', {
-                    project_id: selectedRows.value[i].project_id
-                })
-                    .then((response) => {
-                        if (response.data.code === 200) {
-                            console.log("恢复", selectedRows.value[i].projectName, "成功");
-                        }
-                        else {
-                            ElMessage ({
-                                message: "恢复至" + selectedRows.value[i].projectName + "时失败",
-                                type: 'error'
-                            });
-                            console.log("恢复至", selectedRows.value[i].projectName, "时失败");
-                            console.log(response.config.data);
-                            console.log(response.data);
-                            flag.value = 1;
-                        }
-                    })
-                    .catch((error) => {
-                        ElMessage ({
-                            message: "恢复至" + selectedRows.value[i].projectName + "时失败",
-                            type: 'error'
-                        });
-                        console.log(error.config.data);
-                        console.log(error.data);
-                        console.log("恢复至", selectedRows.value[i].projectName, "时失败");
-                        flag.value = 1;
-                    })
-            }
-            if (flag.value === 0) {
-                ElMessage({
-                    message: "恢复成功",
-                    type: 'error'
-                });
-                callFetchInProjectList();
-            }
-            checkedDelete.value = [];
-            deleteTable.value = false;
-        }
-
-        onMounted(() => {
-            // callFetchInProjectList();
-        });
-
-        return {
-            user,
-            curTeamId,
-            curProjectId,
-            plNewPjVisable,
-            projectData,
-            newPjName,
-            newPjDes,
-            isDropdownVisible,
-            selectedOption,
-            options,
-            placeholder,
-            sortFlag,
-            sortOption,
-            arrow1,
-            arrow11,
-            arrow2,
-            arrow21,
-            arrow3,
-            arrow31,
-            clickSortB1,
-            clickSortB2,
-            clickSortB3,
-
-            checkType,
-            toggleDropdown,
-            selectOption,
-
-            createNewProject,
-            fetchProjectList,
-            callFetchInProjectList,
-            // callCreatNewProject,
-            handleEdit,
-            handleDelete,
-            copyProject,
-
-            selectInputValue,
-            selectFor,
-
-            openDelete,
-            deleteTable,
-            checkedDelete,
-            deletedData,
-            trueDelete,
-            pullBack
-        };
-    },
-};
-</script>
-
 <style scoped>
-.sortB1,
-.sortB2,
-.sortB3,
-.sortB4
-{
-    width: 100%;
-    height: 100%;
-    border: hidden;
-}
-.sortB1:active,
-.sortB2:active,
-.sortB3:active,
-.sortB4:active
-{
-    width: 100%;
-    height: 100%;
-    border: hidden;
-    background-color: rgba(126, 124, 203, 0.34);
-    color: rgba(126, 124, 203, 0.34);
-}
-.sortB1:hover,
-.sortB2:hover,
-.sortB3:hover,
-.sortB4:hover
-{
-    width: 100%;
-    height: 100%;
-    border: hidden;
-    background-color: rgba(158, 156, 244, 0.26);
-    color: #7E7CCB;
-}
-.sortB1:focus,
-.sortB2:focus,
-.sortB3:focus,
-.sortB4:focus
-{
-    width: 100%;
-    height: 100%;
-    border: hidden;
-    background-color: rgba(126, 124, 203, 0.3);
-    color: #7E7CCB;
+
+.in-button-container {
+    flex: 1; /* This will make in-button-container occupy the remaining height */
+    display: flex;
+    justify-content: center; /* Align the button to the bottom of the container */
+    align-items: center; /* Align the button to the right of the container */
+    /*padding: 20px; !* Add some padding for spacing *!*/
+    width: 95%;
+    flex-direction: column;
 }
 
-.selevt-input {
-    height: 35px;
-    width: 130px;
-    border-radius: 4px; /* 添加圆角半径 */
-    margin-right: 5px;
+.in-custom-button:hover,
+.in-custom-button:focus {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #7E7CCB;
+    color: #7E7CCB;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button {
+    display: flex;
+    width: 85%;
+    background-color: white;
+    border-color: #9E9CF4;
+    color: #9E9CF4;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.in-custom-button:active {
+    display: flex;
+    width: 85%;
+    background-color: #7E7CCB;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    align-items: center;
+    justify-content: center;
+}
+
+.tl-button-container {
+    display: flex;
+    justify-content: flex-end;
+    /*padding-right: 20px; !* 调整按钮与容器边缘的间距 *!*/
+    max-width: 100%;
+}
+
+.tl-input1 {
+    max-width: 85%;
+    flex: 0 0 85%;
+    margin: 5px;
+}
+.tl-input2 {
+    max-width: 85%;
+    flex: 0 0 85%;
+    margin: 5px;
+}
+.tl-input3 {
+    max-width: 85%;
+    flex: 0 0 85%;
+    margin: 5px;
+}
+.tl-input4 {
+    max-width: 85%;
+    flex: 0 0 85%;
+    margin: 5px;
+}
+
+.tl-card-table {
+    height: 330px;
+    overflow: auto;
+}
+
+.flex-container {
+    display: flex;
+    height: calc(100vh - 85px);
+    flex-direction: column;
     align-items: center;
 }
 
-.button-select {
-    position: relative;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-end; /* Right-align the items */
-    margin-right: 5px;
-}
-
-.selected-button {
-    /*padding: 8px 12px;*/
-    border: 1px solid #ccc;
-    background-color: #fff;
-    cursor: pointer;
-    border-radius: 4px; /* 添加圆角半径 */
-    height: 35px;
-    width: 85px;
-
-}
-
-.dropdown {
-    position: absolute;
-    margin-top: 3px;
-    top: 100%;
-    left: 0;
-    width: 120px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    border-radius: 4px; /* 添加圆角半径 */
-    max-height: 150px; /* 设置最大高度 */
-    overflow-y: auto; /* 设置纵向滚动 */
-    z-index: 2; /* 设置较高的 z-index 值 */
-}
-
-.dropdown::-webkit-scrollbar {
-    width: 8px; /* 滚动条宽度 */
-}
-
-.dropdown::-webkit-scrollbar-thumb {
-    background-color: rgba(204, 204, 204, 0.24); /* 滚动条 thumb 颜色 */
-    border-radius: 4px; /* thumb 圆角 */
-}
-
-.option-button {
-    display: flex;
+.flex-descriptions {
+    flex: 1;
     width: 100%;
-    padding: 8px 12px;
-    border: none;
-    background-color: transparent;
+    max-height: 30%;
+    padding: 15px;
+}
+
+.card-container {
+    flex: 1;
+    width: 95%;
+    padding: 0 10px; /* Add some padding to prevent contents from sticking to the edges */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 垂直居中 */
+    justify-content: flex-start; /* 水平居中 */
+    /*height: calc(80% - 50px);*/
+    /*height: 45%;*/
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.text {
+    font-size: 18px;
+}
+
+.box-card {
+    width: 85%;
+    height: 95%;
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+}
+
+.custom-button-w {
     cursor: pointer;
-    text-align: left;
-    border-radius: 4px; /* 添加圆角半径 */
+    user-select: none; /* 禁止选中文字 */
 }
 
-.option-button:hover {
-    background-color: #f5f5f5;
+.custom-button-w:focus {
+    outline: none; /* 去掉按钮的焦点样式 */
+    color: #9E9CF4;
 }
 
-.pl-button-d-c:hover,
-.pl-button-d-c:focus {
-    border-style: solid;
+.custom-button-w:active {
+    background-color: rgba(158, 156, 244, 0.32); /* 点击时的背景色 */
+    color: #9E9CF4;
+}
+
+.custom-button-w:hover {
+    color: #9E9CF4; /* 修改悬停状态下的文字颜色 */
+}
+
+.custom-button-w {
+    color: #9E9CF4;
+    width: 100%; /* 设置按钮宽度 */
+    padding: -5px;
+    margin: -5px;
+    height: 40px; /* 调整为您希望的行高度值 */
+    line-height: 40px; /* 使文本垂直居中 */
+}
+
+.custom-save-button-tl {
+    background-color: white;
+    border-color: #9E9CF4;
+    color: #9E9CF4;
+}
+
+.custom-save-button-tl:hover,
+.custom-save-button-tl:focus {
     background-color: white;
     border-color: #7E7CCB;
     color: #7E7CCB;
@@ -849,8 +285,42 @@ export default {
     transition: background-color 0.3s, color 0.3s;
 }
 
-.pl-button-d-c {
-    border-style: solid;
+.custom-save-button-tl:active {
+    background-color: #9E9CF4;
+    border-color: white;
+    color: white;
+}
+
+.text {
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.custom-input {
+    border: 1px solid #9E9CF4;
+    border-radius: 8px; /* 添加圆角边框 */
+    padding: 8px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.custom-input:hover,
+.custom-input:focus {
+    border-color: #9E9CF4;
+    box-shadow: 0 0 5px rgba(158, 156, 244, 0.7);
+    outline: none;
+}
+
+.custom-button:hover,
+.custom-button:focus {
+    background-color: white;
+    border-color: #7E7CCB;
+    color: #7E7CCB;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.custom-button {
     background-color: white;
     border-color: #9E9CF4;
     color: #9E9CF4;
@@ -858,16 +328,13 @@ export default {
     transition: background-color 0.3s, color 0.3s;
 }
 
-.pl-button-d-c:active {
-    border-style: solid;
+.custom-button:active {
     background-color: #7E7CCB;
-    border-color: #7E7CCB;
     color: white;
 }
 
-.pl-button-d-i:hover,
-.pl-button-d-i:focus {
-    border-style: solid;
+.custom-button-i:hover,
+.custom-button-i:focus {
     background-color: #7E7CCB;
     border-color: #7E7CCB;
     color: white;
@@ -875,8 +342,7 @@ export default {
     transition: background-color 0.3s, color 0.3s;
 }
 
-.pl-button-d-i {
-    border-style: solid;
+.custom-button-i {
     background-color: #9E9CF4;
     border-color: white;
     color: white;
@@ -884,77 +350,378 @@ export default {
     transition: background-color 0.3s, color 0.3s;
 }
 
-.pl-button-d-i:active {
-    border-style: solid;
+.custom-button-i:active {
     background-color: white;
     color: #7E7CCB;
 }
-
-.pl-input-d {
-    max-width: 85%;
-    flex: 0 0 85%;
-    margin: 5px;
-}
-
-.table-pl {
-    padding: 15px;
-    overflow: auto;
-    height: 570px;
-    width: 100%;
-}
-
-.table-container-pl {
-    margin-top: -10px;
-    margin-bottom: 30px;
-    z-index: 1; /* 设置较低的 z-index 值 */
-}
-
-.flex-container-pl {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;}
-
-.align-right-pl {
-    display: flex;
-    margin-left: auto;
-    align-items: center;
-    white-space: nowrap;
-    flex-wrap: nowrap;
-}
-
-.newProject-pl:hover,
-.newProject-pl:focus {
-    border-style: solid;
-    background-color: #9E9CF4;
-    border-color: white;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Add border-color transition */}
-
-.newProject-pl {
-    display: inline-flex;
-    font-size: 17px;
-    height: 35px;
-    width: 85px;
-    border-style: solid;
-    background-color: #9E9CF4;
-    border-color: white;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Add border-color transition */}
-
-.newProject-pl:active {
-    border-style: solid;
-    background-color: white;
-    border-color: #7E7CCB;
-    color: #7E7CCB;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Add border-color transition */
-}
-
-.selevt-input {
-    height: 35px;
-    width: 150px;
-}
-
 </style>
+
+<script>
+import { ref, defineComponent, reactive, onMounted, inject } from 'vue';
+import axios from "axios";
+import {ElMessage} from "element-plus";
+import router from "@/router";
+import { useStore, mapActions, mapState } from 'vuex';
+// const API_URL = '/'; // 新增这一行，定义API_URL
+
+export default defineComponent( {
+    name: 'TeamList',
+    computed: {
+        ...mapState(['projectData']),
+        // 其他 computed properties
+    },
+    setup() {
+        const store = useStore();
+        const user = store.state.user;
+        // const curTeamId = toRef(store.state, 'curTeamId')
+        // const curTeamId = store.state.curTeamId;
+        const curTeamId = ref('');
+        const input = ref('');
+        const message = ElMessage;
+        const visible = ref(false);
+        const valueBasic1 = ref('');
+        const name = ref('');
+        const uid = ref('');
+        const nitName = ref(''); // Initialize with an empty value
+        const curNitName = ref('')
+        const email = ref('');
+        const password = ref(""); // Initialize with
+        const description = ref(""); // Initialize with
+        const curDescription = ref(""); // Initialize with
+        const updateVisable = ref(false);
+        const passwordO = ref(""); // Initialize with
+        const passwordN = ref(""); // Initialize
+        // const fetchProjectList = inject('FetchProjectList');
+        const { fetchProjectList } = mapActions(['fetchProjectList']);
+        const test = inject('test');
+        console.log(fetchProjectList);
+        const callFetchInProjectList = () => {
+            console.log('TL', window.sessionStorage.getItem('curTeamId'));
+            store.dispatch('fetchProjectList', window.sessionStorage.getItem('curTeamId'));
+        };
+        const data = reactive({
+            name: 'Tom',
+            age: 20,
+            address: 'Chengdu',
+        });
+        const tableData = ref([]);
+        // const tableData = [
+        //     {
+        //         "team_id": 1,
+        //         "team_name": "testTeam1"
+        //     },
+        //     {
+        //         "team_id": 2,
+        //         "team_name": "testTeam1"
+        //     },
+        //     {
+        //         "team_id": 3,
+        //         "team_name": "testTeam1"
+        //     },
+        //     {
+        //         "team_id": 4,
+        //         "team_name": "testTeam1"
+        //     },
+        // ]
+
+        const cutInput = () => {
+            updateVisable.value = false;
+            curNitName.value = '';
+            curDescription.value = '';
+            passwordN.value = '';
+            passwordO.value = '';
+        };
+
+        const updateCurDescription = (newValue) => {
+            curDescription.value = newValue;
+        }
+        const updatePasswordO = (newValue) => {
+            passwordO.value = newValue;
+        }
+        const updatePasswordN = (newValue) => {
+            passwordN.value = newValue;
+        }
+        const updateCurNitName = (newValue) => {
+            curNitName.value = newValue;
+        };
+
+
+        const handleClear = () => {
+            console.log('clear');
+            valueBasic1.value = '';
+        };
+
+        const handleClick = () => {
+            visible.value = true;
+        };
+        const hidden = () => {
+            visible.value = false;
+        };
+        const newTeam = () => {
+            const hold = ref('');
+            hold.value = valueBasic1.value;
+            if(valueBasic1.value.length > 20) {
+                message({
+                    message:"团队名称需少于20个字符",
+                    type: 'error'
+                })
+                handleClear();
+                return;
+            }
+            visible.value = false;
+            // 发送POST请求
+            axios.post('/team/create',{
+                teamName: valueBasic1.value // 使用输入框的值作为参数
+            })
+                .then((response) => {
+                    // 处理响应
+                    if (response.data.code === 200) {
+                        message({
+                            message: response.data.message,
+                            type:'success'
+                        })
+                        window.sessionStorage.setItem('curTeamId', response.data.team_id);
+                        window.sessionStorage.setItem('curTeamName', valueBasic1.value);
+                        console.log('视察', window.sessionStorage.getItem('curTeamId'));
+                        fetchTeamList();
+                        router.push('/teamCenter'); // 原型是设计的url是prototype
+                    }
+                    else {
+                        message({
+                            message: '新建团队失败，请重试',
+                            type:'error'
+                        })
+                        console.log('一次新建', response);
+                    }
+                })
+                .catch(error => {
+                    message({
+                        message:"新建团队其他错误，请重试",
+                        type:'error'
+                    })
+                    // 处理错误
+                    console.error('POST request error:', error);
+                });
+        };
+
+        const fetchTeamList = () => {
+            axios.get('/team/all') // 从后端获取团队列表数据
+                .then(async (response) => {
+                    console.log(response.data.res);
+                    if (response.data.code === 200) {
+                        tableData.value = response.data.res; // 将获取的数据赋值给tableData
+                        console.log('success');
+                        console.log(tableData.value);
+                        console.log('检查点1', Number(window.sessionStorage.getItem('curTeamId')));
+                        if (tableData.value !== null) {
+                            if (tableData.value.length > 0 && Number(window.sessionStorage.getItem('curTeamId')) === -1) {
+                                // store.commit('setCurTeamId', tableData.value[0].team_id);
+                                window.sessionStorage.setItem('curTeamId', tableData.value[0].team_id);
+                                window.sessionStorage.setItem('curTeamName', tableData.value[0].team_name);
+                                console.log('检查点2', Number(window.sessionStorage.getItem('curTeamId')));
+                                // callFetchInProjectList();
+                            }
+                        } else {
+                            // store.commit('setCurTeamId', -1);
+                            window.sessionStorage.setItem('curTeamId', -1);
+                        }
+                        console.log('查看', window.sessionStorage.getItem('curTeamId'));
+                        callFetchInProjectList();
+                        fetchSelfInform();
+                    }
+                })
+                .catch((error) => {
+                    message({
+                        message:"获取团队信息失败，请刷新重试",
+                        type:'error'
+                    })
+                    console.error('GET request error:', error);
+                });
+            console.log(tableData.value);
+            console.log('检查点3', Number(window.sessionStorage.getItem('curTeamId')));
+        };
+
+        // const initCurTeam = () => {
+        //     console.log('长度', tableData.value.length);
+        // };
+        const fetchSelfInform = () => {
+            console.log("进入SI", Number(window.sessionStorage.getItem('curTeamId')));
+            axios.post('/team/myself/', {
+                team_id: Number(window.sessionStorage.getItem('curTeamId'))
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        message({
+                            message: response.data.message,
+                            type:'success'
+                        })
+                        store.commit('setUser', response.data);
+                        window.sessionStorage.setItem('userId', response.data.user_id);
+                        window.sessionStorage.setItem('userName', response.data.name);
+                        window.sessionStorage.setItem('userNickName', response.data.nickname);
+                        window.sessionStorage.setItem('curRoleNum', response.data.perm);
+                        uid.value = response.data.user_id;
+                        nitName.value = response.data.nickname;
+                        name.value = response.data.name;
+                        email.value = response.data.email;
+                        description.value = response.data.description;
+                    }
+                    else {
+                        message({
+                            message: response.data.error,
+                            type:'error'
+                        })
+                        console.log(response.data);
+                    }
+                })
+                .catch((error) => {
+                    message({
+                        message:"获取个人信息错误，请重试",
+                        type:'error'
+                    })
+                    // 处理错误
+                    console.error('POST request error:', error.config.data);
+                })
+        };
+
+        const updateSelfInform = () => {
+            axios.put('/user/myself/', {
+                nickname: curNitName.value,
+                description: curDescription.value
+            })
+                .then((response2) => {
+                    if (response2.data.code === 200) {
+                        message({
+                            message: response2.data.message,
+                            type:'success'
+                        })
+                        console.log(response2.data.message)
+                    }
+                    else {
+                        message({
+                            message: response2.data.error,
+                            type:'error'
+                        })
+                        console.log(response2.data.error)
+                    }
+                    updateVisable.value = false;
+                    curNitName.value = '';
+                    curDescription.value = '';
+                    fetchSelfInform();
+                })
+                .catch((error2) => {
+                    message({
+                        message:"修改普通信息错误，请重试",
+                        type:'error'
+                    })
+                    // 处理错误
+                    console.error('POST request error:', error2);
+                })
+        };
+
+        const updatePassword = () => {
+            axios.post('/user/changepassword/', {
+                old_password: passwordO.value,
+                new_password: passwordN.value
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        message({
+                            message: response.data.message,
+                            type:'success'
+                        })
+                        console.log(response.data.message);
+                    }
+                    else {
+                        message({
+                            message: response.data.error,
+                            type:'error'
+                        })
+                        console.log(response.data.error);
+                    }
+                    updateVisable.value = false;
+                    fetchSelfInform();
+                    passwordO.value = '';
+                    passwordN.value = '';
+                })
+                .catch((error) => {
+                    message({
+                        message:"修改密码错误，请重试",
+                        type:'error'
+                    })
+                    // 处理错误
+                    console.error('POST request error:', error);
+                })
+        };
+
+        const chooseCurTeam = (team_id, team_name) => {
+            curTeamId.value = team_id;
+            // store.commit('setCurTeamId', team_id);
+            window.sessionStorage.setItem('curTeamId', team_id);
+            window.sessionStorage.setItem('curTeamName', team_name);
+            callFetchInProjectList();
+            fetchSelfInform();
+            console.log(window.sessionStorage.getItem('curTeamId'));
+        };
+
+        const inClick = () => {
+            if (Number(window.sessionStorage.getItem('curTeamId')) === -1) {
+                message({
+                    message: '未选择团队',
+                    type: 'error'
+                });
+            }
+            else {
+                router.push('/teamCenter');
+            }
+        }
+
+        onMounted(async () => {
+            console.log('m', fetchProjectList);
+
+            await fetchTeamList(); // 组件挂载后获取团队列表数据
+            // await fetchSelfInform();
+            // initCurTeam();
+        });
+
+        return {
+            test,
+            user,
+            curTeamId,
+            visible,
+            valueBasic1,
+            data,
+            tableData,
+            input,
+            name,
+            uid,
+            nitName,
+            curNitName,
+            email,
+            password,
+            description,
+            curDescription,
+            updateVisable,
+            passwordO,
+            passwordN,
+            fetchProjectList,
+            callFetchInProjectList,
+            updateSelfInform,
+            updatePassword,
+            updateCurDescription,
+            updatePasswordO,
+            updatePasswordN,
+            updateCurNitName,
+            handleClear,
+            handleClick,
+            hidden,
+            newTeam,
+            chooseCurTeam,
+            fetchTeamList,
+            fetchSelfInform,
+            inClick,
+            cutInput
+        };
+    },
+});
+</script>

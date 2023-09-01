@@ -7,11 +7,11 @@
       <el-container>
         <div class="header" style="margin: 0; padding: 0;">
           <el-header>
-            <div class="headerleft" style="display: flex; margin-top: 0px;">
+            <div class="headerleft" style="display: flex; margin-top: 0;">
               <router-link to="/documentadmin">
                 <el-button size="mini" color="#545c64">返回管理页</el-button>
               </router-link>
-              <el-button type="info" style="margin-top: 0px;margin-left: 800px;" color="#545c64"
+              <el-button type="info" style="margin-top: 0;margin-left: 800px;" color="#545c64"
                   @click="this.dialogFormVisible = true">分享文档</el-button>
                 <el-dialog v-model="this.dialogFormVisible" title="分享文档">
                   <el-form :model="form">
@@ -36,7 +36,7 @@
                 </el-dialog>
                 <el-dropdown>
                 <el-button color="#545c64">
-                  导出文档<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                  导出文档<el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
@@ -53,8 +53,7 @@
         </el-header>
         <div>
           <div style="position: absolute;width:200px;top:100px">
-            <el-card class="box-card"
-              style="position: absolute;height:800px;width:200px;background-color: rgba(255, 255, 255, 0.85);left:20px">
+            <el-card class="box-card" style="position: absolute;height:650px;width:200px;background-color: rgba(255, 255, 255, 0.85);left:20px">
               <div slot="header" class="clearfix">
                 <h3>文档操作区</h3>
                 <h4>文档名:<span>{{ this.doc_name }}</span></h4>
@@ -73,13 +72,12 @@
               </div>
             </el-card>
           </div>
-          <div class="edit_container" style="width: 900px;left:420px; height: 800px; top:100px"  @keyup="handkeKeyUp"
-      @keydown="handleKeyDown">
+          <div class="edit_container" style="width: 900px;left:420px; top:100px"  @keyup="handkeKeyUp" @keydown="handleKeyDown">
             <QuillEditor id="editorId" ref="myQuillEditor" :content="editorContent" contentType="html"
-              @updateContent="update" :options="options" style="width: 800px;left:420px; top:160px" height: 800 />
+              @updateContent="update" :options="options" style="width: 800px;left:420px; top:160px; height: 800px"  />
           </div>
           <div class="templateuse">
-            <el-card class="templatecard" style="position: absolute;height:800px;width:200px;top:100px;background-color: rgba(255, 255, 255, 0.85);left:1350px" >
+            <el-card class="templatecard" style="position: absolute;height:650px;width:200px;top:100px;background-color: rgba(255, 255, 255, 0.85);left:1350px" >
               <div>
                 <div slot="header" class="clearfix">
                 <h3>文档模板</h3>
@@ -191,19 +189,13 @@
 import CommonAside from '@/components/CommonAside.vue';
 import QuillEditor from '../components/Editor/index.vue';
 // import { Mentionable } from 'vue-mention'
-import {
-  Check,
-  Delete,
-  Edit,
-  Message,
-  Search,
-  Star,
-} from '@element-plus/icons-vue'
-import axios from 'axios';
-import { ref, onMounted, getCurrentInstance } from 'vue';
-import { ElNotification,ArrowDown } from 'element-plus'
+import axios, {options} from 'axios';
+import { ElNotification } from 'element-plus'
+import {ArrowDown} from "@element-plus/icons";
+// import {ref} from 'vue';
 export default {
   components: {
+    ArrowDown,
     CommonAside,
     QuillEditor,
   },
@@ -233,10 +225,11 @@ export default {
       perm: '1',
     };
   },
-  created(){
+  created() {
     this.getdoccontent();
   },
   methods: {
+    options,
     model1(){
       this.editorContent='<h1 class="ql-align-center">开发计划书</h1><h2>1.引言</h2><h3>	1.1背景</h3><h3>	1.2目的</h3><h3>	1.3术语定义</h3><h3>	1.4参考资料</h3><h3>	1.5相关文档</h3><h2>2.项目概述</h2><h3>	2.1项目的目的</h3><h3>	2.2项目的使用对象</h3><h2>3.项目组织及人力资源管理情况</h2><h2>4.软件生命周期</h2><h2>5.规范，方法和标准</h2><h3>	5.1前端代码规范</h3><h3>	5.2后端代码规范</h3><h3>	5.3开发方法</h3><h3>	5.4维护相关</h3><h2>6.任务与工作产品</h2><h2>7.工作产品，任务规模，工作量估计</h2><h2>8.成本估计</h2><h2>9.软件项目进度计划</h2><h2>10.配置管理计划</h2><h2>11.质量保证计划</h2><h2>12.风险分析</h2><h2>13.设备工具</h2><h3>	13.1运行环境</h3><h3>	13.2开发环境</h3><h2>14.项目评审</h2><h2>15.度量</h2>'
       this.$refs.myQuillEditor.changeContent( this.editorContent );
@@ -274,13 +267,13 @@ export default {
         "project_id": Number(this.project_id),
         "doc_id": documentid,
       })
-      .then((response) => {
+      .then(async (response) => {
         this.editorContent = response.data.content;
-        this.$refs.myQuillEditor.changeContent( this.editorContent );
+        await this.$refs.myQuillEditor.changeContent(this.editorContent);
         this.doc_name = response.data.doc_name;
-        console.log("did",this.doc_id);
-        console.log("content",this.editorContent);
-        console.log("dname",this.doc_name);
+        console.log("did", this.doc_id);
+        console.log("content", this.editorContent);
+        console.log("dname", this.doc_name);
       })
       }
       else{
@@ -303,18 +296,6 @@ export default {
           });
         });
       }
-    },
-    docscontent() {
-      axios.post('/doc/doc_search',
-        {
-          "project_id": Number(this.project_id),
-          "doc_id": this.doc_id1,
-        })
-        .then((response) => {
-          this.editorContent = response.data.content;
-        }
-        )
-      return response.data.content;
     },
     docsedit() {
       if(this.$store.state.isLoggedIn==true || (this.$store.state.isLoggedIn ==false)&&this.perm == 1){
@@ -431,7 +412,7 @@ export default {
     sharedocs(){
       console.log(this.$store.state.isLoggedIn);
       console.log(window.sessionStorage.getItem('curRoleNum'));
-      if(this.$store.state.isLoggedIn = true)
+      if(this.$store.state.isLoggedIn === true)
       {
       this.dialogFormVisible=false;
       if(window.sessionStorage.getItem('curRoleNum')=='0'||window.sessionStorage.getItem('curRoleNum')=='1')
@@ -500,6 +481,11 @@ export default {
 </script>
 
 <style>
+.common-layout {
+  height: 93%;
+  width: 100vw;
+}
+
 .bgbox {
   display: block;
   opacity: 1;
@@ -515,7 +501,7 @@ export default {
 }
 
 .edit_container {
-  height: 600px;
+  height: 100%;
   margin-top: 0px;
   margin-right: 40px;
   position: absolute;
@@ -525,18 +511,5 @@ export default {
   margin-left: 10px;
   color: #818080;
   margin-top: 5px;
-}
-
-.ql-editor {
-  min-height: 760px;
-}
-
-.example-showcase .el-dropdown-link {
-  color: var(--el-color-primary);
-  display: flex;
-}
-
-.el-dropdown .el-button {
-  margin-left: 25px;
 }
 </style>

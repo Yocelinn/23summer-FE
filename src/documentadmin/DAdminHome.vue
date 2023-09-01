@@ -161,11 +161,11 @@ export default {
         "project_id": Number(window.sessionStorage.getItem('curProjectId')),
       })
               .then((response)=>{
-                console.log(response.data.res);
+                console.log(response.data.docs);
                 if(response.data.code === 200)
                 {
                   console.log(response.data);
-                  docs.value = response.data.res;
+                  docs.value = response.data.docs;
                   console.log(docs.value);
                   console.log(docs);
                 }
