@@ -5,25 +5,72 @@
         </span>
 
         <div class="align-right-pl">
-            <!--            <span>-->
-            <!--                -->
-            <!--            </span>-->
-            <!--            <el-divider class="custom-divider" direction="vertical" />-->
-<!--            <div class="button-select">-->
-<!--                <button class="selected-button" @click="toggleDropdown">{{ selectedOption || placeholder }}</button>-->
-<!--                <div v-if="isDropdownVisible" class="dropdown" @click.stop>-->
-<!--                    <button-->
-<!--                            v-for="(option, index) in options"-->
-<!--                            :key="index"-->
-<!--                            class="option-button"-->
-<!--                            @click="selectOption(option)"-->
-<!--                    >-->
-<!--                        {{ option }}-->
-<!--                    </button>-->
-<!--                </div>-->
-<!--            </div>-->
+            <el-icon style="margin-right: 5px" @click="openDelete"><Delete /></el-icon>
+            <d-modal v-model="deleteTable" style="display: inline-block; max-width: 100%; width: 650px; height: 450px">
+                <template #header>
+                    <d-modal-header>
+                        <span>回收站</span>
+                    </d-modal-header>
+                </template>
+
+                <el-table class="table-pl" :data="deletedData" style="width: 100%; height: 310px" stripe="true" fit="true">
+                    <el-table-column>
+                        <template #header>
+                                项目名称
+                        </template>
+                        <template #default="scope">
+                            <el-checkbox v-model="scope.row.checked" size="large" >
+                                <div style="display: flex; align-items: center">
+                                    <span>{{ scope.row.projectName }}</span>
+                                </div>
+                            </el-checkbox>
+                        </template>
+                    </el-table-column>
+                    <el-table-column>
+                        <template #header>
+                                创建时间
+                        </template>
+                        <template #default="scope">
+                            <div style="display: flex; align-items: center">
+                                <span>{{ scope.row.created_time }}</span>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column>
+                        <template #header>
+                                最后修改时间
+                        </template>
+                        <template #default="scope">
+                            <div style="display: flex; align-items: center">
+                                <span>{{ scope.row.updated_time }}</span>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+
+                <template #footer>
+                    <d-modal-footer class="pl-button-container-d" style="padding-right: 20px; width: 100%">
+                        <d-button class="pl-button-d-i" @click="trueDelete" style="text-align: left;">删除</d-button>
+                        <d-button class="pl-button-d-c" @click="pullBack" style="text-align: right;">恢复</d-button>
+                    </d-modal-footer>
+                </template>
+            </d-modal>
+            <div class="button-select">
+                <button class="selected-button" @click="toggleDropdown">{{ selectedOption || placeholder }}</button>
+                <div v-if="isDropdownVisible" class="dropdown" @click.stop>
+                    <button
+                            v-for="(option, index) in options"
+                            :key="index"
+                            class="option-button"
+                            @click="selectOption(option)"
+                    >
+                        {{ option }}
+                    </button>
+                </div>
+            </div>
             <div class="selevt-input">
-                <d-input v-model="selectInputValue" autofocus placeholder="项目名称" @input="selectFor"></d-input>
+                <d-input v-model="selectInputValue" autofocus @input="selectFor"></d-input>
             </div>
             <d-button class="newProject-pl" @click="plNewPjVisable=true">
                 新建项目
@@ -473,39 +520,45 @@ export default {
         // };
 
         //搜索
-        // const selectedOption = ref(null);
-        // const options = ref([
-        //     "项目名称",
-        //     "创建时间",
-        //     "最后修改时间"
-        // ]);
-        // const placeholder = ref('搜索类型');
-        //
-        // const selectInputValue = ref('');
+        const selectedOption = ref(null);
+        const options = ref([
+            "区分大小写",
+            "不区分大小写"
+        ]);
+        const placeholder = ref('大小写');
 
+        const checkType = ref(1);
+        const toggleDropdown = () => {
+            isDropdownVisible.value = !isDropdownVisible.value;
+        };
 
-        // const checkType = ref('');
-        // const toggleDropdown = () => {
-        //     isDropdownVisible.value = !isDropdownVisible.value;
-        // };
+        const selectOption = (option) => {
+            if (isDropdownVisible.value === true) {
+                selectedOption.value = option;
+                if (option === "区分大小写") {
+                    checkType.value = 0;
+                }
+                else {
+                    checkType.value = 1;
+                }
+                isDropdownVisible.value = false;
+            }
+        };
 
-        // const selectOption = (option) => {
-        //     if (isDropdownVisible.value === true) {
-        //         selectedOption.value = option;
-        //         if (option.value === "项目名称")
-        //         isDropdownVisible.value = false;
-        //     }
-        // };
         const selectInputValue = ref('');
-        const selectFor = () => {
+        const selectFor = (newValue) => {
+            selectInputValue.value = newValue;
+            console.log('检查输入', selectInputValue.value, newValue);
             axios.post('/project/find', {
-                key_word: selectInputValue.value
+                team_id: Number(window.sessionStorage.getItem('curTeamId')),
+                key_word: selectInputValue.value,
+                options: checkType.value
             })
                 .then((response) => {
                     if (response.data.code === 200) {
                         ElMessage({
                             message: response.data.message,
-                            type: 'error'
+                            type: 'success'
                         });
                         store.commit('setProjectData', response.data.projects);
                     }
@@ -518,7 +571,7 @@ export default {
                         console.log(response.data);
                     }
                 })
-                .then((error) => {
+                .catch((error) => {
                     ElMessage({
                         message: "查询失败，请重试",
                         type: 'error'
@@ -526,6 +579,101 @@ export default {
                     console.log(error.config.data);
                     console.log(error.data);
                 })
+        }
+
+        const openDelete = () => {
+            deleteTable.value = true;
+            axios.post('/project/recyclebin', {
+                team_id: Number(window.sessionStorage.getItem('curTeamId'))
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        ElMessage ({
+                            message: response.data.message,
+                            type: 'success'
+                        });
+                        deletedData.value = response.data.recycle_bin;
+                    }
+                    else {
+                        ElMessage ({
+                            message: response.data.error,
+                            type: 'error'
+                        });
+                        console.log(response.config.data);
+                        console.log(response.data);
+                    }
+                })
+                .catch((error) => {
+                    ElMessage ({
+                        message: '访问回收站失败，请重试',
+                        type: 'error'
+                    });
+                    console.log(error.config.data);
+                    console.log(error.data);
+                })
+        }
+
+        const deleteTable = ref(false);
+
+        const checkedDelete = ref([]);
+
+        const deletedData = ref([]);
+
+
+        const trueDelete = () => {
+            const selectedRows = deletedData.value.filter(row => row.checked);
+            console.log("选中的行数据：", selectedRows);
+
+            checkedDelete.value = [];
+            deleteTable.value = false;
+        }
+
+        const pullBack = () => {
+            const selectedRows = deletedData.value.filter(row => row.checked);
+            console.log("选中的行数据：", selectedRows);
+            const flag = ref(0);
+            for (let i = 0; i < selectedRows.value.length; i++) {
+                if (flag.value === 1) {
+                    break;
+                }
+                axios.post('/project/recycle', {
+                    project_id: selectedRows.value[i].project_id
+                })
+                    .then((response) => {
+                        if (response.data.code === 200) {
+                            console.log("恢复", selectedRows.value[i].projectName, "成功");
+                        }
+                        else {
+                            ElMessage ({
+                                message: "恢复至" + selectedRows.value[i].projectName + "时失败",
+                                type: 'error'
+                            });
+                            console.log("恢复至", selectedRows.value[i].projectName, "时失败");
+                            console.log(response.config.data);
+                            console.log(response.data);
+                            flag.value = 1;
+                        }
+                    })
+                    .catch((error) => {
+                        ElMessage ({
+                            message: "恢复至" + selectedRows.value[i].projectName + "时失败",
+                            type: 'error'
+                        });
+                        console.log(error.config.data);
+                        console.log(error.data);
+                        console.log("恢复至", selectedRows.value[i].projectName, "时失败");
+                        flag.value = 1;
+                    })
+            }
+            if (flag.value === 0) {
+                ElMessage({
+                    message: "恢复成功",
+                    type: 'error'
+                });
+                callFetchInProjectList();
+            }
+            checkedDelete.value = [];
+            deleteTable.value = false;
         }
 
         onMounted(() => {
@@ -541,10 +689,9 @@ export default {
             newPjName,
             newPjDes,
             isDropdownVisible,
-            // selectedOption,
-            // options,
-            // placeholder,
-            // selectInputValue,
+            selectedOption,
+            options,
+            placeholder,
             sortFlag,
             sortOption,
             arrow1,
@@ -557,9 +704,9 @@ export default {
             clickSortB2,
             clickSortB3,
 
-            // checkType,
-            // toggleDropdown,
-            // selectOption,
+            checkType,
+            toggleDropdown,
+            selectOption,
 
             createNewProject,
             fetchProjectList,
@@ -570,7 +717,14 @@ export default {
             copyProject,
 
             selectInputValue,
-            selectFor
+            selectFor,
+
+            openDelete,
+            deleteTable,
+            checkedDelete,
+            deletedData,
+            trueDelete,
+            pullBack
         };
     },
 };
@@ -579,7 +733,8 @@ export default {
 <style scoped>
 .sortB1,
 .sortB2,
-.sortB3
+.sortB3,
+.sortB4
 {
     width: 100%;
     height: 100%;
@@ -587,7 +742,8 @@ export default {
 }
 .sortB1:active,
 .sortB2:active,
-.sortB3:active
+.sortB3:active,
+.sortB4:active
 {
     width: 100%;
     height: 100%;
@@ -597,7 +753,8 @@ export default {
 }
 .sortB1:hover,
 .sortB2:hover,
-.sortB3:hover
+.sortB3:hover,
+.sortB4:hover
 {
     width: 100%;
     height: 100%;
@@ -607,7 +764,8 @@ export default {
 }
 .sortB1:focus,
 .sortB2:focus,
-.sortB3:focus
+.sortB3:focus,
+.sortB4:focus
 {
     width: 100%;
     height: 100%;
@@ -624,62 +782,62 @@ export default {
     align-items: center;
 }
 
-/*!*.button-select {*!*/
-/*!*    position: relative;*!*/
-/*!*    display: inline-flex;*!*/
-/*!*    flex-direction: column;*!*/
-/*!*    align-items: flex-end; !* Right-align the items *!*!*/
-/*!*    margin-right: 5px;*!*/
-/*!*}*!*/
+.button-select {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end; /* Right-align the items */
+    margin-right: 5px;
+}
 
-/*!*.selected-button {*!*/
-/*!*    !*padding: 8px 12px;*!*!*/
-/*!*    border: 1px solid #ccc;*!*/
-/*!*    background-color: #fff;*!*/
-/*!*    cursor: pointer;*!*/
-/*!*    border-radius: 4px; !* 添加圆角半径 *!*!*/
-/*!*    height: 35px;*!*/
-/*!*    width: 85px;*!*/
+.selected-button {
+    /*padding: 8px 12px;*/
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 4px; /* 添加圆角半径 */
+    height: 35px;
+    width: 85px;
 
-/*!*}*!*/
+}
 
-/*!*.dropdown {*!*/
-/*!*    position: absolute;*!*/
-/*!*    margin-top: 3px;*!*/
-/*!*    top: 100%;*!*/
-/*!*    left: 0;*!*/
-/*!*    width: 120px;*!*/
-/*!*    border: 1px solid #ccc;*!*/
-/*!*    background-color: #fff;*!*/
-/*!*    border-radius: 4px; !* 添加圆角半径 *!*!*/
-/*!*    max-height: 150px; !* 设置最大高度 *!*!*/
-/*!*    overflow-y: auto; !* 设置纵向滚动 *!*!*/
-/*!*    z-index: 2; !* 设置较高的 z-index 值 *!*!*/
-/*!*}*!*/
+.dropdown {
+    position: absolute;
+    margin-top: 3px;
+    top: 100%;
+    left: 0;
+    width: 120px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 4px; /* 添加圆角半径 */
+    max-height: 150px; /* 设置最大高度 */
+    overflow-y: auto; /* 设置纵向滚动 */
+    z-index: 2; /* 设置较高的 z-index 值 */
+}
 
-/*!*.dropdown::-webkit-scrollbar {*!*/
-/*!*    width: 8px; !* 滚动条宽度 *!*!*/
-/*!*}*!*/
+.dropdown::-webkit-scrollbar {
+    width: 8px; /* 滚动条宽度 */
+}
 
-/*!*.dropdown::-webkit-scrollbar-thumb {*!*/
-/*!*    background-color: rgba(204, 204, 204, 0.24); !* 滚动条 thumb 颜色 *!*!*/
-/*!*    border-radius: 4px; !* thumb 圆角 *!*!*/
-/*!*}*!*/
+.dropdown::-webkit-scrollbar-thumb {
+    background-color: rgba(204, 204, 204, 0.24); /* 滚动条 thumb 颜色 */
+    border-radius: 4px; /* thumb 圆角 */
+}
 
-/*!*.option-button {*!*/
-/*!*    display: flex;*!*/
-/*!*    width: 100%;*!*/
-/*!*    padding: 8px 12px;*!*/
-/*!*    border: none;*!*/
-/*!*    background-color: transparent;*!*/
-/*!*    cursor: pointer;*!*/
-/*!*    text-align: left;*!*/
-/*!*    border-radius: 4px; !* 添加圆角半径 *!*!*/
-/*!*}*!*/
+.option-button {
+    display: flex;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 4px; /* 添加圆角半径 */
+}
 
-/*!*.option-button:hover {*!*/
-/*!*    background-color: #f5f5f5;*!*/
-/*}*/
+.option-button:hover {
+    background-color: #f5f5f5;
+}
 
 .pl-button-d-c:hover,
 .pl-button-d-c:focus {

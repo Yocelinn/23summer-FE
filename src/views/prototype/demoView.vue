@@ -7,7 +7,7 @@
 <script>
 import data from '@/data.json'
 import { ref, provide } from 'vue'
-import Editor from '@/packages/editor'
+import Editor from '@/packages/editor.jsx'
 import { registerConfig as config } from '@/utils/editor-config.jsx'
 export default {
   name: 'App',

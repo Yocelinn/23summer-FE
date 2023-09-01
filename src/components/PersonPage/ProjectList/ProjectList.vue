@@ -5,10 +5,57 @@
         </span>
 
         <div class="align-right-pl">
-            <!--            <span>-->
-            <!--                -->
-            <!--            </span>-->
-            <!--            <el-divider class="custom-divider" direction="vertical" />-->
+            <el-icon style="margin-right: 5px" @click="openDelete"><Delete /></el-icon>
+            <d-modal v-model="deleteTable" style="display: inline-block; max-width: 100%; width: 650px; height: 450px">
+                <template #header>
+                    <d-modal-header>
+                        <span>回收站</span>
+                    </d-modal-header>
+                </template>
+
+                <el-table class="table-pl" :data="deletedData" style="width: 100%; height: 310px" stripe="true" fit="true">
+                    <el-table-column>
+                        <template #header>
+                            项目名称
+                        </template>
+                        <template #default="scope">
+                            <el-checkbox v-model="scope.row.checked" size="large" >
+                                <div style="display: flex; align-items: center">
+                                    <span>{{ scope.row.projectName }}</span>
+                                </div>
+                            </el-checkbox>
+                        </template>
+                    </el-table-column>
+                    <el-table-column>
+                        <template #header>
+                            创建时间
+                        </template>
+                        <template #default="scope">
+                            <div style="display: flex; align-items: center">
+                                <span>{{ scope.row.created_time }}</span>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column>
+                        <template #header>
+                            最后修改时间
+                        </template>
+                        <template #default="scope">
+                            <div style="display: flex; align-items: center">
+                                <span>{{ scope.row.updated_time }}</span>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+
+                <template #footer>
+                    <d-modal-footer class="pl-button-container-d" style="padding-right: 20px; width: 100%">
+                        <d-button class="pl-button-d-i" @click="pullAllBack" style="text-align: left;">一键恢复</d-button>
+                        <d-button class="pl-button-d-c" @click="pullBack" style="text-align: right;">恢复</d-button>
+                    </d-modal-footer>
+                </template>
+            </d-modal>
             <div class="button-select">
                 <button class="selected-button" @click="toggleDropdown">{{ selectedOption || placeholder }}</button>
                 <div v-if="isDropdownVisible" class="dropdown" @click.stop>
@@ -122,29 +169,31 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" style="color:#9E9CF4;">
                 <template #default="scope">
-                    <d-button
-                            class="copy"
-                            size="small"
-                            @click="copyProject(scope.$index, scope.row)"
-                    >
-                        复制项目
-                    </d-button>
-                    <d-button
-                            class="access-pl"
-                            size="small"
-                            @click="handleEdit(scope.$index, scope.row)">
-                        进入项目
-                    </d-button>
-                    <d-button
-                            class="delete"
-                            size="small"
-                            type="danger"
-                            @click="handleDelete(scope.$index, scope.row)"
-                    >
-                        删除项目
-                    </d-button>
+                    <div style="color:#9E9CF4;">
+                        <d-button
+                                class="copy"
+                                size="small"
+                                @click="copyProject(scope.$index, scope.row)"
+                        >
+                            复制项目
+                        </d-button>
+                        <d-button
+                                class="access-pl"
+                                size="small"
+                                @click="handleEdit(scope.$index, scope.row)">
+                            进入项目
+                        </d-button>
+                        <d-button
+                                class="delete"
+                                size="small"
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row)"
+                        >
+                            删除项目
+                        </d-button>
+                    </div>
                 </template>
             </el-table-column>
         </el-table>
@@ -488,12 +537,12 @@ export default {
         const selectOption = (option) => {
             if (isDropdownVisible.value === true) {
                 selectedOption.value = option;
-                   if (option === "区分大小写") {
-                       checkType.value = 0;
-                   }
-                   else {
-                       checkType.value = 1;
-                   }
+                if (option === "区分大小写") {
+                    checkType.value = 0;
+                }
+                else {
+                    checkType.value = 1;
+                }
                 isDropdownVisible.value = false;
             }
         };
@@ -534,6 +583,128 @@ export default {
                 })
         }
 
+        const openDelete = () => {
+            deleteTable.value = true;
+            axios.post('/project/recyclebin', {
+                team_id: Number(window.sessionStorage.getItem('curTeamId'))
+            })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        ElMessage ({
+                            message: response.data.message,
+                            type: 'success'
+                        });
+                        deletedData.value = response.data.recycle_bin;
+                    }
+                    else {
+                        ElMessage ({
+                            message: response.data.error,
+                            type: 'error'
+                        });
+                        console.log(response.config.data);
+                        console.log(response.data);
+                    }
+                })
+                .catch((error) => {
+                    ElMessage ({
+                        message: '访问回收站失败，请重试',
+                        type: 'error'
+                    });
+                    console.log(error.config.data);
+                    console.log(error.data);
+                })
+        }
+
+        const deleteTable = ref(false);
+
+        const checkedDelete = ref([]);
+
+        const deletedData = ref([]);
+
+
+        const pullAllBack = async () => {
+            console.log("选中的行数据：", deletedData.value);
+            try {
+                for (let i = 0; i < deletedData.value.length; i++) {
+                    const response = await axios.post('/project/recycle', {
+                        project_id: deletedData.value[i].project_id
+                    });
+
+                    if (response.data.code === 200) {
+                        console.log("恢复", deletedData.value[i].projectName, "成功");
+                    } else {
+                        ElMessage({
+                            message: "恢复至" + deletedData.value[i].projectName + "时失败",
+                            type: 'error'
+                        });
+                        console.log("恢复至", deletedData.value[i].projectName, "时失败");
+                        console.log(response.config.data);
+                        console.log(response.data);
+                        return; // Exit the function early if there's an error
+                    }
+                }
+
+                ElMessage({
+                    message: "恢复成功",
+                    type: 'success'
+                });
+
+                callFetchInProjectList();
+            } catch (error) {
+                ElMessage({
+                    message: "恢复时发生错误",
+                    type: 'error'
+                });
+                console.log(error.config.data);
+                console.log(error.data);
+            } finally {
+                checkedDelete.value = [];
+                deleteTable.value = false;
+            }
+        }
+
+        const pullBack = async () => {
+            const selectedRows = deletedData.value.filter(row => row.checked);
+            console.log("选中的行数据：", selectedRows[0]);
+
+            try {
+                for (let i = 0; i < selectedRows.length; i++) {
+                    const response = await axios.post('/project/recycle', {
+                        project_id: selectedRows[i].project_id
+                    });
+
+                    if (response.data.code === 200) {
+                        console.log("恢复", selectedRows[i].projectName, "成功");
+                    } else {
+                        ElMessage({
+                            message: "恢复至" + selectedRows[i].projectName + "时失败",
+                            type: 'error'
+                        });
+                        console.log("恢复至", selectedRows[i].projectName, "时失败");
+                        console.log(response.config.data);
+                        console.log(response.data);
+                        return; // Exit the function early if there's an error
+                    }
+                }
+
+                ElMessage({
+                    message: "恢复成功",
+                    type: 'success'
+                });
+
+                callFetchInProjectList();
+            } catch (error) {
+                ElMessage({
+                    message: "恢复时发生错误",
+                    type: 'error'
+                });
+                console.log(error.config.data);
+                console.log(error.data);
+            } finally {
+                checkedDelete.value = [];
+                deleteTable.value = false;
+            }
+        }
 
         onMounted(() => {
             // callFetchInProjectList();
@@ -576,8 +747,14 @@ export default {
             copyProject,
 
             selectInputValue,
-            selectFor
+            selectFor,
 
+            openDelete,
+            deleteTable,
+            checkedDelete,
+            deletedData,
+            pullAllBack,
+            pullBack
         };
     },
 };
@@ -592,6 +769,8 @@ export default {
     width: 100%;
     height: 100%;
     border: hidden;
+    color: #9E9CF4;
+    background-color: white;
 }
 .sortB1:active,
 .sortB2:active,
@@ -752,7 +931,7 @@ export default {
 .table-pl {
     padding: 15px;
     overflow: auto;
-    height: 570px;
+    height: 650px;
     width: 100%;
 }
 

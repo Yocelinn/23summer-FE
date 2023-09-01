@@ -44,8 +44,12 @@ export default{
 </script>
 
 <style>
+.tac {
+  /*height: 93vh;*/
+}
+
 .el-menu {
-  height: 100vh;
+  height: 93vh;
   width: 200px;
 }
 
