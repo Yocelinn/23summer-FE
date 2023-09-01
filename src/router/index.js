@@ -49,9 +49,9 @@ const routes = [
       },
       {
         path: '/prototype',
-        component: () => import('@/views/prototype/PrototypeView.vue'),
+        component: () => import('@/views/prototype/prototypeAdmin.vue'),
         meta: {
-          title: '原型设计',
+          title: '原型管理',
         }
       },
     ]

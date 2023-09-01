@@ -17,7 +17,7 @@
         </router-link>
         <router-link to="/prototype">
           <el-menu-item index="4">
-          <el-icon><setting /></el-icon>
+            <el-icon><PictureRounded /></el-icon>
           <span>原型设计</span>
           </el-menu-item>
         </router-link>
