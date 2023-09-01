@@ -207,7 +207,7 @@ export default {
     const deleteFile = (row) => {
       axios.post('/doc/delete',
               {
-                "doc_id": row.doc_id,
+                "doc_id": row.id,
                 "folder_id": Number(window.sessionStorage.getItem('curFolderId'))
               })
               .then((response) => {
@@ -319,7 +319,7 @@ export default {
         lengthEnough.value = true;
         window.sessionStorage.setItem('curFolderId', row.id);
         window.sessionStorage.setItem('curFolderName', row.name);
-        fileName.value = row.doc_name;
+        fileName.value = row.name;
         axios.post('/doc/folder/docs', {
           folder_id: row.id
         })

@@ -506,7 +506,7 @@ export default defineComponent( {
 
         const fetchTeamList = () => {
             axios.get('/team/all') // 从后端获取团队列表数据
-                .then((response) => {
+                .then(async (response) => {
                     console.log(response.data.res);
                     if (response.data.code === 200) {
                         tableData.value = response.data.res; // 将获取的数据赋值给tableData
@@ -519,14 +519,15 @@ export default defineComponent( {
                                 window.sessionStorage.setItem('curTeamId', tableData.value[0].team_id);
                                 window.sessionStorage.setItem('curTeamName', tableData.value[0].team_name);
                                 console.log('检查点2', Number(window.sessionStorage.getItem('curTeamId')));
-                                callFetchInProjectList();
+                                // callFetchInProjectList();
                             }
-                        }
-                        else {
+                        } else {
                             // store.commit('setCurTeamId', -1);
                             window.sessionStorage.setItem('curTeamId', -1);
                         }
-                        console.log('查看', window.sessionStorage.getItem('curTeamId'))
+                        console.log('查看', window.sessionStorage.getItem('curTeamId'));
+                        callFetchInProjectList();
+                        fetchSelfInform();
                     }
                 })
                 .catch((error) => {
@@ -538,21 +539,27 @@ export default defineComponent( {
                 });
             console.log(tableData.value);
             console.log('检查点3', Number(window.sessionStorage.getItem('curTeamId')));
-            callFetchInProjectList();
         };
 
         // const initCurTeam = () => {
         //     console.log('长度', tableData.value.length);
         // };
         const fetchSelfInform = () => {
-            axios.get('/user/myself')
+            console.log("进入SI", Number(window.sessionStorage.getItem('curTeamId')));
+            axios.post('/team/myself/', {
+                team_id: Number(window.sessionStorage.getItem('curTeamId'))
+            })
                 .then((response) => {
                     if (response.data.code === 200) {
                         message({
                             message: response.data.message,
                             type:'success'
                         })
+                        store.commit('setUser', response.data);
                         window.sessionStorage.setItem('userId', response.data.user_id);
+                        window.sessionStorage.setItem('userName', response.data.name);
+                        window.sessionStorage.setItem('userNickName', response.data.nickname);
+                        window.sessionStorage.setItem('curRoleNum', response.data.perm);
                         uid.value = response.data.user_id;
                         nitName.value = response.data.nickname;
                         name.value = response.data.name;
@@ -573,7 +580,7 @@ export default defineComponent( {
                         type:'error'
                     })
                     // 处理错误
-                    console.error('POST request error:', error);
+                    console.error('POST request error:', error.config.data);
                 })
         };
 
@@ -597,6 +604,10 @@ export default defineComponent( {
                         })
                         console.log(response2.data.error)
                     }
+                    updateVisable.value = false;
+                    curNitName.value = '';
+                    curDescription.value = '';
+                    fetchSelfInform();
                 })
                 .catch((error2) => {
                     message({
@@ -606,10 +617,6 @@ export default defineComponent( {
                     // 处理错误
                     console.error('POST request error:', error2);
                 })
-            updateVisable.value = false;
-            fetchSelfInform();
-            curNitName.value = '';
-            curDescription.value = '';
         };
 
         const updatePassword = () => {
@@ -632,6 +639,10 @@ export default defineComponent( {
                         })
                         console.log(response.data.error);
                     }
+                    updateVisable.value = false;
+                    fetchSelfInform();
+                    passwordO.value = '';
+                    passwordN.value = '';
                 })
                 .catch((error) => {
                     message({
@@ -641,10 +652,6 @@ export default defineComponent( {
                     // 处理错误
                     console.error('POST request error:', error);
                 })
-            updateVisable.value = false;
-            fetchSelfInform();
-            passwordO.value = '';
-            passwordN.value = '';
         };
 
         const chooseCurTeam = (team_id, team_name) => {
@@ -653,6 +660,7 @@ export default defineComponent( {
             window.sessionStorage.setItem('curTeamId', team_id);
             window.sessionStorage.setItem('curTeamName', team_name);
             callFetchInProjectList();
+            fetchSelfInform();
             console.log(window.sessionStorage.getItem('curTeamId'));
         };
 
@@ -672,7 +680,7 @@ export default defineComponent( {
             console.log('m', fetchProjectList);
 
             await fetchTeamList(); // 组件挂载后获取团队列表数据
-            fetchSelfInform();
+            // await fetchSelfInform();
             // initCurTeam();
         });
 
