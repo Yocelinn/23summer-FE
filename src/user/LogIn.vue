@@ -97,6 +97,7 @@ export default {
   mounted(){
     this.showLeft = true;
     this.showImg = true;
+    window.sessionStorage.setItem('isLoggined', false);
   },
   methods: {
     validatePhone(rule, value, callback) {
@@ -190,6 +191,7 @@ export default {
                 type: 'success',
               });
               window.sessionStorage.setItem('curTeamId', -1);
+              window.sessionStorage.setItem('isLoggined', true);
               this.$store.commit('login', r.data);
               console.log(this.$store.state.user.nickname);
               window.sessionStorage.setItem('token',this.$store.state.user.token);

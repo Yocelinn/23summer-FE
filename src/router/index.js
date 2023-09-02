@@ -120,7 +120,7 @@ router.beforeEach((to, from, next) => {
   {
     next()
   }
-  else if (!store.state.isLoggedIn) {
+  else if (!window.sessionStorage.getItem('isLoggined')) {
     next('/');
   } else {
     next()
