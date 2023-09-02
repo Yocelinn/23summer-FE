@@ -84,101 +84,12 @@ export default {
             store.dispatch('fetchElementPList', Number(window.sessionStorage.getItem('curProjectId')));
         }
 
-        // const elements_w = [
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     // 其他元素...
-        // ]
         const show_p = computed(() => {
             return store.state.show_P;
         });
         const show_w = computed(() => {
             return store.state.show_W;
         });
-        // const getdocslist = () => {
-        //     axios.post('/doc/root', {
-        //         "project_id": Number(window.sessionStorage.getItem('curProjectId')),
-        //     })
-        //         .then((response)=>{
-        //             if (response.data.code === 200) {
-        //                 // ElMessage({
-        //                 //     message: response.data.message,
-        //                 //     type: 'success'
-        //                 // });
-        //                 elements_w.value = response.data.docs;
-        //                 console.log(response.config.data);
-        //                 console.log(response.data);
-        //             }
-        //             else {
-        //                 ElMessage({
-        //                     message: response.data.error,
-        //                     type: 'error'
-        //                 });
-        //                 console.log(response.config.data);
-        //                 console.log(response.data);
-        //             }
-        //             console.log(elements_w.value.length);
-        //             show_w.value = (elements_w.value.length === 0);
-        //             console.log(show_w.value);
-        //         })
-        //         .catch((error) => {
-        //             ElMessage({
-        //                 message: "获取文档错误，请重试",
-        //                 type: 'error'
-        //             });
-        //             console.log(error.config.data);
-        //             console.log(error.data);
-        //         })
-        // };
-
-        // const getProToTypeList = () => {
-        //     axios.post('/prototype/info', {
-        //         "project_id": Number(window.sessionStorage.getItem('curProjectId')),
-        //     })
-        //         .then((response)=>{
-        //             if (response.data.code === 200) {
-        //                 // ElMessage({
-        //                 //     message: response.data.message,
-        //                 //     type: 'success'
-        //                 // });
-        //                 elements_p.value = response.data.prototypes;
-        //                 console.log(response.config.data);
-        //                 console.log(response.data);
-        //             }
-        //             else {
-        //                 ElMessage({
-        //                     message: response.data.error,
-        //                     type: 'error'
-        //                 });
-        //                 console.log(response.config.data);
-        //                 console.log(response.data);
-        //             }
-        //             console.log(elements_p.value.length);
-        //             show_p.value = (elements_p.value.length === 0);
-        //             console.log(show_p.value);
-        //         })
-        //         .catch((error) => {
-        //             ElMessage({
-        //                 message: "获取文档错误，请重试",
-        //                 type: 'error'
-        //             });
-        //             console.log(error.config.data);
-        //             console.log(error.data);
-        //         })
-        // };
 
         const jumpToP = () => {
             router.push('/prototype');

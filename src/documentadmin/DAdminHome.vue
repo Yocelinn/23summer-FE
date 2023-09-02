@@ -17,7 +17,7 @@
                   </div>
                 </div>
                 <div class="projectmessage">
-                  <p>项目创建时间：<span>{{created_time}}</span></p>
+                  <p>项目创建时间：<span>{{formatTime(created_time)}}</span></p>
                   <p>项目简介:<span>{{project_description}}</span></p>
                 </div>
               </el-card>
@@ -105,11 +105,17 @@
                       <el-icon v-if="!isFolder(scope.row)" size="18" style="margin-left: 7px; margin-top: 7px" @click="openHistory(scope.row)"><Clock /></el-icon>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="created_time" label="创建时间" width="220">
+                  <el-table-column label="创建时间" width="160">
+                    <template #default="scope">
+                      {{formatTime(scope.row.created_time)}}
+                    </template>
                   </el-table-column>
-                  <el-table-column prop="update_time" label="更新时间" width="220">
+                  <el-table-column  label="更新时间" width="160">
+                      <template #default="scope">
+                        {{formatTime(scope.row.update_time)}}
+                      </template>
                   </el-table-column>
-                  <el-table-column prop="option" label="删除" width="180">
+                  <el-table-column prop="option" label="删除" width="100">
                     <template #default="scope">
 <!--                      <el-button link type="primary" size="small" @click="docsedit(scope.row)">Edit</el-button>-->
                       <el-button plain type="danger" size="small" @click="docsdelete(scope.row)">删除</el-button>
@@ -132,7 +138,7 @@
                       </template>
                       <template #default="scope">
                         <div style="display: flex; align-items: center">
-                          <span>{{ scope.row.history_id }}</span>
+                          <span>{{ formatTime(scope.row.history_id) }}</span>
                         </div>
                       </template>
                     </el-table-column>
@@ -142,7 +148,7 @@
                       </template>
                       <template #default="scope">
                         <div style="display: flex; align-items: center">
-                          <span>{{ scope.row.update_time }}</span>
+                          <span>{{ formatTime(scope.row.update_time) }}</span>
                         </div>
                       </template>
                     </el-table-column>
@@ -187,6 +193,15 @@ export default {
 
   setup () {
     // const project_id = ref('');
+    const formatTime = (dateTimeStr) => {
+      const dateTime = new Date(dateTimeStr);
+      const year = dateTime.getFullYear(); // 获取年份
+      const month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
+      const day = dateTime.getDate().toString().padStart(2, '0');
+      const hours = dateTime.getHours().toString().padStart(2, '0');
+      const minutes = dateTime.getMinutes().toString().padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    };
     const fileName = ref('');
     const lengthEnough = ref(false);
     const staff = ref([]);
@@ -664,6 +679,7 @@ export default {
     })
 
     return {
+      formatTime,
       showHistory,
       historyData,
       currFileId,

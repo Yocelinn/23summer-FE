@@ -290,8 +290,13 @@ export default {
 
         const addNewTeammate = () => {
             console.log("检查email", newPjName.value);
+            const hold = ref('');
+            hold.value = getRole(newPjDes.value);
+            if (hold.value !== 2 || hold.value !== 1 || hold.value !== 0 ) {
+                hold.value = 0;
+            }
 
-            if (window.sessionStorage.getItem('curTeamId').value === -1) {
+            if (Number(window.sessionStorage.getItem('curTeamId')) === -1) {
                 ElMessage({
                     message: '当前未选择团队',
                     type:'error'
@@ -310,7 +315,7 @@ export default {
                             axios.post('/team/member', {
                                 team_id: window.sessionStorage.getItem('curTeamId'),
                                 user_id: response.data.user_id,
-                                perm: getRole(newPjDes.value)
+                                perm: hold.value
                             })
                                 .then((response2) => {
                                     if (response2.data.code === 200) {

@@ -88,18 +88,18 @@ export function useButtons(data, commands, previewRef, editorRef, clearBlockFocu
         commands.delete()
       }
     },
-    {
-      label: () => {
-        return previewRef.value ? '编辑' : '预览'
-      },
-      icon: () => {
-        return previewRef.value ? 'icon-edit' : 'icon-browse'
-      },
-      handler: () => {
-        previewRef.value = !previewRef.value
-        clearBlockFocus()
-      }
-    },
+    // {
+    //   label: () => {
+    //     return previewRef.value ? '编辑' : '预览'
+    //   },
+    //   icon: () => {
+    //     return previewRef.value ? 'icon-edit' : 'icon-browse'
+    //   },
+    //   handler: () => {
+    //     previewRef.value = !previewRef.value
+    //     clearBlockFocus()
+    //   }
+    // },
     {
       label: '保存',
       icon: 'icon-entypomenu',

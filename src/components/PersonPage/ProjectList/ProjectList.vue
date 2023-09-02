@@ -32,7 +32,7 @@
                         </template>
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
-                                <span>{{ scope.row.created_time }}</span>
+                                <span>{{ formatTime(scope.row.created_time) }}</span>
                             </div>
                         </template>
                     </el-table-column>
@@ -42,7 +42,7 @@
                         </template>
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
-                                <span>{{ scope.row.updated_time }}</span>
+                                <span>{{ formatTime(scope.row.updated_time) }}</span>
                             </div>
                         </template>
                     </el-table-column>
@@ -151,7 +151,7 @@
                 </template>
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
-                        <span>{{ scope.row.created_time }}</span>
+                        <span>{{ formatTime(scope.row.created_time) }}</span>
                     </div>
                 </template>
             </el-table-column>
@@ -165,7 +165,7 @@
                 </template>
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
-                        <span>{{ scope.row.updated_time }}</span>
+                        <span>{{formatTime( scope.row.updated_time) }}</span>
                     </div>
                 </template>
             </el-table-column>
@@ -224,6 +224,16 @@ export default {
     },
 
     setup() {
+        const formatTime = (dateTimeStr) => {
+            const dateTime = new Date(dateTimeStr);
+            const year = dateTime.getFullYear(); // 获取年份
+            const month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
+            const day = dateTime.getDate().toString().padStart(2, '0');
+            const hours = dateTime.getHours().toString().padStart(2, '0');
+            const minutes = dateTime.getMinutes().toString().padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}`;
+        };
+
         const store = useStore();
         const user = store.state.user;
         const curTeamId = window.sessionStorage.getItem('curTeamId');
@@ -716,6 +726,7 @@ export default {
         });
 
         return {
+            formatTime,
             user,
             curTeamId,
             curProjectId,
