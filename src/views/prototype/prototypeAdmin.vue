@@ -337,10 +337,16 @@
         pagesVisible.value = true
       }
       const openOnePage = (row) => {
-        if(JSON.stringify(row.component) !== "{}") {
+        if(row.component !== "{}" && row.component != "[]") {
+          console.log('11111')
           localStorage.setItem('data', row.component)
-        } 
-        console.log(row.component)
+        } else {  // else 说明该文件为空,不能从localStorage读值
+          console.log('22222')
+          localStorage.setItem('data', null)
+        }
+        console.log(typeof(row.component))
+        console.log(JSON.stringify(row.component))
+        console.log(localStorage.getItem('data'))
         localStorage.setItem('curDesignPage', row.page_id)
         console.log(row.page_id)
         router.push('/designPage')
