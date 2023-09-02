@@ -40,9 +40,9 @@
                 </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>导出为Word</el-dropdown-item>
-                    <el-dropdown-item>导出为Pdf</el-dropdown-item>
-                    <el-dropdown-item>导出为Markdown</el-dropdown-item>
+                    <el-dropdown-item @click="outputDocx">导出为Word</el-dropdown-item>
+                    <el-dropdown-item @click="outputPdf">导出为Pdf</el-dropdown-item>
+                    <el-dropdown-item @click="outputMd">导出为Markdown</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -186,17 +186,9 @@ import CommonAside from '@/components/CommonAside.vue';
 import QuillEditor from '../components/Editor/index.vue';
 import MemerDialog from './member-dialog.vue'
 // import { Mentionable } from 'vue-mention'
-import {
-  Check,
-  Delete,
-  Edit,
-  Message,
-  Search,
-  Star,
-} from '@element-plus/icons-vue'
-import axios from 'axios';
-import { ref, onMounted, getCurrentInstance, toRaw } from 'vue';
-import { ElNotification,ArrowDown } from 'element-plus'
+import axios, {options} from 'axios';
+import { toRaw } from 'vue';
+import {ElNotification, ElMessage} from 'element-plus'
 export default {
   components: {
     CommonAside,
@@ -234,6 +226,73 @@ export default {
     this.getdoccontent();
   },
   methods: {
+    options,
+    outputDocx() {
+      axios.post('/doc/convert/word', {
+        doc_id: Number(this.doc_id)
+      })
+              .then((response) => {
+                if (response.data.code === 200) {
+                  ElMessage({
+                    message: response.data.message,
+                    type: 'success'
+                  });
+
+                  this.$router.push(response.data.url);
+                }
+                else {
+                  ElMessage({
+                    message: response.data.error,
+                    type: 'error'
+                  });
+                  console.log(response.config.data);
+                  console.log(response.data);
+                }
+              })
+              .catch((error) => {
+                ElMessage({
+                  message: '导出失败，请重试',
+                  type: 'error'
+                });
+                console.log(error.config.data);
+                console.log(error.data);
+              })
+    },
+    outputPdf() {
+
+    },
+    outputMd() {
+      axios.post('/doc/convert/md', {
+        doc_id: Number(this.doc_id)
+      })
+              .then((response) => {
+                if (response.data.code === 200) {
+                  ElMessage({
+                    message: response.data.message,
+                    type: 'success'
+                  });
+
+                  this.$router.push(response.data.url);
+                }
+                else {
+                  ElMessage({
+                    message: response.data.error,
+                    type: 'error'
+                  });
+                  console.log(response.config.data);
+                  console.log(response.data);
+                }
+              })
+              .catch((error) => {
+                ElMessage({
+                  message: '导出失败，请重试',
+                  type: 'error'
+                });
+                console.log(error.config.data);
+                console.log(error.data);
+              })
+    },
+
     model1(){
       this.editorContent='<h1 class="ql-align-center">开发计划书</h1><h2>1.引言</h2><h3>	1.1背景</h3><h3>	1.2目的</h3><h3>	1.3术语定义</h3><h3>	1.4参考资料</h3><h3>	1.5相关文档</h3><h2>2.项目概述</h2><h3>	2.1项目的目的</h3><h3>	2.2项目的使用对象</h3><h2>3.项目组织及人力资源管理情况</h2><h2>4.软件生命周期</h2><h2>5.规范，方法和标准</h2><h3>	5.1前端代码规范</h3><h3>	5.2后端代码规范</h3><h3>	5.3开发方法</h3><h3>	5.4维护相关</h3><h2>6.任务与工作产品</h2><h2>7.工作产品，任务规模，工作量估计</h2><h2>8.成本估计</h2><h2>9.软件项目进度计划</h2><h2>10.配置管理计划</h2><h2>11.质量保证计划</h2><h2>12.风险分析</h2><h2>13.设备工具</h2><h3>	13.1运行环境</h3><h3>	13.2开发环境</h3><h2>14.项目评审</h2><h2>15.度量</h2>'
       this.$refs.myQuillEditor.changeContent( this.editorContent );

@@ -51,7 +51,7 @@ defineExpose({
     }
 })
 
-const editContent = ref(props.content);
+// const editContent = ref(props.content);
 
 const myQuillEditor = ref(null)
 watch(props.content, (newVal, oldVal) => {
@@ -234,7 +234,7 @@ function textChange(content) {
 }
 
 // 上传成功处理
-function handleUploadSuccess(res, file) {
+function handleUploadSuccess(res) {
     // 如果上传成功
     if (res.status == 200) {
         let rawMyQuillEditor = toRaw(myQuillEditor.value)
