@@ -578,7 +578,7 @@ export default {
             "perm": Number('0'),
          })
          .then((response) => {
-          this.link='http://localhost:8080/documentadd/'+ response.data.doc_token;
+          this.link='http://81.70.184.77/documentadd/'+ response.data.doc_token;
           console.log(this.link);
           this.copyText();
           this.link='/documandadmin/token'
@@ -599,7 +599,7 @@ export default {
             "perm": Number('1'),
          })
          .then((response) => {
-          this.link='http://localhost:8080/documentadd/'+ response.data.doc_token;
+          this.link='http://81.70.184.77/documentadd/'+ response.data.doc_token;
           console.log(this.link);
           this.copyText();
           this.link='/documandadmin/token';
