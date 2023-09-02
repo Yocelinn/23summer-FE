@@ -387,11 +387,11 @@ export default {
           this.$refs.myQuillEditor.changeContent( this.editorContent );
           console.log(this.editorContent);
           console.log(this.doc_id);
-          ElNotification({
-            title: 'success',
-            message: '新建文档成功，现在可以开始编辑了',
-            type: 'create',
-          });
+          // ElNotification({
+          //   title: 'success',
+          //   message: '新建文档成功，现在可以开始编辑了',
+          //   type: 'create',
+          // });
         }
         )}
       else{
@@ -413,11 +413,11 @@ export default {
           console.log(this.doc_id2)
           console.log(response.data.message);
           this.doc_id2 = '';
-          ElNotification({
-            title: 'success',
-            message: '删除文档成功',
-            type: 'delete',
-          });
+          // ElNotification({
+          //   title: 'success',
+          //   message: '删除文档成功',
+          //   type: 'delete',
+          // });
         }
         )}
       else{

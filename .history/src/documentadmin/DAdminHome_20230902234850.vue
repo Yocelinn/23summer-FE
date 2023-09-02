@@ -261,7 +261,7 @@ export default {
                   //   message: response.data.message,
                   //   type: 'success'
                   // });
-                  router.push(`/documentadd/${currFileId.value}`);
+                  router.push(`/documentadmin/${currFileId.value}`);
                 }
                 else {
                   ElMessage({
@@ -515,6 +515,9 @@ export default {
                   console.log(error.data);
                 })
       }
+              // else if (lengthEnough.value === true) {
+              //     this.$router.push(`/documentadmin/${window.sessionStorage.getItem('curFolderId')}/${row.doc_id}`);
+      // }
       else {
         window.sessionStorage.setItem('curDocId', row.id);
         // window.sessionStorage.setItem('curDocName', row.name);

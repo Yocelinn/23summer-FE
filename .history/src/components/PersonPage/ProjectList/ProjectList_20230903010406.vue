@@ -259,10 +259,10 @@ export default {
                     .then((response) => {
                         console.log(response.config.data);
                         if (response.data.code === 200) {
-                            // ElMessage({
-                            //     message: '新建成功',
-                            //     type:'success'
-                            // })
+                            ElMessage({
+                                message: '新建成功',
+                                type:'success'
+                            })
                             console.log(response.data);
                             plNewPjVisable.value = false;
 // 未完成                            curProjectId.value = response.data.id;
@@ -313,10 +313,10 @@ export default {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // ElMessage ({
-                        //     message: '删除成功',
-                        //     type: 'success'
-                        // });
+                        ElMessage ({
+                            message: '删除成功',
+                            type: 'success'
+                        });
                         console.log(response.data);
                         callFetchInProjectList();
                     }
@@ -343,10 +343,10 @@ export default {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // ElMessage({
-                        //     message: response.data.message,
-                        //     type: 'success'
-                        // });
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
                         callFetchInProjectList();
                     }
                     else {
@@ -402,10 +402,10 @@ export default {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // ElMessage({
-                        //     message: response.data.message,
-                        //     type: 'success'
-                        // });
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
                         store.commit('setProjectData', response.data.projects);
                     }
                     else {
@@ -450,10 +450,10 @@ export default {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // ElMessage({
-                        //     message: response.data.message,
-                        //     type: 'success'
-                        // });
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
                         store.commit('setProjectData', response.data.projects);
                     }
                     else {
@@ -498,10 +498,10 @@ export default {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // ElMessage({
-                        //     message: response.data.message,
-                        //     type: 'success'
-                        // });
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
                         store.commit('setProjectData', response.data.projects);
                     }
                     else {
@@ -563,10 +563,10 @@ export default {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // ElMessage({
-                        //     message: response.data.message,
-                        //     type: 'success'
-                        // });
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
                         store.commit('setProjectData', response.data.projects);
                     }
                     else {
@@ -595,10 +595,10 @@ export default {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // ElMessage ({
-                        //     message: response.data.message,
-                        //     type: 'success'
-                        // });
+                        ElMessage ({
+                            message: response.data.message,
+                            type: 'success'
+                        });
                         deletedData.value = response.data.recycle_bin;
                     }
                     else {
@@ -649,10 +649,10 @@ export default {
                     }
                 }
 
-                // ElMessage({
-                //     message: "恢复成功",
-                //     type: 'success'
-                // });
+                ElMessage({
+                    message: "恢复成功",
+                    type: 'success'
+                });
 
                 callFetchInProjectList();
             } catch (error) {
@@ -692,10 +692,10 @@ export default {
                     }
                 }
 
-                // ElMessage({
-                //     message: "恢复成功",
-                //     type: 'success'
-                // });
+                ElMessage({
+                    message: "恢复成功",
+                    type: 'success'
+                });
 
                 callFetchInProjectList();
             } catch (error) {

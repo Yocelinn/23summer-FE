@@ -199,10 +199,10 @@
                       })
                               .then((response2) => {
                                 if (response2.data.code === 200) {
-                                  // ElMessage ({
-                                  //   message: response2.data.message,
-                                  //   type: 'success'
-                                  // });
+                                  ElMessage ({
+                                    message: response2.data.message,
+                                    type: 'success'
+                                  });
                                   docs.value = response2.data.docs;
                                 }
                                 else {
@@ -251,10 +251,10 @@
         })
                 .then((response) => {
                   if (response.data.code === 200) {
-                    // ElMessage({
-                    //   message: response.data.message,
-                    //   type: 'success'
-                    // });
+                    ElMessage({
+                      message: response.data.message,
+                      type: 'success'
+                    });
                     console.log(response.config.data);
                     console.log(response.data);
                     getdocslist();
@@ -300,10 +300,10 @@
           })
                   .then((response) => {
                     if (response.data.code === 200) {
-                      // ElMessage({
-                      //   message: response.data.message,
-                      //   type: 'success'
-                      // });
+                      ElMessage({
+                        message: response.data.message,
+                        type: 'success'
+                      });
                       console.log("进入文件夹")
                       docs.value = response.data.docs;
                       fileName.value = row.name;
@@ -368,10 +368,10 @@
           })
                   .then((response) => {
                     if (response.data.code === 200) {
-                      // ElMessage({
-                      //   message: response.data.message,
-                      //   type: 'success'
-                      // });
+                      ElMessage({
+                        message: response.data.message,
+                        type: 'success'
+                      });
                       docsedit(response.data);
                       console.log(response.data);
                     }
@@ -401,10 +401,10 @@
           })
                   .then((response) => {
                     if (response.data.code === 200) {
-                      // ElMessage({
-                      //   message: response.data.message,
-                      //   type: 'success'
-                      // });
+                      ElMessage({
+                        message: response.data.message,
+                        type: 'success'
+                      });
                       docsedit(response.data);
                       console.log(response.data);
                     }

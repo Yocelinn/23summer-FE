@@ -6,7 +6,7 @@
       </el-aside>
       <el-container class="big-container">
         <div class="header" style="margin: 0; padding: 0; flex: 0 0 auto;">
-          <el-header style="width: 90%">
+          <el-header>
             <div class="headerleft" style="margin-top: 0; display: flex; flex-wrap: wrap-reverse">
               <router-link to="/documentadmin">
                 <el-button class="back" size="mini" color="#545c64">返回管理页</el-button>
@@ -52,7 +52,7 @@
         <!--        <el-header>-->
         <!--        </el-header>-->
         <div class="small-container">
-          <div class="card1" style="width: 20%; flex: 1; height: 88%; padding: 20px">
+          <div class="card1" style="width: 20%; flex: 1; height: 100%; padding: 20px">
             <el-card class="box-card" style="background-color: rgba(255, 255, 255, 0.85); height: 100%; padding: 20px">
               <div slot="header" class="clearfix">
                 <h3>文档操作区</h3>
@@ -70,9 +70,9 @@
           <div class="edit_container" style="width: 80%; flex: 5; max-height: 100%" @keyup="handkeKeyUp" @keydown="handleKeyDown">
             <QuillEditor id="editorId" ref="myQuillEditor" :content="editorContent" contentType="html"
               @updateContent="update" @textChange="textChange" :options="options" style="width: 800px;left:420px; top:160px" height: 800 />
-            <MemerDialog ref="MemerDialog" @rowClick="rowClick"></MemerDialog>
+			      <MemerDialog ref="MemerDialog" @rowClick="rowClick"></MemerDialog>
           </div>
-          <div class="card2" style="width: 20%; flex: 1; height:88%; padding: 20px">
+          <div class="card2" style="width: 20%; flex: 1; height: 100%; padding: 20px">
             <el-card class="box-card2" style="background-color: rgba(255, 255, 255, 0.85); height: 100%; padding: 20px" >
               <div>
                 <div slot="header" class="clearfix">
@@ -649,9 +649,6 @@ export default {
 </script>
 
 <style scoped>
-.card1 {
-
-}
 .container-all {
   display: flex;
   /*flex-direction: column; !* 垂直布局 *!*/
@@ -725,25 +722,4 @@ export default {
 .sharedoc{
   margin-top: 20px;
 }
-
-/*:deep(el-button) {*/
-/*  background-color: white;*/
-/*  border-color: #9E9CF4;*/
-/*  color: #9E9CF4;*/
-/*}*/
-
-/*:deep(el-button:hover),*/
-/*:deep(el-button:focus) {*/
-/*  background-color: white;*/
-/*  border-color: #7E7CCB;*/
-/*  color: #7E7CCB;*/
-/*  cursor: pointer;*/
-/*  transition: background-color 0.3s, color 0.3s;*/
-/*}*/
-
-/*:deep(el-button:active) {*/
-/*  background-color: #9E9CF4;*/
-/*  border-color: white;*/
-/*  color: white;*/
-/*}*/
 </style>

@@ -135,10 +135,10 @@ export default defineComponent({
                 else{
                     let curTeamId=window.sessionStorage.getItem('curTeamId')
                     console.log("Child:"+curTeamId)
-                    // ElMessage({
-                    //     message: '邀请成功',
-                    //     type: 'success',
-                    // })
+                    ElMessage({
+                        message: '邀请成功',
+                        type: 'success',
+                    })
                     updateList();
                     // console.log("quitGroup")
                 }
@@ -158,10 +158,10 @@ export default defineComponent({
                     console.log(res.data.error)
                 }
                 else{
-                    // ElMessage({
-                    //     message: '邀请成功',
-                    //     type: 'success',
-                    // })
+                    ElMessage({
+                        message: '邀请成功',
+                        type: 'success',
+                    })
                     showAddModal.value=false;
                     updateList();
                 }
@@ -195,10 +195,10 @@ export default defineComponent({
                 }
                 else{
                     // console.log(response.data.message)
-                    // ElMessage({
-                    //     message: "解散群聊成功",
-                    //     type: 'success',
-                    // })
+                    ElMessage({
+                        message: "解散群聊成功",
+                        type: 'success',
+                    })
                     updateList();
                 }
             })

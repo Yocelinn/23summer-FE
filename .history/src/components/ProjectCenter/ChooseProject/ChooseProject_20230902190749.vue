@@ -432,10 +432,10 @@ export default defineComponent( {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // message({
-                        //     message: response.data.message,
-                        //     type:'success'
-                        // })
+                        message({
+                            message: response.data.message,
+                            type:'success'
+                        })
                         console.log(response.data);
                         tName.value = window.sessionStorage.getItem('curProjectName');
                         roleNum.value = response.data.perm;
@@ -474,10 +474,10 @@ export default defineComponent( {
             })
                 .then((response2) => {
                     if (response2.data.code === 200) {
-                        // message({
-                        //     message: response2.data.message,
-                        //     type:'success'
-                        // })
+                        message({
+                            message: response2.data.message,
+                            type:'success'
+                        })
                         console.log(response2.data.message)
                         window.sessionStorage.setItem('curProjectName',  Cname.value);
                         fetchSelfInform();
@@ -515,10 +515,10 @@ export default defineComponent( {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // message({
-                        //     message: response.data.message,
-                        //     type:'success'
-                        // })
+                        message({
+                            message: response.data.message,
+                            type:'success'
+                        })
                         console.log(response.data.message);
                         window.sessionStorage.setItem('curProjectDes', holdDes.value)
                         console.log('检查curProjectDes更新', curDescription.value);

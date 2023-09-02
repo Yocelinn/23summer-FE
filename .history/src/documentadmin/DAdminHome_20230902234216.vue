@@ -257,11 +257,11 @@ export default {
       })
               .then((response) => {
                 if(response.data.code === 200) {
-                  // ElMessage({
+                  ElMessage({
                   //   message: response.data.message,
                   //   type: 'success'
                   // });
-                  router.push(`/documentadd/${currFileId.value}`);
+                  router.push(`/documentadmin/${currFileId.value}`);
                 }
                 else {
                   ElMessage({
@@ -296,6 +296,20 @@ export default {
       axios.post('/doc/root', {
         "project_id": Number(window.sessionStorage.getItem('curProjectId')),
       })
+<<<<<<< HEAD
+      .then((response)=>{
+      console.log(response.data.docs);
+      if(response.data.code === 200)
+      {
+        console.log(response.data);
+        docs.value = response.data.docs;
+        console.log(docs.value);
+        console.log(docs);
+      }
+      }).catch(error=>{
+        console.log(error)
+      })
+=======
               .then((response)=>{
                 console.log(response.data.docs);
                 if(response.data.code === 200)
@@ -314,6 +328,7 @@ export default {
                 console.log(error.config.data);
                 console.log(error.data);
               })
+>>>>>>> Terry_x
     }
     const getprojectmessage = () => {
       rooter.value = window.sessionStorage.getItem('curProjectName');
@@ -321,6 +336,35 @@ export default {
                 "project_id": Number(window.sessionStorage.getItem('curProjectId')),
               }
       )
+<<<<<<< HEAD
+     .then((response)=>{
+      console.log(response.data.project_name);
+      console.log(response.data.project_description);
+      console.log(response.data.created_time);
+      created_time.value=response.data.created_time;
+      project_description.value=response.data.project_description;
+      project_name.value=response.data.project_name;
+      team_id.value=response.data.team_id;
+      console.log("tid", team_id.value);
+      console.log("tid",team_id.value)
+      axios.post('/team/seemember',
+      {
+        "team_id":team_id.value,
+      })
+      .then((response)=>{
+      console.log(response.data);
+      console.log(team_id);
+      staff.value=response.data.res;
+      console.log(staff.value);
+      }
+      ).catch(error=>{
+        console.log(error)
+      })
+      }
+      ).catch(error=>{
+        console.log(error)
+      })
+=======
               .then((response)=>{
                         console.log(response.data.project_name);
                         console.log(response.data.project_description);
@@ -364,6 +408,7 @@ export default {
                 console.log(error.data);
               })
 
+>>>>>>> Terry_x
     }
 
     const deleteFile = (row) => {
@@ -515,6 +560,9 @@ export default {
                   console.log(error.data);
                 })
       }
+              // else if (lengthEnough.value === true) {
+              //     this.$router.push(`/documentadmin/${window.sessionStorage.getItem('curFolderId')}/${row.doc_id}`);
+      // }
       else {
         window.sessionStorage.setItem('curDocId', row.id);
         // window.sessionStorage.setItem('curDocName', row.name);

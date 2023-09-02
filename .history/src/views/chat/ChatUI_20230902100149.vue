@@ -336,10 +336,10 @@
                     console.log(response.data.message)
                 }
                 else{
-                    // ElMessage({
-                    //     message: '创建群聊成功',
-                    //     type: 'success',
-                    // })
+                    ElMessage({
+                        message: '创建群聊成功',
+                        type: 'success',
+                    })
                     // getChatList(curTeamId);
                     console.log(chat_list.value)
                     const LastChat= chat_list.value[chat_list.value.length - 1];

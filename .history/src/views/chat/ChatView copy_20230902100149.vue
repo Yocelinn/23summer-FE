@@ -254,10 +254,10 @@ export default defineComponent({
           if (response.data.code != 200) {
             console.log(response.data.message);
           } else {
-            // ElMessage({
-            //   message: '创建群聊成功',
-            //   type: 'success',
-            // });
+            ElMessage({
+              message: '创建群聊成功',
+              type: 'success',
+            });
             const LastChat = chat_list.value[chat_list.value.length - 1];
             chat_list.value.push({ "no": LastChat.no + 1, "type": "group", "id": response.data.group_team, "name": addedGroupName.value });
             select_options.value.push({

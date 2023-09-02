@@ -85,10 +85,10 @@ export default {
             })
                 .then((response)=>{
                     if (response.data.code === 200) {
-                        // ElMessage({
-                        //     message: response.data.message,
-                        //     type: 'success'
-                        // });
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
                         elements_w.value = response.data.docs;
                         console.log(response.config.data);
                         console.log(response.data);
@@ -121,10 +121,10 @@ export default {
             })
                 .then((response)=>{
                     if (response.data.code === 200) {
-                        // ElMessage({
-                        //     message: response.data.message,
-                        //     type: 'success'
-                        // });
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
                         elements_p.value = response.data.prototypes;
                         console.log(response.config.data);
                         console.log(response.data);

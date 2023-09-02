@@ -258,10 +258,10 @@ export default {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // ElMessage({
-                        //     message: response.data.message,
-                        //     type: 'success'
-                        // });
+                        ElMessage({
+                            message: response.data.message,
+                            type: 'success'
+                        });
                         updateTable(index, hold.value);
                     }
                     else {
@@ -303,10 +303,10 @@ export default {
                 })
                     .then((response) => {
                         if (response.data.code === 200) {
-                            // ElMessage({
-                            //     message: response.data.message,
-                            //     type: 'success'
-                            // });
+                            ElMessage({
+                                message: response.data.message,
+                                type: 'success'
+                            });
                             axios.post('/team/member', {
                                 team_id: window.sessionStorage.getItem('curTeamId'),
                                 user_id: response.data.user_id,
@@ -314,10 +314,10 @@ export default {
                             })
                                 .then((response2) => {
                                     if (response2.data.code === 200) {
-                                        // ElMessage({
-                                        //     message: response2.data.message,
-                                        //     type: 'success'
-                                        // });
+                                        ElMessage({
+                                            message: response2.data.message,
+                                            type: 'success'
+                                        });
                                         callFetchTeammateList();
                                     }
                                     else {
@@ -373,10 +373,10 @@ export default {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // ElMessage ({
-                        //     message: '删除成功',
-                        //     type: 'success'
-                        // });
+                        ElMessage ({
+                            message: '删除成功',
+                            type: 'success'
+                        });
                         console.log(response.data);
                         callFetchTeammateList();
                     }

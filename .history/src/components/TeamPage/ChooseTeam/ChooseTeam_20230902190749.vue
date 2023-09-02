@@ -348,10 +348,10 @@ export default defineComponent( {
                 .then((response) => {
                     // 处理响应
                     if (response.data.code === 200) {
-                        // message({
-                        //     message: response.data.message,
-                        //     type:'success'
-                        // })
+                        message({
+                            message: response.data.message,
+                            type:'success'
+                        })
                         window.sessionStorage.setItem('curTeamName', hole.value);
                         window.sessionStorage.setItem('curTeamId', response.data.team_id);
                         console.log('视察', window.sessionStorage.getItem('curTeamId'));
@@ -426,10 +426,10 @@ export default defineComponent( {
             })
                 .then((response) => {
                     if (response.data.code === 200) {
-                        // message({
-                        //     message: response.data.message,
-                        //     type:'success'
-                        // })
+                        message({
+                            message: response.data.message,
+                            type:'success'
+                        })
                         console.log(response.data);
                         roleNum.value = response.data.perm;
                         store.commit('setCurRoleNum', response.data.perm);

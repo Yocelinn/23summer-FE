@@ -21,10 +21,6 @@ import { QuillBinding } from 'y-quill'
 import { WebsocketProvider } from 'y-websocket'
 
 
-
-
-
-
 // 引入插入图片标签自定义的类
 
 // 注册图片拖拽和大小修改插件(不起效果暂时屏蔽)
@@ -313,8 +309,9 @@ onMounted(() => {
 }
 
 :deep(.ql-editor) {
-    min-height: 740px;
+    min-height: 76vh;
     overflow: auto;
+    max-height: 76vh;
 }
 
 
