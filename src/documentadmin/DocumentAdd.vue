@@ -68,7 +68,7 @@
             </el-card>
           </div>
           <div class="edit_container" style="width: 60%; flex: 3; max-height: 100%" @keyup="handkeKeyUp" @keydown="handleKeyDown">
-            <QuillEditor id="editorId" ref="myQuillEditor" :content="editorContent" contentType="html"
+            <QuillEditor id="editor" ref="myQuillEditor" :content="editorContent" contentType="html"
               @updateContent="update" @textChange="textChange" :options="options" style="width: 800px;left:420px; top:160px" height: 800 />
 			<MemerDialog ref="MemerDialog" @rowClick="rowClick"></MemerDialog>
           </div>
@@ -187,8 +187,8 @@ import QuillEditor from '../components/Editor/index.vue';
 import MemerDialog from './member-dialog.vue'
 // import { Mentionable } from 'vue-mention'
 import axios, {options} from 'axios';
-import { toRaw } from 'vue';
-import {ElNotification, ElMessage} from 'element-plus'
+import { ref, onMounted, getCurrentInstance, toRaw } from 'vue';
+import {ElNotification, ArrowDown, ElMessage} from 'element-plus'
 export default {
   components: {
     CommonAside,
@@ -238,7 +238,7 @@ export default {
                     type: 'success'
                   });
 
-                  this.$router.push(response.data.url);
+                  window.location.href = 'http://81.70.184.77:8000' + response.data.url
                 }
                 else {
                   ElMessage({
@@ -259,7 +259,35 @@ export default {
               })
     },
     outputPdf() {
+      axios.post('/doc/convert/PDF', {
+        doc_id: Number(this.doc_id)
+      })
+              .then((response) => {
+                if (response.data.code === 200) {
+                  ElMessage({
+                    message: response.data.message,
+                    type: 'success'
+                  });
 
+                  window.location.href = 'http://81.70.184.77:8000' + response.data.url
+                }
+                else {
+                  ElMessage({
+                    message: response.data.error,
+                    type: 'error'
+                  });
+                  console.log(response.config.data);
+                  console.log(response.data);
+                }
+              })
+              .catch((error) => {
+                ElMessage({
+                  message: '导出失败，请重试',
+                  type: 'error'
+                });
+                console.log(error.config.data);
+                console.log(error.data);
+              })
     },
     outputMd() {
       axios.post('/doc/convert/md', {
@@ -272,7 +300,7 @@ export default {
                     type: 'success'
                   });
 
-                  this.$router.push(response.data.url);
+                  window.location.href = 'http://81.70.184.77:8000' + response.data.url
                 }
                 else {
                   ElMessage({
