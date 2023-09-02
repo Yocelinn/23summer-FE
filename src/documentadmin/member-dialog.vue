@@ -28,13 +28,14 @@ export default {
         axios.post('/team/seemember',
           {
             "team_id":Number(this.team_id),
-          }
-          )
+          })
           .then((response)=>{
         console.log(response.data);
         console.log(this.team_id);
         this.dataList=response.data.res;
         console.log(this.dataList);
+      }).catch(error=>{
+        console.log(error)
       }),
       console.log('数据', this.dataList)
     },

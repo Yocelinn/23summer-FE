@@ -99,7 +99,7 @@ const routes = [
 ]
 const whiteList = ['/', '/signup', '/login', '/home','/documentadd','/documentadd/:id']
 const excludedRoute = '/documentadd/:id';
-
+const excludedRoute2 = '/designPage/prototype_preview/:pathMatch(.*)*';
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
@@ -107,6 +107,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const isExcluded = match(excludedRoute)(to.path);
+  const isExcluded2 = match(excludedRoute2)(to.path);
   if (whiteList.indexOf(to.path) !== -1) {
     // 放行，进入下一个路由
     next()
@@ -115,7 +116,11 @@ router.beforeEach((to, from, next) => {
   {
     next()
   } 
-  else if (!store.state.isLoggedIn) {
+  else if(isExcluded2)
+  {
+    next()
+  }
+  else if (!window.sessionStorage.getItem('isLoggined')) {
     next('/');
   } else {
     next()
