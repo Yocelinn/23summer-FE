@@ -52,7 +52,7 @@
         <!--        <el-header>-->
         <!--        </el-header>-->
         <div class="small-container">
-          <div class="card1" style="width: 20%; flex: 1; height: 100%">
+          <div class="card1" style="width: 10%; flex: 1; height: 100%">
             <el-card class="box-card" style="background-color: rgba(255, 255, 255, 0.85); height: 100%">
               <div slot="header" class="clearfix">
                 <h3>文档操作区</h3>
@@ -67,12 +67,12 @@
               </div>
             </el-card>
           </div>
-          <div class="edit_container" style="width: 60%; flex: 3; max-height: 100%" @keyup="handkeKeyUp" @keydown="handleKeyDown">
+          <div class="edit_container" style="width: 80%; flex: 5; max-height: 100%" @keyup="handkeKeyUp" @keydown="handleKeyDown">
             <QuillEditor id="editorId" ref="myQuillEditor" :content="editorContent" contentType="html"
               @updateContent="update" @textChange="textChange" :options="options" style="width: 800px;left:420px; top:160px" height: 800 />
-			<MemerDialog ref="MemerDialog" @rowClick="rowClick"></MemerDialog>
+			      <MemerDialog ref="MemerDialog" @rowClick="rowClick"></MemerDialog>
           </div>
-          <div class="card2" style="width: 20%; flex: 1; height: 100%">
+          <div class="card2" style="width: 10%; flex: 1; height: 100%">
             <el-card class="box-card2" style="background-color: rgba(255, 255, 255, 0.85); height: 100%" >
               <div>
                 <div slot="header" class="clearfix">
@@ -345,11 +345,13 @@ export default {
     },
 	
 	textChange(content) {
-		if (content && content.delta.ops.length === 2 ) {
+		if (content && content.delta.ops.length === 1 && content.delta.ops[0].insert && content.delta.ops[0].insert === '@') {
+			this.$refs.MemerDialog.showDialog([])
+		} else if (content && content.delta.ops.length === 2 ) {
 			if (content.delta.ops[1].insert && content.delta.ops[1].insert === '@') {
 				this.$refs.MemerDialog.showDialog([])
 			} 
-		} 
+		}
 	},
 	rowClick(row) {
 		if (this.editorContent) {
@@ -526,7 +528,6 @@ export default {
 
 <style scoped>
 .container-all {
-
   display: flex;
   /*flex-direction: column; !* 垂直布局 *!*/
   justify-content: space-between;
@@ -581,5 +582,14 @@ export default {
   margin-left: 10px;
   color: #818080;
   margin-top: 5px;
+}
+
+.box-card .el-button{
+  margin-top:10px;
+  margin-bottom: 50px;
+}
+
+.box-card .el-input{
+  width: 80%;
 }
 </style>

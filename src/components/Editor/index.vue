@@ -12,9 +12,13 @@
    
 <script setup>
 import { QuillEditor, Quill } from '@vueup/vue-quill'
+import QuillCursors from 'quill-cursors'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getCurrentInstance, reactive, ref, toRaw, computed, onMounted, watch, defineExpose } from "vue";
 import { ElMessage } from 'element-plus';
+import * as Y from 'yjs'
+import { QuillBinding } from 'y-quill'
+import { WebsocketProvider } from 'y-websocket'
 // 引入插入图片标签自定义的类
 
 // 注册图片拖拽和大小修改插件(不起效果暂时屏蔽)
@@ -23,7 +27,7 @@ import { ElMessage } from 'element-plus';
 
 // Quill.register('modules/ImageDrop', ImageDrop);
 // Quill.register('modules/imageResize', ImageResize);
-
+Quill.register('modules/cursors',QuillCursors);
 const { proxy } = getCurrentInstance();
 const emit = defineEmits(['updateContent', 'getFileId', 'handleRichTextContentChange', 'textChange'])
 const props = defineProps({
@@ -80,6 +84,7 @@ const options = reactive({
     theme: 'snow',
     debug: 'warn',
     modules: {
+        cursors: true,
         // mention:{
         //     allowedChars: /^[\u4e00-\u9fa5]*$/,
         //     mentionDenotationChars:["@"],
@@ -151,6 +156,11 @@ const options = reactive({
         ],
     },
 })
+
+// const ydoc = new Y.Doc()
+// const ytext = ydoc.getText('quill')
+// const provider = new WebsocketProvider('wss://demos.yjs.dev', 'quill-demo-room', ydoc)
+// const binding = new QuillBinding(ytext, toRaw(myQuillEditor.value).getQuill(), provider.awareness)
 
 // toolbar标题（此项是用来增加hover标题）
 const titleConfig = ref([
@@ -274,6 +284,13 @@ function initTitle() {
 onMounted(() => {
     initTitle()
     oldContent.value = props.content
+    // console.log(myQuillEditor)
+    let myQuill = toRaw(myQuillEditor.value).getQuill()
+    const ydoc = new Y.Doc()
+    const ytext = ydoc.getText('myQuill')
+    const room_no = window.sessionStorage.getItem('curDocId')
+    const provider = new WebsocketProvider('wss://demos.yjs.dev', room_no, ydoc)
+    const binding = new QuillBinding(ytext, myQuill, provider.awareness)
 })
 </script>
   //通过css样式来汉化

@@ -355,6 +355,8 @@ export default {
               //     this.$router.push(`/documentadmin/${window.sessionStorage.getItem('curFolderId')}/${row.doc_id}`);
       // }
       else {
+        window.sessionStorage.setItem('curDocId', row.id);
+        // window.sessionStorage.setItem('curDocName', row.name);
         router.push(`/documentadmin/${row.id}`);
       }
     }

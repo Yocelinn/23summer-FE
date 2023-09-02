@@ -24,11 +24,13 @@
     "deepcopy": "^2.1.0",
     "devui-theme": "^0.0.7",
     "element-plus": "^2.3.12",
+    "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.1",
     "jspdf": "^1.5.3",
-    "html2canvas": "^1.4.1",
     "moment": "^2.29.4",
     "pdfmake": "^0.2.7",
+    "quill": "^1.3.7",
+    "quill-cursors": "^4.0.2",
     "quill-mention": "^3.4.0",
     "stream-browserify": "^3.0.0",
     "vue": "^3.2.13",
@@ -39,7 +41,10 @@
     "vue-splitpane": "^1.0.6",
     "vuesax": "^3.12.2",
     "vuex": "^4.0.0",
-    "vuex-persistedstate": "^4.1.0"
+    "vuex-persistedstate": "^4.1.0",
+    "y-quill": "^0.1.5",
+    "y-websocket": "^1.5.0",
+    "yjs": "^13.6.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
