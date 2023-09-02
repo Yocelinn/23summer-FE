@@ -120,7 +120,6 @@ const options = reactive({
                 [{ color: [] }, { background: [] }], // 字体颜色、字体背景颜色
                 [{ align: [] }], // 对齐方式
                 ['clean'], // 清除文本格式
-                ['link', 'image'], // 链接、图片、视频
             ],
             handlers: {
                 // 重写图片上传事件
