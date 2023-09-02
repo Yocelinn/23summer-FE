@@ -28,5 +28,10 @@ body{
   height: 100%;
   width: 100%;
 }
-
+.el-card {
+  --el-card-padding: 0px; 
+}
+:deep(.el-card) {
+  border: 0px;
+}
 </style>

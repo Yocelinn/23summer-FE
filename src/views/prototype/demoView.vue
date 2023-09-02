@@ -1,6 +1,7 @@
 <template>
   <div class="main-page">
     <Editor v-model="state"></Editor>
+      
   </div>
 </template>
 
@@ -13,10 +14,11 @@ import { registerIcon as icon} from '@/utils/editor-icon'
 export default {
   name: 'PrototyeView',
   components: {
-    Editor
+    Editor, 
   },
   setup() {
     const state = ref(JSON.parse(localStorage.getItem('data')) || data)
+    const previewStatus = ref(localStorage.getItem('preview') || false)
     provide('config', config) //把config提供出去
     provide('icon',icon)  // 把图标列表提供出去
     const formDate = ref({
@@ -29,13 +31,14 @@ export default {
     })
     provide('formDate', formDate)
     return {
-      state
+      state,
+      previewStatus
     }
   }
 }
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 .main-page {
   position: absolute;
 /*  top: 20px;
@@ -47,4 +50,12 @@ export default {
   right: 0px;
   bottom: 20px;
 }
+.el-card {
+  --el-card-padding: 0px; 
+  border: 0px;
+}
+#el-card {
+  border: 0px;
+}
+ 
 </style>

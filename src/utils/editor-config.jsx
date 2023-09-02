@@ -222,7 +222,7 @@ registerConfig.register({
   },
   preview: () => <ElCard style="width:60px;height:60px" ></ElCard>,
   render: ({ props, size }) => (
-      <ElCard body-style={{ width:(size.width || '200') + 'px', height: (size.height || '200')+'px', backgroundColor: props.backgroundColor}} 
+      <ElCard body-style={{ width:(size.width || '200') + 'px', height: (size.height || '200')+'px', backgroundColor: props.backgroundColor, border: '0px'}} 
       header= {props.header}
       shadow= {props.shadow}
       >

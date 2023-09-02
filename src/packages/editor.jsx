@@ -35,7 +35,8 @@ export default defineComponent({
         ctx.emit('update:modelValue', deepcopy(newValue))
       }
     })
-    // console.log(data.value)
+    console.log('__________________________________')
+    console.log(data.value)
     const containerStyles = computed(() => ({
       width: data.value.container.width + 'px',
       height: data.value.container.height + 'px',
@@ -79,7 +80,7 @@ export default defineComponent({
     const { commands } = useCommand(data, focusData)
     // 按钮库
     const buttons = useButtons(data, commands, previewRef, editorRef, clearBlockFocus, saveImg)
-    return () =>
+    return () => 
       !editorRef.value ? (
         <>
           <div class={editorRef.value ? 'editor-container-canvas__content' : 'editor-container-canvas__content closeEditor'} style={containerStyles.value}>
@@ -89,9 +90,9 @@ export default defineComponent({
             ))}
           </div>
           <span>
-            <ElButton color="#ca96ff" onClick={() => (editorRef.value = true)}>
+            {/* <ElButton color="#ca96ff" onClick={() => (editorRef.value = true)}>
               继续编辑
-            </ElButton>
+            </ElButton> */}
           </span>
         </>
       ) : (
@@ -204,5 +205,6 @@ export default defineComponent({
           </div>
         </div>
       )
-  }
+    }   
+  
 })
