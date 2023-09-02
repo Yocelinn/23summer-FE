@@ -722,7 +722,8 @@ export default {
   margin-left: 0px;
 }
 
-.sharedoc{
+.sharedoc
+{
   margin-top: 20px;
 }
 
