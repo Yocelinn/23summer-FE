@@ -4,7 +4,7 @@
         <i ref="uploadRef" class="Plus editor-img-uploader"></i>
     </el-upload>
     <div class="editor">
-        <QuillEditor id="editorId" ref="myQuillEditor" v-model:content="editorContent" contentType="html"
+        <QuillEditor id="editor" ref="myQuillEditor" v-model:content="editorContent" contentType="html"
             @update:content="onContentChange" @textChange="textChange" :options="options" />
         <!-- <QuillEditor theme="snow" :content="props.content" contentType="html"/> -->
     </div>
@@ -19,6 +19,12 @@ import { ElMessage } from 'element-plus';
 import * as Y from 'yjs'
 import { QuillBinding } from 'y-quill'
 import { WebsocketProvider } from 'y-websocket'
+
+
+
+
+
+
 // 引入插入图片标签自定义的类
 
 // 注册图片拖拽和大小修改插件(不起效果暂时屏蔽)
@@ -55,7 +61,7 @@ defineExpose({
     }
 })
 
-const editContent = ref(props.content);
+// const editContent = ref(props.content);
 
 const myQuillEditor = ref(null)
 watch(props.content, (newVal, oldVal) => {
@@ -242,7 +248,7 @@ function textChange(content) {
 }
 
 // 上传成功处理
-function handleUploadSuccess(res, file) {
+function handleUploadSuccess(res) {
     // 如果上传成功
     if (res.status == 200) {
         let rawMyQuillEditor = toRaw(myQuillEditor.value)

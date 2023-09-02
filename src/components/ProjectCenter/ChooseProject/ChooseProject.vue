@@ -218,10 +218,11 @@
 }
 
 .box-card {
-    width: 85%;
+    width: 75%;
     height: 95%;
     align-items: center; /* 垂直居中 */
     justify-content: center; /* 水平居中 */
+    padding: 20px;
 }
 
 .custom-save-button-tl {
