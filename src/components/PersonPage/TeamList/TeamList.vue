@@ -78,7 +78,7 @@
             </el-descriptions>
         </div>
         <div class="card-container">
-            <el-card class="box-card" >
+            <el-card class="box-card">
                 <template #header>
                     <div class="card-header">
                         <span class="text"><b>选择团队</b></span>
@@ -236,10 +236,11 @@
 }
 
 .box-card {
-    width: 85%;
+    width: 75%;
     height: 95%;
     align-items: center; /* 垂直居中 */
     justify-content: center; /* 水平居中 */
+    padding: 20px;
 }
 
 .custom-button-w {
