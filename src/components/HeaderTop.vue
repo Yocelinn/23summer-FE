@@ -27,7 +27,7 @@
             <div class="noti-column"  :class="{ 'slide-out': showNotiList }">
                 <transition name="slide">
                     <div v-if="showNotiList" class="noti-list-wrapper" >
-                        <Notification/>
+                        <Notification @enterOther="getMsg"/>
                     </div>
                 </transition>
             </div>
@@ -86,11 +86,21 @@
 import { Search } from '@element-plus/icons-vue'
 import Notification from './NotificationView.vue'
 import router from "@/router"
+import {ref} from 'vue'
 
 export default {
     setup() {
+        const getMsg=(val)=>{
+            console.log("receiveChild" +val.content)
+            showNotiList.value=false
+
+        }
+        function toggleNotiList() {
+        showNotiList.value = !showNotiList.value; // 切换列表显示状态
+        }
+        const showNotiList=ref(false)
         return {
-            Search,
+            Search,showNotiList,toggleNotiList,getMsg
         }
     },
     components:{
@@ -103,15 +113,13 @@ export default {
             curTeamName: '',
 
             input2: '',
-            showNotiList:false,
+            
         }
     },
     mounted() {
     },
     methods:{
-        toggleNotiList() {
-        this.showNotiList = !this.showNotiList; // 切换列表显示状态
-        },
+        
         readInfo(){
             this.userName = window.sessionStorage.getItem('userName')
             this.userNickName = window.sessionStorage.getItem('userNickName')

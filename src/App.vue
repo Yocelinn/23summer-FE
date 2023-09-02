@@ -28,5 +28,11 @@ body{
   height: 100%;
   width: 100%;
 }
+.n-base-select-menu .n-base-select-option.n-base-select-option--selected{
+    --n-option-text-color-active: #9E9CF4
+}
+.n-base-select-menu .n-base-select-option .n-base-select-option__check {
+  --n-option-check-color:#9E9CF4
+}
 
 </style>

@@ -69,7 +69,7 @@ const routes = [
   },
   
   {
-    path: '/chat',
+    path: '/chat/:group_id?/:chat_id?',
     name: 'chat',
     component: () => import('@/views/chat/ChatView.vue')
   },
@@ -89,6 +89,12 @@ const routes = [
     meta: {
       title: '原型设计',
     }
+  },
+  {
+    path: '/homeshow',
+    name:'homeshow',
+    component: () => import('@/views/HomeShow.vue'),
+  
   },
 ]
 

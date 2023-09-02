@@ -1,5 +1,5 @@
 <template>
-     <div class="chat-friend" :id="'record'+chatInfo.chat_id">
+     <div class="chat-friend" :id="'record'+chatInfo.chat_id" >
       <div class="info-time">
         <n-avatar >{{ chatInfo.sender.slice(-2) }}</n-avatar>
       </div>
