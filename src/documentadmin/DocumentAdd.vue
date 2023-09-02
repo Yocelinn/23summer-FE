@@ -636,7 +636,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.timer = setInterval(this.docsedit, 10000);
+      this.timer = setInterval(this.docsedit, 60000);
     });
     onUnmounted(() => {
       clearInterval(this.timer); // 清除定时器
