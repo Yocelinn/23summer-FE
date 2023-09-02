@@ -2,7 +2,7 @@
   <div class="layout">
     <el-container class="el-body" style="height: 100%">
       <el-container style="height: 100%">
-        <el-aside width="180px" height="93vh" style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;">
+        <el-aside width="13vw" height="93vh" style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;">
           <CommonAside></CommonAside>
         </el-aside>
         <el-main style="height: 100%">

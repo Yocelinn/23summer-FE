@@ -68,9 +68,7 @@
             </el-card>
           </div>
           <div class="edit_container" style="width: 60%; flex: 3; max-height: 100%" @keyup="handkeKeyUp" @keydown="handleKeyDown">
-            <QuillEditor id="editorId" ref="myQuillEditor" :content="editorContent" contentType="html"
-              @updateContent="update" @textChange="textChange" :options="options" style="width: 800px;left:420px; top:160px" height: 800 />
-			<MemerDialog ref="MemerDialog" @rowClick="rowClick"></MemerDialog>
+            <QuillEditor id="editorId" ref="myQuillEditor" :content="editorContent" contentType="html" @updateContent="update" :options="options" style="max-height: 100%"/>
           </div>
           <div class="card2" style="width: 20%; flex: 1; height: 100%">
             <el-card class="box-card2" style="background-color: rgba(255, 255, 255, 0.85); height: 100%" >
@@ -184,24 +182,16 @@
 //调用编辑器\
 import CommonAside from '@/components/CommonAside.vue';
 import QuillEditor from '../components/Editor/index.vue';
-import MemerDialog from './member-dialog.vue'
 // import { Mentionable } from 'vue-mention'
-import {
-  Check,
-  Delete,
-  Edit,
-  Message,
-  Search,
-  Star,
-} from '@element-plus/icons-vue'
-import axios from 'axios';
-import { ref, onMounted, getCurrentInstance, toRaw } from 'vue';
-import { ElNotification,ArrowDown } from 'element-plus'
+import axios, {options} from 'axios';
+import { ElNotification } from 'element-plus'
+import {ArrowDown} from "@element-plus/icons";
+// import {ref} from 'vue';
 export default {
   components: {
+    ArrowDown,
     CommonAside,
     QuillEditor,
-	MemerDialog
   },
   data() {
     return {
@@ -220,20 +210,20 @@ export default {
       doc_name: '',
       doc_id1: '',
       doc_id2: '',
-      team_id: window.sessionStorage.getItem('curTeamId'),
+      team_id: '',
       project_id: window.sessionStorage.getItem('curProjectId'),
       doc_name1: '',
       staff: [],
       power:false,
       tourist: '游客不能编辑文档',
       perm: '1',
-      username: window.sessionStorage.getItem('userName')
     };
   },
-  created(){
+  created() {
     this.getdoccontent();
   },
   methods: {
+    options,
     model1(){
       this.editorContent='<h1 class="ql-align-center">开发计划书</h1><h2>1.引言</h2><h3>	1.1背景</h3><h3>	1.2目的</h3><h3>	1.3术语定义</h3><h3>	1.4参考资料</h3><h3>	1.5相关文档</h3><h2>2.项目概述</h2><h3>	2.1项目的目的</h3><h3>	2.2项目的使用对象</h3><h2>3.项目组织及人力资源管理情况</h2><h2>4.软件生命周期</h2><h2>5.规范，方法和标准</h2><h3>	5.1前端代码规范</h3><h3>	5.2后端代码规范</h3><h3>	5.3开发方法</h3><h3>	5.4维护相关</h3><h2>6.任务与工作产品</h2><h2>7.工作产品，任务规模，工作量估计</h2><h2>8.成本估计</h2><h2>9.软件项目进度计划</h2><h2>10.配置管理计划</h2><h2>11.质量保证计划</h2><h2>12.风险分析</h2><h2>13.设备工具</h2><h3>	13.1运行环境</h3><h3>	13.2开发环境</h3><h2>14.项目评审</h2><h2>15.度量</h2>'
       this.$refs.myQuillEditor.changeContent( this.editorContent );
@@ -267,246 +257,206 @@ export default {
       const documentid = this.$route.params.id;
       if(this.project_id != null)
       {
-      axios.post('/doc/doc_search',{
-        "project_id": Number(this.project_id),
-        "doc_id": documentid,
-      })
-      .then((response) => {
-        this.editorContent = response.data.content;
-        this.$refs.myQuillEditor.changeContent( this.editorContent );
-        this.doc_name = response.data.doc_name;
-        console.log("did",this.doc_id);
-        console.log("content",this.editorContent);
-        console.log("dname",this.doc_name);
-      })
+        axios.post('/doc/doc_search',{
+          "project_id": Number(this.project_id),
+          "doc_id": documentid,
+        })
+                .then(async (response) => {
+                  this.editorContent = response.data.content;
+                  await this.$refs.myQuillEditor.changeContent(this.editorContent);
+                  this.doc_name = response.data.doc_name;
+                  console.log("did", this.doc_id);
+                  console.log("content", this.editorContent);
+                  console.log("dname", this.doc_name);
+                })
       }
       else{
         axios.get('/doc/decode/'+ documentid)
-        .then((response)=>{
-          this.perm = response.data.res.perm;
-          this.doc_id = response.data.res.doc_id;
-          console.log(response.data.res.perm);
-          console.log(response.data.res.doc_id);
-          console.log(this.perm)
-          console.log(this.doc_id)
-          axios.post(('/doc/view'),
-          {
-            "doc_id": this.doc_id,
-          })
-          .then((response1)=>{
-            this.project_id = response1.data.doc_project;
-            this.editorContent = response1.data.content;
-            this.$refs.myQuillEditor.changeContent( this.editorContent );
-          });
-        });
+                .then((response)=>{
+                  this.perm = response.data.res.perm;
+                  this.doc_id = response.data.res.doc_id;
+                  console.log(response.data.res.perm);
+                  console.log(response.data.res.doc_id);
+                  console.log(this.perm)
+                  console.log(this.doc_id)
+                  axios.post(('/doc/view'),
+                          {
+                            "doc_id": this.doc_id,
+                          })
+                          .then((response1)=>{
+                            this.project_id = response1.data.doc_project;
+                            this.editorContent = response1.data.content;
+                            this.$refs.myQuillEditor.changeContent( this.editorContent );
+                          });
+                });
       }
-    },
-    docscontent() {
-      axios.post('/doc/doc_search',
-        {
-          "project_id": Number(this.project_id),
-          "doc_id": this.doc_id1,
-        })
-        .then((response) => {
-          this.editorContent = response.data.content;
-        }
-        )
-      return response.data.content;
     },
     docsedit() {
       if(this.$store.state.isLoggedIn==true || (this.$store.state.isLoggedIn ==false)&&this.perm == 1){
 
-      axios.post('/doc/edit', {
-        "doc_id": this.doc_id,
-        "content": this.editorContent,
-      })
-        .then((response) => {
-          console.log(this.doc_id);
-          console.log(response.data.doc_id);
-          console.log(this.editorContent);
-          ElNotification({
-            title: 'success',
-            message: '保存文档成功',
-            type: 'edit',
-          });
-        })}
-        else{
-          ElNotification({
-            title: 'fail',
-            message: '您没有编辑的权限',
-            type: 'editfail',
-          });
-        }
+        axios.post('/doc/edit', {
+          "doc_id": this.doc_id,
+          "content": this.editorContent,
+        })
+                .then((response) => {
+                  console.log(this.doc_id);
+                  console.log(response.data.doc_id);
+                  console.log(this.editorContent);
+                  ElNotification({
+                    title: 'success',
+                    message: '保存文档成功',
+                    type: 'edit',
+                  });
+                })}
+      else{
+        ElNotification({
+          title: 'fail',
+          message: '您没有编辑的权限',
+          type: 'editfail',
+        });
+      }
     },
     update(newValue) {
       console.log('test')
       console.log(newValue)
       this.editorContent = newValue;
     },
-	
-	textChange(content) {
-		if (content && content.delta.ops.length === 2 ) {
-			if (content.delta.ops[1].insert && content.delta.ops[1].insert === '@') {
-				this.$refs.MemerDialog.showDialog([])
-			} 
-		} 
-	},
-	rowClick(row) {
-		if (this.editorContent) {
-			const lastIndex = this.editorContent.lastIndexOf('<')
-			this.editorContent = `${this.editorContent.substring(0, lastIndex)}${row.nickname}(${row.name})${this.editorContent.substring(lastIndex)}`
-		}
-		this.$refs.myQuillEditor.changeContent( this.editorContent );
-    axios.post('/message/create',{
-      "rec_id": row.user_id,
-      "content" : this.username + '在文档' + this.doc_name + '中@了你', 
-      "team_id": this.team_id,
-      "ref_type": "doc",
-      "ref_id": this.doc_id,
-    }).then((response)=>{
-      console.log(response.data.message);
-    }
-    )
-		this.$nextTick(() =>{
-			toRaw(this.$refs.myQuillEditor.$refs.myQuillEditor.getQuill()).setSelection(this.editorContent.length)
-		})
-	},
     docscreate() {
       if(this.$store.state.isLoggedIn == true)
       {
-      console.log(this.editorContent);
-      console.log(this.doc_id);
-      axios.post('/doc/create', {
-        "doc_name": this.doc_name1,
-        "project_id": this.project_id,
-      })
-        .then((response) => {
-          this.doc_id = response.data.doc_id;
-          this.$router.push(`/documentadmin/${this.doc_id}`);
-          this.editorContent = '请于此处开始编辑';
-          this.$refs.myQuillEditor.changeContent( this.editorContent );
-          console.log(this.editorContent);
-          console.log(this.doc_id);
-          ElNotification({
-            title: 'success',
-            message: '新建文档成功，现在可以开始编辑了',
-            type: 'create',
-          });
-        }
-        )}
+        console.log(this.editorContent);
+        console.log(this.doc_id);
+        axios.post('/doc/create', {
+          "doc_name": this.doc_name1,
+          "project_id": this.project_id,
+        })
+                .then((response) => {
+                          this.doc_id = response.data.doc_id;
+                          this.$router.push(`/documentadmin/${this.doc_id}`);
+                          this.editorContent = '请于此处开始编辑';
+                          this.$refs.myQuillEditor.changeContent( this.editorContent );
+                          console.log(this.editorContent);
+                          console.log(this.doc_id);
+                          ElNotification({
+                            title: 'success',
+                            message: '新建文档成功，现在可以开始编辑了',
+                            type: 'create',
+                          });
+                        }
+                )}
       else{
         ElNotification({
-            title: 'fail',
-            message: '您没有新建文档的权限',
-            type: 'createfail',
-          });
+          title: 'fail',
+          message: '您没有新建文档的权限',
+          type: 'createfail',
+        });
       }
     },
     docsdelete() {
       if(this.$store.state.isLoggedIn == true)
       {
-      axios.post('/doc/delete',
-        {
-          "doc_id": this.doc_id2,
-        })
-        .then((response) => {
-          console.log(this.doc_id2)
-          console.log(response.data.message);
-          this.doc_id2 = '';
-          ElNotification({
-            title: 'success',
-            message: '删除文档成功',
-            type: 'delete',
-          });
-        }
-        )}
+        axios.post('/doc/delete',
+                {
+                  "doc_id": this.doc_id2,
+                })
+                .then((response) => {
+                          console.log(this.doc_id2)
+                          console.log(response.data.message);
+                          this.doc_id2 = '';
+                          ElNotification({
+                            title: 'success',
+                            message: '删除文档成功',
+                            type: 'delete',
+                          });
+                        }
+                )}
       else{
         ElNotification({
-            title: 'fail',
-            message: '您没有删除文档的权限',
-            type: 'deletefail',
-          });
+          title: 'fail',
+          message: '您没有删除文档的权限',
+          type: 'deletefail',
+        });
       }
     },
     docsserach() {
       if(this.$store.state.isLoggedIn == true)
       {
-      axios.post('/doc/doc_search',
-        {
-          "project_id": Number(this.project_id),
-          "doc_id": this.doc_id1,
-        })
-        .then((response) => {
-          console.log(this.doc_id1);
-          console.log(response.data.content);
-          this.editorContent = response.data.content;
-          this.$refs.myQuillEditor.changeContent( this.editorContent );
-          this.$router.push(`/documentadmin/${this.doc_id1}`);
-          this.doc_id1='';
-        }
-        )}
-        else{
-          ElNotification({
-            title: 'fail',
-            message: '您没有查看其他文档的权限的权限',
-            type: 'serachfail',
-          });
-        }
+        axios.post('/doc/doc_search',
+                {
+                  "project_id": Number(this.project_id),
+                  "doc_id": this.doc_id1,
+                })
+                .then((response) => {
+                          console.log(this.doc_id1);
+                          console.log(response.data.content);
+                          this.editorContent = response.data.content;
+                          this.$refs.myQuillEditor.changeContent( this.editorContent );
+                          this.$router.push(`/documentadmin/${this.doc_id1}`);
+                          this.doc_id1='';
+                        }
+                )}
+      else{
+        ElNotification({
+          title: 'fail',
+          message: '您没有查看其他文档的权限的权限',
+          type: 'serachfail',
+        });
+      }
     },
     sharedocs(){
       console.log(this.$store.state.isLoggedIn);
       console.log(window.sessionStorage.getItem('curRoleNum'));
-      if(this.$store.state.isLoggedIn = true)
+      if(this.$store.state.isLoggedIn === true)
       {
-      this.dialogFormVisible=false;
-      if(window.sessionStorage.getItem('curRoleNum')=='0'||window.sessionStorage.getItem('curRoleNum')=='1')
-      {
-        if(this.tourist=='游客不能编辑文档')
+        this.dialogFormVisible=false;
+        if(window.sessionStorage.getItem('curRoleNum')=='0'||window.sessionStorage.getItem('curRoleNum')=='1')
         {
-         axios.post('/doc/link',
-         {
-            "doc_id": this.doc_id,
-            "perm": Number('0'),
-         })
-         .then((response) => {
-          this.link='http://localhost:8080/documentadmin/'+ response.data.doc_token;
-          console.log(this.link);
-          this.copyText();
-          this.link='/documandadmin/token'
-         })
-        ElNotification({
-          title: '已复制链接',
-          message: '现在已经可以将链接分享给游客了(游客不能编辑)',
-          type: 'cant',
-        })
+          if(this.tourist=='游客不能编辑文档')
+          {
+            axios.post('/doc/link',
+                    {
+                      "doc_id": this.doc_id,
+                      "perm": Number('0'),
+                    })
+                    .then((response) => {
+                      this.link='http://localhost:8080/documentadmin/'+ response.data.doc_token;
+                      console.log(this.link);
+                      this.copyText();
+                      this.link='/documandadmin/token'
+                    })
+            ElNotification({
+              title: '已复制链接',
+              message: '现在已经可以将链接分享给游客了(游客不能编辑)',
+              type: 'cant',
+            })
+          }
+          else(this.tourist=='游客能编辑文档')
+          {
+            axios.post('/doc/link',
+                    {
+                      "doc_id": this.doc_id,
+                      "perm": Number('1'),
+                    })
+                    .then((response) => {
+                      this.link='http://localhost:8080/documentadmin/'+ response.data.doc_token;
+                      console.log(this.link);
+                      this.copyText();
+                      this.link='/documandadmin/token';
+                    })
+            ElNotification({
+              title: '已复制链接',
+              message: '现在已经可以将链接分享给游客了(游客可以编辑)',
+              type: 'can',
+            })
+          }
         }
-        else(this.tourist=='游客能编辑文档')
-        {
-         axios.post('/doc/link',
-         {
-            "doc_id": this.doc_id,
-            "perm": Number('1'),
-         })
-         .then((response) => {
-          this.link='http://localhost:8080/documentadmin/'+ response.data.doc_token;
-          console.log(this.link);
-          this.copyText();
-          this.link='/documandadmin/token';
-         })
-        ElNotification({
-          title: '已复制链接',
-          message: '现在已经可以将链接分享给游客了(游客可以编辑)',
-          type: 'can',
-        })
+        else{
+          ElNotification({
+            title: 'fail',
+            message: '您没有分享文档的权限',
+            type: 'sharefail',
+          })
         }
-      }
-      else{
-        ElNotification({
-          title: 'fail',
-          message: '您没有分享文档的权限',
-          type: 'sharefail',
-        })
-      }
       }
       else{
         ElNotification({
@@ -519,7 +469,7 @@ export default {
     copyText(){
       navigator.clipboard.writeText(this.link).then(() => {
       });
-      },
+    },
   },
 }
 </script>

@@ -5,16 +5,15 @@
     </el-upload>
     <div class="editor">
         <QuillEditor id="editorId" ref="myQuillEditor" v-model:content="editorContent" contentType="html"
-            @update:content="onContentChange" @textChange="textChange" :options="options" />
-        <!-- <QuillEditor theme="snow" :content="props.content" contentType="html"/> -->
+            @update:content="onContentChange" :options="options" />
     </div>
 </template>
-   
+
 <script setup>
 import { QuillEditor, Quill } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { getCurrentInstance, reactive, ref, toRaw, computed, onMounted, watch, defineExpose } from "vue";
-import { ElMessage } from 'element-plus';
+import {ElMessage} from "element-plus";
 // 引入插入图片标签自定义的类
 
 // 注册图片拖拽和大小修改插件(不起效果暂时屏蔽)
@@ -25,7 +24,7 @@ import { ElMessage } from 'element-plus';
 // Quill.register('modules/imageResize', ImageResize);
 
 const { proxy } = getCurrentInstance();
-const emit = defineEmits(['updateContent', 'getFileId', 'handleRichTextContentChange', 'textChange'])
+const emit = defineEmits(['updateContent', 'getFileId', 'handleRichTextContentChange'])
 const props = defineProps({
     /* 编辑器的内容 */
     content: {
@@ -70,39 +69,17 @@ const editorContent = computed({
     },
     set: (val) => {
         //   emit('update:content', val)
-        console.log('设置', val)
+        console.log(val)
     }
 });
 const uploadUrl = ref('/sysFiles/upload') // 上传的图片服务器地址
 //   const uploadUrl = ref(import.meta.env.VITE_BASEURL + '/sysFiles/upload') // 上传的图片服务器地址
 const oldContent = ref('')
+
 const options = reactive({
     theme: 'snow',
     debug: 'warn',
     modules: {
-        // mention:{
-        //     allowedChars: /^[\u4e00-\u9fa5]*$/,
-        //     mentionDenotationChars:["@"],
-        //     positioningStrategy:"fixed",
-        //     renderItem:(data)=>{
-        //         return 
-        //         `
-        //          <div class="member-ites">
-        //            <span class="member-name">${data.value}<span>
-        //          </div>
-        //         `
-        //     },
-        //     renderLoading:()=>{
-        //         return "Loading...";
-        //     },
-        //     source:(serchTerm,renderList,mentionChar) => {
-        //         const cloneMemberList = deepClone(memberList).filter(
-        //         (item) => item.value.indexOf(searchTerm) !== -1
-        //         );
-        //         // renderList 方法，将数据填充到选人框中
-        //         renderList(cloneMemberList);
-        //     }
-        // },
         // 工具栏配置
         toolbar: {
             container: [
@@ -228,10 +205,6 @@ function onContentChange(content) {
     emit('handleRichTextContentChange', content)
 }
 
-// xxwany 新增
-function textChange(content) {
-	emit('textChange', content)
-}
 
 // 上传成功处理
 function handleUploadSuccess(res, file) {
@@ -249,7 +222,7 @@ function handleUploadSuccess(res, file) {
             url: imageUrl,
             id: imageId,
         });
-        
+
         quill.setSelection(length + 1);
         emit('getFileId', res.body[0].id)
     } else {

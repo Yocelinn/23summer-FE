@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 import axios from "axios";
-import message from "@element-plus/icons/lib/Message";
+// import message from "@element-plus/icons/lib/Message";
 import {ElMessage} from "element-plus";
 
 export default createStore({
