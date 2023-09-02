@@ -37,10 +37,8 @@
   }
   </script>
   
-  <style>
-  .tac {
-    /*height: 93vh;*/
-  }
+  <style scoped>
+  
   
   .el-menu {
     height: 93vh;
