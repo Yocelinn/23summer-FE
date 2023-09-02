@@ -1,7 +1,7 @@
 <template>
- <div class="sear chMsg">
+ <div class="searchMsg">
     <div class="search-bar">
-        <el-input :class="{ 'sticky': true}"
+        <el-input 
             v-model="searchInput"
             placeholder="Please Input"
 
@@ -178,9 +178,17 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+.searchMsg{
+    max-height: 400px;
+    overflow:auto
+}
 .search-bar{
     display: flex;
     justify-content: space-between;
+     position: sticky;
+  top: 0;
+  background-color: white; /* 可以添加背景颜色，使其更明显 */
+  z-index: 100; 
 }
 :deep(.el-button ){
     --el-button-hover-text-color:#8988f1 ; 

@@ -92,7 +92,7 @@
                   <el-table-column label="类型" width="80" align="center" >
                     <template #default="scope">
                       <div @click="docsedit(scope.row)">
-                        <el-icon v-if="isFolder(scope.row)"><Files /></el-icon>
+                        <el-icon v-if="!isFolder(scope.row)"><Files /></el-icon>
                         <el-icon v-else><Folder /></el-icon>
                       </div>
                     </template>
@@ -102,7 +102,7 @@
                   <el-table-column label="文档名" width="160">
                     <template #default="scope">
                       {{ scope.row.name }}
-                      <el-icon v-if="!scope.row.is_folder" size="18" style="margin-left: 7px; margin-top: 7px" @click="openHistory(scope.row)"><Clock /></el-icon>
+                      <el-icon v-if="!isFolder(scope.row)" size="18" style="margin-left: 7px; margin-top: 7px" @click="openHistory(scope.row)"><Clock /></el-icon>
                     </template>
                   </el-table-column>
                   <el-table-column prop="created_time" label="创建时间" width="220">
@@ -509,6 +509,7 @@ export default {
                       type: 'error'
                     });
                     console.log(response.config.data);
+                    console.log("看看", row);
                     console.log(response.data);
                   }
                 })
@@ -755,7 +756,7 @@ export default {
 }
 
 .members {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 .docslist {
   margin-left: 40px;

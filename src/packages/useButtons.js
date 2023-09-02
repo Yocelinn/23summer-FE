@@ -1,10 +1,21 @@
 import { $dialog } from '@/components/Dialog'
-import { Picture, Position } from '@element-plus/icons-vue';
-import {mapState, useStore, mapActions } from 'vuex';
+import { Picture, Position, Back } from '@element-plus/icons-vue';
+import { useStore } from 'vuex';
+import router from '@/router';
+import axios from "axios";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { ref } from 'vue'
 
 export function useButtons(data, commands, previewRef, editorRef, clearBlockFocus, saveImg) {
   const store = useStore()
   const buttons = [
+    {
+      label: '回到项目',
+      icon: Back,
+      handler: () => {
+        router.push('/prototype')
+      }
+    },
     {
       label: '撤销',
       icon: 'icon-back',
@@ -94,6 +105,21 @@ export function useButtons(data, commands, previewRef, editorRef, clearBlockFocu
       icon: 'icon-entypomenu',
       handler: () => {
         commands.store()
+        const page_id = localStorage.getItem('curDesignPage')
+        
+        axios.post('/prototype/page/design', {
+          "page_id": page_id,
+          "component": JSON.stringify(data.value)
+        }).then((response) => {
+          if(response.data.code === 200) {
+            ElMessage({ message: response.data.message, type: 'success' });
+          } else {
+            ElMessage({ message: response.data.error, type: 'error' });
+          }
+        }).catch((error) => {
+          ElMessage({ message: "保存失败，请重试",type: 'error' });
+          console.log(error)
+        })
       }
     },
     {
@@ -120,21 +146,41 @@ export function useButtons(data, commands, previewRef, editorRef, clearBlockFocu
         store.commit('setPreview')
         
         // location.reload()
-        // 当开启预览时，getItem获取到为'true'
-        if(store.getters.getPreview){         
-          localStorage.setItem('preview',true); 
-          localStorage.setItem('data', JSON.stringify(data.value));
-          // // 当前 URL
-          // const currentURL = window.location.href;
-          // // 要添加的字符串
-          // const queryString = 'preview=true';
-          // // 构建新的 URL
-          // const newURL = currentURL + '?' + queryString;
-          // 打开新窗口
-          window.open('/prototype_preview=true');
-        } else {
-          localStorage.setItem('preview',false); 
-        }
+        const link_token = ref('')
+        axios.post('/prototype/link', {
+          "page_id": localStorage.getItem('curDesignPage')
+        }).then((response) => {
+          if(response.data.code === 200) {
+            ElMessage({ message: response.data.message, type: 'success' });
+            console.log(typeof(response.data.page_token))
+            link_token.value = response.data.page_token
+            if(store.getters.getPreview){         
+              console.log(link_token.value)
+              localStorage.setItem('preview',true); 
+              const shareUrl = location.href + '/prototype_preview/token=' + link_token.value;
+              ElMessageBox({
+                title: '分享链接',
+                message: shareUrl,
+                showClose: false,
+                confirmButtonText: '我知道了',
+              })
+            } else {
+              localStorage.setItem('preview',false); 
+              ElMessageBox({
+                title: '分享链接',
+                message: '预览已关闭',
+                showClose: false,
+                confirmButtonText: '我知道了',
+              })
+            }
+          } else {
+            ElMessage({ message: response.data.error, type: 'error' });
+          }
+        }).catch(error => {
+          ElMessage({ message: error, type: 'error' });
+          console.log(error)
+        })
+        
       },
     },
     

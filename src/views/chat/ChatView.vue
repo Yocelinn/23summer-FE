@@ -1,6 +1,34 @@
 <template>
   <div id="chatUI" >
       <div class="chat-wrapper">  
+        <div class="leftest-bar">
+            <div class="user-avatar">
+                <n-avatar :size="40" style="background-color:  #48464C ">{{userNickName.slice(-2)  }}</n-avatar>
+            </div>
+            <div class="aside-item">
+                <el-icon :size="25" color=" #9E9CF4" ><HomeFilled /></el-icon>
+                <div class="item-tip" @click="jumpToTeam">团队</div>
+            </div>
+            <div class="aside-item">
+                <el-icon :size="25" color=" #9E9CF4"><Comment /></el-icon>
+                <div class="item-tip">消息</div>
+            </div>
+            <!-- <el-menu class="left-menu"
+                default-active="2"
+                :collapse="true"
+                @open="handleOpen"
+                @close="handleClose"
+            >
+            <el-menu-item index="1">
+                <el-icon :size="40"><HomeFilled /></el-icon>
+                <template #title>返回团队</template>
+            </el-menu-item>
+            <el-menu-item index="2">
+                <el-icon :size="40"><Comment /></el-icon>
+                <template #title>团队群聊</template>
+            </el-menu-item>
+            </el-menu> -->
+        </div>
           <div class="chat-friend-list">
               
               <div class="header-item">
@@ -69,12 +97,12 @@
               <div class="chat-window-header">
                   <div class="chat-name">{{selectedChat.name}}</div>
                   <div class="window-header-icon">
-                      <el-icon class="header-icon"><Back /></el-icon>
-                      <el-icon @click="drawer=true" v-if="selectedChat.type==='group'"><MoreFilled /></el-icon>
+                      <!-- <el-icon class="header-icon"><Back /></el-icon> -->
+                      <el-icon @click="drawer=true" v-if="selectedChat.type==='group'||selectedChat.type==='team'"><MoreFilled /></el-icon>
                       
                   </div>
                   <n-drawer v-model:show="drawer" :width="502" placement="right">
-                      <GroupDetail :curChat="selectedChat" :friend_list="friend_list" @updateList="updateChatList" />
+                      <GroupDetail :curChat="selectedChat" :friend_list="friend_list" :Perm="isPerm" @updateList="updateChatList" />
                   </n-drawer>
                   <!-- <el-drawer
                       v-model="drawer"
@@ -93,13 +121,12 @@
               </div>
               <div class="chat-window-text">
                   <div class="toolbar">
-                          <el-upload ref="uploadRef" class="upload-demo" accept="image/png, image/jpeg,image.jpg" :auto-upload="false"
-                          :on-change="sendImg">
-                              <template #trigger>
+                          <el-upload class="upload-demo" ref="uploadRef"  accept="image/png, image/jpeg,image.jpg" :auto-upload="false"
+                          :on-change="sendImg" show-file-list="false">
                                   <el-icon class="tool-icon"><Picture /></el-icon>
-                              </template>
                           </el-upload>
-                          <el-upload ref="uploadRef" class="upload-demo" accept=".doc,.docx,.pdf,.zip,.pptx" :auto-upload="false" :on-change="sendFile">
+                          <el-upload class="upload-demo" ref="uploadRef" accept=".doc,.docx,.pdf,.zip,.pptx" :auto-upload="false"
+                           :on-change="sendFile" show-file-list="false">
                               <template #trigger>
                                   <el-icon class="tool-icon" ><FolderOpened /></el-icon>
                               </template>
@@ -117,17 +144,36 @@
                           <template #header>
                               聊天记录
                           </template>
+                          <!-- <el-icon class="tool-icon"  @click="handleShowClick"><Search /></el-icon> -->
                           <SearchMsg :curTeamId="curTeamId" :selectedMember="selectedChat" @sendMsg="getMsg"/>
                           </n-modal>
+                          <el-icon class="tool-icon" @click="handleTransmitClick"><Message />
+                            <n-modal
+                              v-model:show="showTransModal"
+                              class="custom-card"
+                              preset="card"
+                              :style="bodyStyle"
+                              size="huge"
+                              :bordered="false"
+                              :segmented="segmented"
+                          >
+                          <template #header>
+                              转发消息
+                          </template>
+                          <!-- <el-icon class="tool-icon"  @click="handleShowClick"><Search /></el-icon> -->
+                          <TransmitInfo :allRecords="records" :userId="userId" :transmit_option="chat_list"  @TransMitInfo="transmitToMember" />
+                          </n-modal>
+                        </el-icon>
                   </div>
                  <!-- <Editor/>   -->
                   
-                  <n-mention v-if="isPerm" type="textarea" :options="manager_friend_options" :render-label="renderLabel"  v-model:value="text_content" 
-                  class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendText()"/>
+                  <n-mention v-if="isPerm" type="textarea" :options="manager_friend_options" :render-label="renderLabel" 
+                   v-model:value="text_content"  :size="large"
+                  class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendText(text_content)"/>
                   <n-mention v-else type="textarea" :options="friend_options" :render-label="renderLabel" v-model:value="text_content" 
-                  class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendText()"/>
+                  class="chat-window-textarea" :on-select="atFriend" @keydown.enter.prevent="sendText(text_content)"/>
                  
-                  <!-- <button class="send-button" @click="sendMessage">发送</button> -->
+                  <button class="send-button" @click="sendText(text_content)">发送</button>
               </div> 
           </div>
       </div>
@@ -148,42 +194,83 @@
     import SearchMsg from "@/components/chat/SearchMsg.vue"
     import GroupDetail from "@/components/chat/GroupDetail.vue"
     import { ElMessage,ElLoading } from 'element-plus'
+    import TransmitInfo from '@/components/chat/TransmitInfo.vue'
+    import {useRouter} from 'vue-router'
+    
     // import Editor from "@/components/chat/EditorArea.vue";
     export default defineComponent ({
     components:{
        NSelect,NMention,ChatMe,ChatFriend,PersonCard,HeadPortrait,NList,NListItem,NAvatar,NTag,NModal,NDrawer,
-       SearchMsg,GroupDetail
+       SearchMsg,GroupDetail,TransmitInfo
     },
    
     setup(){
       // const dataLoaded = ref(false);
       // const scrollDom = ref(null);
-
-      onMounted(()=>{
+      const router = useRouter();
+      onMounted( async ()=>{
         // try {
         // // 使用异步函数加载数据
         curTeamId=ref(parseInt(window.sessionStorage.getItem('curTeamId')));
         curTeamName=ref(window.sessionStorage.getItem('curTeamName'));
+        
         console.log(curTeamId)
         console.log(curTeamName)
-        getChatList(); 
+        
+        const groupId = router.currentRoute.value.query.group_id;
+        const chatId = router.currentRoute.value.query.chat_id;
+
+        // 检查 group_id 和 chat_id 是否存在
+        const hasGroupId = typeof groupId !== 'undefined';
+        const hasChatId = typeof chatId !== 'undefined';
+
+        // 打印参数值和存在性
+        await getChatList(); 
+        
         getUserInfo();
+        console.log('group_id:', groupId);
+        console.log('chat_id:', chatId);
+        console.log('hasGroupId:', hasGroupId);
+        console.log('hasChatId:', hasChatId);
+        if(hasGroupId){
+            selectedValue.value=parseInt(groupId);
+            // console.log('检查chatlist', chat_list.value)
+            const curChat=chat_list.value.find(item => item.id === parseInt(groupId))
+            console.log(curChat)
+            // console.log(selectedChat.value)
+            selectedChat.value=curChat;
+        }
+       
         // 设置 dataLoaded 为 true 表示数据加载完成，相关内容可以渲染
        
         // getChatList();
-        console.log(selectedChat.value.name)
-        getAllRecord();
-        
+        // console.log(selectedChat.value.name)
+        await getAllRecord();
+        if(hasChatId){
+             try{
+                console.log('record'+chatId)
+                console.log("records",records.value)
+                console.log(document.getElementById('record'+chatId))
+                const element= document.getElementById('record'+chatId)
+                // element.classList.add('transition-bg');
+           element.scrollIntoView({ behavior: "smooth",block:'start',inline:'start' })
+            // element.style.backgroundColor = 'blue';
+            // setTimeout(() => {
+            // element.classList.remove('transition-bg');
+            // }, 500);
+           
+          }
+          catch(err){
+            console.log(err)
+          }
+        }      
         getFriendList();
-        
-        // dataLoaded.value = true;
-      
     })
-        
-        //     // TeamChat:{},
         let curTeamId=ref(parseInt(window.sessionStorage.getItem('curTeamId')));
         let  curTeamName=ref(window.sessionStorage.getItem('curTeamName'));
-        var websocketURL=ref('ws://'
+        let userNickName=ref(window.sessionStorage.getItem('userNickName'))
+        let userId=ref(parseInt(window.sessionStorage.getItem('userId')));
+        let websocketURL=ref('ws://'
                 +  '81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
                 + '/ws/chat/' 
                 + curTeamId.value //改成团队id 
@@ -198,20 +285,6 @@
                 team_id:''
             })
         let selectedChat=ref({"id":curTeamId.value,"type":"team","name":curTeamName.value})
-      //   let chatSocket;
-      //   function setupWebSocket(webSocketURL) {
-      //     chatSocket = new WebSocket(webSocketURL);
-
-      //     chatSocket.onmessage = function(e) {
-      //       const data = JSON.parse(e.data); 
-      //       receiveMessage(data);
-      //       console.log(data);
-      //       // 这里可以根据需要执行其他操作
-      //     };
-
-      //   // 返回 chatSocket，这样可以在其他地方关闭它
-      //   return chatSocket;
-      // }
         var chatSocket=new WebSocket( 
                 websocketURL.value )
             chatSocket.onmessage = function(e) {
@@ -221,25 +294,23 @@
                 console.log(data)
                 // document.querySelector('#chat-log').value += (data.message + '\n'); 
             } 
-            
-        // onMounted(()=>{
-        //    loading.value=false;
-        // })
-        // const loading=ref(true);
         const drawer=ref(false)
         const direction = ref('rtl')
         const addedGroupName=ref([]);
-        const selectedValue=ref();
-        const addedFriends=ref([]);
-        const chat_list=ref([]);
-        const store = useStore();
-        const showModal=ref(false)
+        const selectedValue=ref();  //选择聊天选择器选中值
+        const addedFriends=ref([]);  //创建群聊时邀请成员列表
+        const chat_list=ref([]);  //聊天列表
+        const store = useStore();  
+        const showModal=ref(false)   
+        const showTransModal=ref(false)
         const showAddGroup=ref(false)
         const text_content=ref("");
-        const friend_list=ref([]);
-        const friend_options=ref([]);
-        const select_options=ref([]);
-        const manager_friend_options=ref([{ value: "所有人", label: "所有人" }])
+        const friend_list=ref([]); //团队成员列表
+        const groupMember_list=ref([]); //当前选中群聊成员列表
+        const friend_options=ref([]); //普通用户@成员的选项
+        const select_options=ref([]); //选择聊天的选择器
+        const manager_friend_options=ref([])  //管理员权限@成员的选项
+        
         const getMsg=(val)=>{
             console.log("receiveChild" +val.content)
             showModal.value=false;
@@ -250,21 +321,40 @@
           catch(err){
             console.log(err)
           }
-            
-
-            // console.log(val.content)
 
         }
-        
+        const transmitToMember=(val)=>{
+            console.log("receiveTransMitInfo")
+            // console.log(val.MsgList)
+            // console.log(val.chatObj)
+            
+            val.MsgList.forEach((info)=>{
+                console.log(info)
+                axios.post('chat/forward',{ "source_type": selectedChat.value.type, "source_id": info.chat_id,
+                 "target_type": val.chatObj.type,"target_id": val.chatObj.id,"team_id": curTeamId.value})
+                 .then((response)=>{
+                    console.log(response.data);
+
+                 })
+                 .catch(error=>{
+                    console.log(error)
+                 })
+                 showTransModal.value=false;
+            })
+            choose_friend(val.chatObj)
+        }
         const updateChatList=(val)=>{
-            console.log("receiveChild:UPDATE")
-            console.log(val.value)
+            // console.log("receiveChild:UPDATE")
+            // console.log(val.value)
 
             // let curTeamId=window.sessionStorage.getItem('curTeamId')
             // selectedValue.value=chat_list.value[0].no;
             
             drawer.value=false;
             getChatList()
+        }
+        function jumpToTeam(){
+            router.push('/teamCenter')
         }
         // const crypto = require('crypto-js');
         function generateIdentifier(num1, num2) {
@@ -294,27 +384,16 @@
                     // alert(response.data.msg);
                 }
                 else{
-                    // friend_list.value=response.data.res;
-                    // let teamChat={
-                    //     "user_id": -1,
-                    //     // "perm": 1,
-                    //     "nickname": this.curTeamName,
-                    //     // "name": "ttt",
-                    //     "isPerm": ""
-                    // }
-                    // friend_list.value=response.data.res;
-                    // chat_list.value.push(teamChat)
-                    // selectedChat.value=teamChat;
-                    // this.chat_list.push(...response.data.res.filter(item => item.user_id !== user.value.user_id) );
-                    console.log("getFriendList");
+                    // console.log("getFriendList");
 
-                    friend_list.value=response.data.res.filter(item => item.user_id !== user.value.user_id);
-                    console.log(friend_list.value)
+                    friend_list.value=response.data.res.filter(item => item.user_id != user.value.user_id);
+                    // console.log(friend_list.value)
                     const foundMe = friend_list.value.find(friend => friend.user_id === user.value.user_id);
                     // console.log(foundMe.perm)
                     if(foundMe){
                         if(foundMe.perm!=0){
                             isPerm.value=true;
+                            // console.log("isPermChanged:"+isPerm.value)
                         }
                     }
                     // const foundFriend = friend_list.value.find(friend => friend.user_id === user.value.user_id);
@@ -329,49 +408,105 @@
                         value: item.nickname,  // 假设 id 为 value
                         label: item.user_id  // 假设 name 为 label
                     }));
-                    manager_friend_options.value.push(
-                        ...response.data.res
-                        .filter(item => item.user_id !== user.value.user_id) 
-                        .map(item => ({
-                            value: item.nickname,
-                            label: item.user_id
-                        })));
+                    manager_friend_options.value=friend_options.value;
+                    manager_friend_options.value.unshift({value:"所有人",label:"所有人"})
                 }
             })
             
         }   
-        function getChatList(){
-            console.log(curTeamId.value)
-            // console.log("id"+id.value)
-            
-            axios.post('chat/list',{"team_id":parseInt(curTeamId.value)})
+        function getGroupMember(){
+            axios.post('chat/group/members',{"group_id":selectedChat.value.id})
             .then((response)=>{
+                console.log(response.data)
                 if(response.data.code!=200){
-                    console.log(response.data.error);
+                    console.log(response.data.error)
                 }
                 else{
-
-                    // console.log("getChatList成功")
-                    // console.log(response.data.res)
-                    chat_list.value=response.data.res;
-                    select_options.value=response.data.res
+                    groupMember_list.value=response.data.res;
+                    // console.log("getGroupmember")
+                    const foundMe = groupMember_list.value.find(friend => friend.user_id === user.value.user_id);
+                    // console.log(foundMe.perm)
+                    if(foundMe){
+                        if(foundMe.perm!=0){
+                            isPerm.value=true;
+                            // console.log("permchanged:"+isPerm.value)
+                        }
+                    }
+                    friend_options.value = response.data.res
+                    .filter(item => item.user_id !== user.value.user_id) 
                     .map(item => ({
-                        value: item.no,  // 假设 id 为 value
-                        label: item.name  // 假设 name 为 label
-                    }))
-                    // console.log(selectedChat.value)
-                    selectedChat.value = response.data.res.find(item => item.type==='team');
-                    console.log(selectedChat.value)
-                    selectedValue.value=selectedChat.value.no;
-                    // select_options.value.push({value:teamChat.user_id,label:teamChat.nickname}) 
-                    // console.log("更新选择器")
-                    console.log(select_options.value)
+                        value: item.nickname,  // 假设 id 为 value
+                        label: item.user_id  // 假设 name 为 label
+                    }));
+                    manager_friend_options.value=friend_options.value;
+                    manager_friend_options.value.unshift({value:"所有人",label:"所有人"})
+
                 }
             })
-            .catch(err=>{
-                console.log(err);
-            })
         }
+        function getChatList(){
+            // console.log('进入getChatLists', curTeamId.value);
+
+            return new Promise((resolve, reject) => {
+                axios
+                .post('chat/list', { "team_id": parseInt(curTeamId.value) })
+                .then((response) => {
+                    if (response.data.code !== 200) {
+                    console.log(response.data.error);
+                    reject(response.data.error); // 失败时调用 reject
+                    } else {
+                    console.log("getChatList成功");
+                    console.log(response.data.res);
+                    chat_list.value = response.data.res;
+                    select_options.value = response.data.res.map(item => ({
+                        value: item.no,
+                        label: item.name
+                    }));
+
+                    selectedChat.value = response.data.res.find(item => item.type === 'team');
+                    selectedValue.value = selectedChat.value.no;
+
+                    // console.log("更新选择器");
+                    resolve(chat_list.value); // 成功时调用 resolve，传递结果数据
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    reject(err); // 失败时调用 reject
+                });
+            });
+        }
+        // function getChatList(){
+        //     console.log('进入getChatLists', curTeamId.value)
+        //     // console.log("id"+id.value)
+            
+        //     axios.post('chat/list',{"team_id":parseInt(curTeamId.value)})
+        //     .then((response)=>{
+        //         if(response.data.code!=200){
+        //             console.log(response.data.error);
+        //         }
+        //         else{
+        //             console.log("getChatList成功")
+        //             console.log(response.data.res)
+        //             chat_list.value=response.data.res;
+        //             select_options.value=response.data.res
+        //             .map(item => ({
+        //                 value: item.no,  // 假设 id 为 value
+        //                 label: item.name  // 假设 name 为 label
+        //             }))
+        //             // console.log(selectedChat.value)
+        //             selectedChat.value = response.data.res.find(item => item.type==='team');
+        //             // console.log(selectedChat.value)
+        //             selectedValue.value=selectedChat.value.no;
+        //             // select_options.value.push({value:teamChat.user_id,label:teamChat.nickname}) 
+        //             console.log("更新选择器")
+        //             // console.log(select_options.value)
+        //         }
+        //     })
+        //     .catch(err=>{
+        //         console.log(err);
+        //     })
+        // }
         function handleShowClick(){
                 showModal.value=true;
             } 
@@ -384,13 +519,16 @@
           // console.log(item)
           const item=chat_list.value.find(chat_item => chat_item.no === value);
           selectedValue.value=value;
-          console.log(item)
+        //   console.log(item)
           choose_friend(item)
           // console.log(value)
         }
         function handleAddGroup(){
             showAddGroup.value=true;
             console.log("创建群聊"+showAddGroup.value)
+        }
+        function handleTransmitClick(){
+            showTransModal.value=true;
         }
         function addConfirm(){
             let curTeamId=window.sessionStorage.getItem('curTeamId')
@@ -405,7 +543,7 @@
                     //     type: 'success',
                     // })
                     getChatList();
-                    console.log(chat_list.value)
+                    // console.log(chat_list.value)
                     // const LastChat= chat_list.value[chat_list.value.length - 1];
                     // console.log(LastChat.no)
                     // chat_list.value.push({"no":LastChat.no+1,"type":"group","id":response.data.group_team,"name": addedGroupName.value})
@@ -426,16 +564,22 @@
             console.log(addedFriends)
             
         }
+       
         function choose_friend(member){
-            // console.log("choose"+member.nickname)
+            // console.log("choose"+member.name)
             selectedValue.value=member.no;
             selectedChat.value=member;
+            isPerm.value=false;
+            friend_options.value=[];
+            // isPerm.value=false 
             if(selectedChat.value.type==='member'){
                 let hash=generateIdentifier(user.value.user_id,selectedChat.value.id)
                 websocketURL.value= 'ws://'+'81.70.184.77:8000' //改成服务器地址81.70.184.77:8000 
             + '/ws/chat/pri/' 
             + hash //hash标识
-            + '/'  }
+            + '/'
+            
+         }
             else if(selectedChat.value.type==='group'){
                 // let hash=this.generateIdentifier(user.value.user_id,selectedChat.value.user_id)
                 websocketURL.value= 'ws://'
@@ -443,6 +587,7 @@
             + '/ws/chat/group/' 
             + selectedChat.value.id 
             + '/' 
+                getGroupMember();
             }
             else{
                 websocketURL.value= 'ws://'
@@ -450,6 +595,7 @@
                 + '/ws/chat/' 
                 + curTeamId.value //改成团队id 
                 + '/';
+                getFriendList();
             }  
             // console.log(selectedChat.value.type)
             console.log(websocketURL.value)
@@ -470,6 +616,7 @@
                 console.log(data)
                 // document.querySelector('#chat-log').value += (data.message + '\n'); 
             } 
+            // console.log("perm:"+isPerm.value);
             getAllRecord();
             }
        function  atFriend(option){
@@ -477,7 +624,7 @@
             // text_content.value=text_content.value+option.label+' '
             // console.log(this.selectedValue);
             if(selectedMentionValue.value==='所有人'){
-                mentionedMembers.value=friend_list.value.filter(member => member.user_id !== user.value.user_id);
+                mentionedMembers.value=groupMember_list.value.filter(member => member.user_id !== user.value.user_id);
             }
             else{
                 if (!mentionedMembers.value.includes(selectedMentionValue.value)) {
@@ -486,38 +633,62 @@
             }
             // console.log(this.mentionedMembers)
         }
-        function getAllRecord(){
-            // chat=chat/all'+curTeamId
+        async function getAllRecord() {
+            console.log("进入getAllRecords");
+            console.log(selectedChat.value)
+            let url = '/chat/all/' + curTeamId.value;
 
-            // console.log("getAllRecord")
-            let url='/chat/all/'+curTeamId.value;
-            if(selectedChat.value.type==='member'){
-                url='/chat/all/pri/'+curTeamId.value+'/'+selectedChat.value.id;
+            if (selectedChat.value.type === 'member') {
+                url = '/chat/all/pri/' + curTeamId.value + '/' + selectedChat.value.id;
+            } else if (selectedChat.value.type === 'group') {
+                url = '/chat/all/group/' + selectedChat.value.id;
             }
-            else if(selectedChat.value.type==='group')
-            {
-                url='/chat/all/group/'+selectedChat.value.id;
-            }
-            // console.log(url)
-            axios.get(url)
-            .then((response)=>{
-                // console.log(response)
-                if(response.data.code!=200){
-                    console.log(response.data.error);
+
+            try {
+                const response = await axios.get(url);
+
+                if (response.data.code !== 200) {
+                console.log(response.data.error);
+                } else {
+                records.value = response.data.chats;
+                scrollBottom();
                 }
-                else{
-                    // records.value=response.data.chats;
-                    records.value=response.data.chats;
-                    scrollBottom();
-                    // console.log(records.value)
-                }
-            })
-        // }
-            .catch(error=>{
+            } catch (error) {
                 console.log(error);
-            })
+            }
+         }
+        // function getAllRecord(){
+        //     // chat=chat/all'+curTeamId
+
+        //     // console.log("getAllRecord")
+        //     let url='/chat/all/'+curTeamId.value;
+        //     if(selectedChat.value.type==='member'){
+        //         url='/chat/all/pri/'+curTeamId.value+'/'+selectedChat.value.id;
+        //     }
+        //     else if(selectedChat.value.type==='group')
+        //     {
+        //         url='/chat/all/group/'+selectedChat.value.id;
+        //     }
+        //     // console.log(url)
+        //     axios.get(url)
+        //     .then((response)=>{
+        //         // console.log(response)
+        //         if(response.data.code!=200){
+        //             console.log(response.data.error);
+        //         }
+        //         else{
+        //             // records.value=response.data.chats;
+        //             records.value=response.data.chats;
+        //             scrollBottom();
+        //             // console.log(records.value)
+        //         }
+        //     })
+        // // }
+        //     .catch(error=>{
+        //         console.log(error);
+        //     })
           
-        }     
+        // }     
         function getUserInfo(){
             axios.get('user/myself/')
             .then((response)=>{
@@ -529,11 +700,11 @@
             nextTick(() => {
               let chatContent = document.getElementById('chatContent');
               // console.log( document.getElementById('chatContent'))
-              if(chatContent){  
-                  animation(chatContent,chatContent.scrollHeight - chatContent.offsetHeight)
-                }
+            //   if(chatContent){  
+            //       animation(chatContent,chatContent.scrollHeight - chatContent.offsetHeight)
+            //     }
           
-              // chatContent.scrollTop = chatContent.scrollHeight - chatContent.offsetHeight   
+              chatContent.scrollTop = chatContent.scrollHeight - chatContent.offsetHeight   
             // const scrollDom = this.$refs.chatContent;
             // if (scrollDom) {
             //     animation(scrollDom, scrollDom.scrollHeight - scrollDom.offsetHeight);
@@ -571,26 +742,28 @@
                 }
             }
             // console.log(this.records);
-            console.log("receive")
+            // console.log("receive")
             records.value.push(receiveMsg)
             // console.log(this.records);
             scrollBottom();
 
         }
-        function sendText(){
+        function sendText(text){
                 // console.log(text_content.value)
                 // const now=new Date()
                 // console.log(now.toISOString())
                 let sendUrl='/chat/create'
                 let postData = {
                     team_id: parseInt(curTeamId.value),
-                    content: text_content.value
+                    content: text
+                    // content: text_content.value
                     };
                 if(selectedChat.value.type==='member'){
                     sendUrl='/chat/create/pri';
                     postData={
                         team_id: parseInt(curTeamId.value),
-                        content:text_content.value,
+                        // content:text_content.value,
+                        content: text,
                         rec_id:selectedChat.value.id
                     }
                 }
@@ -598,17 +771,18 @@
                     sendUrl='/chat/create/group';
                     postData={
                         group_id:selectedChat.value.id,
-                        content: text_content.value,
+                        // content: text_content.value,
+                        content: text
                         
                     }
                 }
-                 if(text_content.value){    
+                //  if(text_content.value){    
                     // console.log("sendUrl "+sendUrl)
                     // console.log("postData "+postData)  
                     axios.post(sendUrl,JSON.stringify(postData))
                     .then((response)=>{
-                        console.log("发送消息")
-                        console.log(response.data)
+                        // console.log("发送消息")
+                        // console.log(response.data)
                         if(response.data.code!=200){
                             console.log(response.data.error)
                         }
@@ -616,7 +790,8 @@
                             chatSocket.send(JSON.stringify({
                                 'id': response.data.sender, 
                                 'name':user.value.nickname,
-                                'message': text_content.value,
+                                // 'message': text_content.value,
+                                'message': text,
                                 'time': response.data.send_time,
                                 'is_file':0
                             })); 
@@ -634,12 +809,9 @@
                     .catch(error=>{
                         console.log(error);
                     })
-                }
-                else{
-                    console.log("发送消息不能为空！")
-                }
             }
-      function sendImg(image){
+
+        function sendImg(image){
             let sendUrl='/chat/file'
             let imgData=new FormData();
             if(selectedChat.value.type==='group'){
@@ -722,12 +894,17 @@
         }
 
         function sendNotiToMembers(members,chat_id){
+            
             members.forEach((member)=>{
+                let ref_type="chat";
+                if(selectedChat.value.type==='group'){
+                    ref_type=selectedChat.value.id.toString();
+                }
                 const NotiContent = {
                             rec_id: member, // member是接收者的 id
                             content:"@了你", // 通知内容可以根据需求自定义
                             team_id:curTeamId.value,
-                            ref_type:"chat",
+                            ref_type:ref_type,
                             ref_id:chat_id
 
                         }
@@ -744,9 +921,11 @@
     }
         return{
           // handleChatSelectChange,
+          jumpToTeam,
+          userNickName,userId,
           handleUpdateValue,
           choose_friend,sendNotiToMembers,sendFile,sendText,sendImg,receiveMessage,scrollBottom,getUserInfo,getAllRecord,
-          atFriend,
+          atFriend,handleTransmitClick,showTransModal,
             updateChatList,
             addedGroupName,
             drawer,
@@ -758,6 +937,7 @@
             // scrollToMsg,
             addedFriends,
             getMsg,
+            transmitToMember,
             store,
             text_content,
             friend_list,
@@ -851,7 +1031,57 @@
     border-radius: 5px;
     
 }
+.leftest-bar{
+    padding:10px 5px;
+    overflow: auto;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    display:flex;
+    flex-direction: column;
+    width:5%;
+    // justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+//   text-align: center; /* 文本水平居中 */
 
+}
+.aside-item{
+    display:flex;
+    flex-direction:column;
+    width:80%;
+    padding:6px;
+    border-radius:6px;
+    display: flex;
+justify-content: center;
+align-items: center;
+}
+.aside-item:hover{
+    background-color:#cecefc7a ;
+    
+}
+.item-tip{
+    color:#48464C;
+    font-size:14px;
+}
+.left-menu{
+    width:10%;
+    justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  text-align: center; /* 文本水平居中 */
+    // align-content: center;
+}
+:deep(.el-menu-item.is-active) {
+color: #9E9CF4;
+}
+// :deep(.n-list.n-list--hoverable .n-list-item:hover ){
+//  background-color: #cecefcf1; 
+// }
+
+:deep(.n-base-selection:not(.n-base-selection--disabled).n-base-selection--focus .n-base-selection__state-border )
+{
+    box-shadow: #9E9CF4;
+    border: #908ef2; 
+
+}
 .chat-left-nav{
     width:10%;
     border-right: 1px solid #ccc; /* 添加右边框 */
@@ -904,15 +1134,15 @@
     justify-content: space-between; /* 将项目放在容器中，首尾对齐 */
     align-items: center; /* 垂直居中对齐项目 */
     // padding:10px;
-    border:2px solid #9d9cf464;;   
-    border-radius: 30px;;
-    margin: 0 10px 5px 10px;
+    // border:2px solid #9d9cf464;;   
+    // border-radius: 30px;;
+    // margin: 0 10px 5px 10px;
     
     
 }
-:deep(.n-list.n-list--hoverable .n-list-item ){
-    border-radius: 20px;
-}
+// :deep(.n-list.n-list--hoverable .n-list-item ){
+//     border-radius: 20px;
+// }
 
 .chat-item-info{
     margin-left: 20px;;
@@ -954,7 +1184,7 @@
     border-bottom: 1px solid rgba(0,0,0,.09);
 
     width: 100%;
-    height: 70%;
+    height: 60%;
     overflow-y: scroll;
     padding: 20px;
     box-sizing: border-box;
@@ -981,10 +1211,14 @@
 .toolbar{
     height: 30px;
     // padding: 0 5px;
+    margin-bottom:20px;
 display: flex;
 }
 
-
+.upload-demo{
+    height:100%;
+    width:50px;
+}
 .tool-icon{
     width: 42px;
 align-items: center;
@@ -1000,18 +1234,28 @@ color: grey;
     color:#9E9CF4;
 }
 }
+:deep(.n-modal){
+    height:500px;
+    overflow:auto ;
+}
 
 .send-button {
     flex-grow:1;
   position: absolute;
-  bottom: 10px;
-  right: 10px;
-//   background-color: #007bff; /* 设置按钮背景颜色 */
+  height:30px;
+  width:100px;
+  bottom: 30px;
+  right: 30px;
+  background-color:#9d9cf49d      ; /* 设置按钮背景颜色 */
   color: #fff; /* 设置按钮文字颜色 */
   border: none;
   border-radius: 5px;
   padding: 5px 10px;
   cursor: pointer;
+}
+.send-button:hover{
+    background-color: #9E9CF4 ;
+
 }
 .list-header{
     display:flex;
@@ -1043,6 +1287,12 @@ cursor: pointer;
 }
 // .add-icon{
 // }
+
+:deep(.n-input .n-input--textarea .n-input--resizable .n-input--stateful){
+    --n-border-hover: 1px solid#9E9CF4; 
+ --n-border-focus: 1px solid #9E9CF4; 
+--n-box-shadow-focus: 0 0 0 2px rgba(#9E9CF4, 0.2); 
+}
 .chat-window-textarea{
     border-color:#fff;
     text-align:left;

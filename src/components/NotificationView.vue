@@ -33,10 +33,10 @@
         <div v-if="value==='AllNoti'">
             <n-list hoverable clickable class="noti-list"  v-for="(noti,index) in notifications" :key="index">
             <n-list-item   @mouseenter="setHover(index, true)" @mouseleave="setHover(index, false)">
-                <n-thing :title="noti.is_read ? '查看消息' : '您有一条新消息'" content-style="margin-top: 10px;"
-                @click="enterChatRoom(noti)">  
+                <n-thing :title="noti.is_read ? '查看消息' : '您有一条新消息'" class="header-wrapper"
+                >  
                 <div class="noti-list-item">
-                    <div class="noti-list-content">
+                    <div class="noti-list-content" @click="enterChatRoom(noti)">
                         <div class="noti-avator">
                             <el-avatar :size="30" :src="circleUrl" />
                         </div>
@@ -148,7 +148,7 @@ import { NList,NListItem,NThing,NSpace,NTag } from 'naive-ui'
 import { CheckmarkCircle } from "@vicons/ionicons5";
 import axios from 'axios'
 import { useRouter } from 'vue-router';
-import { onMounted } from 'vue';
+import { onMounted,emit } from 'vue';
 // import { post } from '@/utils/'
 
 export default defineComponent({
@@ -156,7 +156,15 @@ export default defineComponent({
         // showList: Boolean, // 控制列表的显示状态
 
     },
-    setup(){
+    setup(props,{emit}){
+        const enterOther = () => {
+            let param = {
+                 content:1
+            };
+            console.log("sendToParent"+param.content)
+            emit('enterOther',param)
+        }
+        const showList=ref(true);
        const notifications=ref([]);
        const curTeamId=ref()
        const router = useRouter()
@@ -185,8 +193,9 @@ export default defineComponent({
     //    const checkisShow=ref([]);
 
         function enterChatRoom(noti){
-            // console.log('enterChatRoom')
-            let url='/message/self/'+noti.msg_ig
+            console.log('enterChatRoom')
+            let url='/message/self/'+noti.msg_id
+            console.log(url)
             axios.get(url)
             .then((response)=>{
                 console.log(response.data)
@@ -194,7 +203,23 @@ export default defineComponent({
                     console.log(response.data.error)
                 }
                 else{
-                    router.push('/chat')
+                    enterOther();
+                    if(response.data.ref_type==='doc'){
+                        console.log("it's doc")
+                        const docRouter=`/documentadd/:${response.data.ref_id}`
+                        router.push(docRouter)
+                        showList.value=false;
+                    }
+                    else if(response.data.ref_type!='chat'){
+                        router.push({ path: '/chat', query: { group_id: parseInt(response.data.ref_type),chat_id:response.data.ref_id}})
+                        showList.value=false;
+                    }
+                    else{
+                        router.push({path:'/chat',query:{chat_id:response.data.ref_id}})
+                        showList.value=false;
+                    }
+                   
+                    
                 }
             })
             .catch(err=>{
@@ -258,14 +283,15 @@ export default defineComponent({
         }
         function allNotiFinished(){
             curTeamId.value=window.sessionStorage.getItem('curTeamId')
-            axios.put('/message/operate_all',{"team_id":parseInt(curTeamId)})
+            console.log("一键已读")
+            axios.put('message/operate_all',{"team_id":parseInt(curTeamId.value)})
             .then((response)=>{
-                // console.log(response)
+                console.log(response.data)
                 if(response.data.code!=200){
-                    alert(response.data.messages);
+                    console.log(response.data.error);
                 }
                 else{
-                    // console.log("消息已读");
+                    console.log("消息已读");
                     // console.log("selectedValue:"+value.value);
                     if(value.value==="AllNoti"){
                         fetchNotifications(); // 重新获取数据
@@ -285,9 +311,9 @@ export default defineComponent({
         }
         function allNotiDeleted(){
             curTeamId.value=window.sessionStorage.getItem('curTeamId')
-            axios.delete('/message/operate_all',{"team_id":parseInt(curTeamId)})
+            axios.post('/message/operate_all',{"team_id":curTeamId.value})
             .then((response)=>{
-                // console.log(response)
+                console.log(response)
                 if(response.data.code!=200){
                     console.log(response.data.messages);
                 }
@@ -320,6 +346,7 @@ export default defineComponent({
                 }
                 else{
                     notifications.value = response.data.messages;
+                    // console.log("获取Notification")
                     console.log(response.data.messages);
                     // this.checkisShow = this.notifications.map((message) => !message.is_read);
 
@@ -432,7 +459,7 @@ export default defineComponent({
        });
        return{
         notifications,notiNotRead,notiHasRead,isHovered_all,noti_options,circleUrl,value, isHovered_not,
-        isHovered_read,checkisShow,curTeamId,
+        isHovered_read,checkisShow,curTeamId,showList,
         // checkisShow,
         CheckmarkCircle,
         checkNoti,deleteNoti,allNotiDeleted,allNotiFinished,
@@ -446,7 +473,7 @@ export default defineComponent({
        
         // selectedValue: '',
         
-        showList:true,
+        
         
         };
     },
@@ -469,7 +496,9 @@ export default defineComponent({
 .icon-choose {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   transition: all 0.3s;
+
 }
 .unread-badge {
   /* 未读消息数量的样式 */
@@ -490,6 +519,10 @@ export default defineComponent({
   /* 鼠标悬停时的样式 */
   /* background-color: #f0f0f0; 修改为你希望的背景颜色 */
 }
+
+.header-wrapper{
+    line-height: 1;
+}
 .noti-list-item {
     display: flex;
     justify-content: space-between; /* 将项目放在容器中，首尾对齐 */
@@ -498,6 +531,8 @@ export default defineComponent({
 }
 .noti-list-content{
     display:flex;
+    width:70%;
+    text-align:left;
     
 }
 .noti-list-content:hover{
@@ -543,6 +578,7 @@ export default defineComponent({
     justify-content: space-between; /* 将项目放在容器中，首尾对齐 */
     align-items: center; /* 垂直居中对齐项目 */
     margin-right:30px;
+    margin-bottom:10px;
 }
 .noti-list-item{
     display: flex;
@@ -555,6 +591,7 @@ export default defineComponent({
     margin-left:10px;
     display: flex;
     flex-direction: column;
+    line-height:1.5;
     /* display:flex; */
 }
 .noti-allChecked{

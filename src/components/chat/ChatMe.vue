@@ -1,5 +1,5 @@
 <template>
-    <div class="chat-me" :id="'record'+chatInfo.chat_id">
+    <div class="chat-me" :id="'record'+chatInfo.chat_id" @contextmenu="showContextMenu">
         <div class="left-info">
           <span>{{ chatInfo.sender }}</span>
           <div class="chat-record">
@@ -43,31 +43,6 @@
         <div class="info-time">
           <n-avatar >{{ chatInfo.sender.slice(-2) }}</n-avatar>
         </div>
-         
-            <!-- <div class="chat-img" v-if="item.chatType == 1">
-              <img
-                :src="item.msg"
-                alt="表情"
-                v-if="item.extend.imgType == 1"
-                style="width: 100px; height: 100px"
-              />
-              <el-image
-                style="max-width: 300px; border-radius: 10px"
-                :src="item.msg"
-                :preview-src-list="srcImgList"
-                v-else
-              >
-              </el-image>
-            </div> -->
-            <!-- <div class="chat-img" v-if="item.chatType == 2">
-              <div class="word-file">
-                <FileCard
-                  :fileType="item.extend.fileType"
-                  :file="item.msg"
-                ></FileCard>
-              </div>
-            </div> -->
-            
           </div>
 </template>
 <script>
@@ -88,7 +63,44 @@ export default defineComponent({
         NAvatar
     },
     methods:{
-      
+      showContextMenu(event) {
+    // 阻止默认的右键菜单
+        event.preventDefault();
+
+        // 在这里可以根据 event 对象的坐标来确定菜单的位置
+        const x = event.clientX;
+        const y = event.clientY;
+
+        // 显示下拉菜单，你可以使用一个 Vue 组件或者普通的 HTML 元素来实现
+        // 这里以一个简单的示例为例，使用一个普通的 div 元素作为下拉菜单
+        const contextMenu = document.createElement("div");
+        contextMenu.className = "context-menu";
+        contextMenu.style.left = `${x}px`;
+        contextMenu.style.top = `${y}px`;
+        contextMenu.innerHTML = `
+          <ul>
+            <li>转发</li>
+            <li>多选</li>
+          </ul>
+        `;
+
+        // 将下拉菜单添加到 DOM 中
+        document.body.appendChild(contextMenu);
+
+        // 在下拉菜单之外的地方点击时，关闭下拉菜单
+        document.addEventListener("click", this.hideContextMenu);
+      },
+
+  hideContextMenu() {
+    // 移除下拉菜单
+    const contextMenu = document.querySelector(".context-menu");
+    if (contextMenu) {
+      contextMenu.remove();
+    }
+
+    // 移除点击事件监听器
+    document.removeEventListener("click", this.hideContextMenu);
+  },
       formattedTime(dateTimeStr) {
             const dateTime = new Date(dateTimeStr);
             const now = new Date();

@@ -233,8 +233,6 @@ export function useCommand(data, focusData) {
       return {
         redo() {
           data.value.isStore = true //已保存
-          console.log('*************************************')
-          console.log(data.value)
           localStorage.setItem('data', JSON.stringify(data.value)) //保存到localStorage
           // console.log('保存成功')
         }
