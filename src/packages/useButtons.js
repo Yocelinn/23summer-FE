@@ -1,6 +1,9 @@
 import { $dialog } from '@/components/Dialog'
+import { Picture, Position } from '@element-plus/icons-vue';
+import {mapState, useStore, mapActions } from 'vuex';
 
 export function useButtons(data, commands, previewRef, editorRef, clearBlockFocus, saveImg) {
+  const store = useStore()
   const buttons = [
     {
       label: '撤销',
@@ -25,34 +28,16 @@ export function useButtons(data, commands, previewRef, editorRef, clearBlockFocu
           content: JSON.stringify(data.value),
           "footer": true,
           onConfirm: () => {
-            $dialog({
-              title: '下载js文件',
-              footer: true,
-              default: false,
-              onConfirm: () => {
-                var a = document.createElement('a');
-                a.download = "export_prototype.js";
-                a.style.display = "none";
-                // console.log(data.value)
-                var jsCode = `var exportedData = ${JSON.stringify(data.value, null, 2)};`;
-                var blob = new Blob([jsCode], { type: "application/javascript" });
-                a.href = URL.createObjectURL(blob);
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-              },
-              // onCancel: () => {
-              //   var a = document.createElement('a');
-              //   a.download = "export_prototype.json";
-              //   a.style.display="none";
-              //   var dat = JSON.stringify(data.value,null,4);
-              //   var blob = new Blob([dat],{type:"Application/json"});
-              //   a.href = URL.createObjectURL(blob);
-              //   document.body.appendChild(a);
-              //   a.click();
-              //   document.body.removeChild(a);
-              // }
-            })
+            var a = document.createElement('a');
+            a.download = "export_prototype.js";
+            a.style.display = "none";
+            // console.log(data.value)
+            var jsCode = `var exportedData = ${JSON.stringify(data.value, null, 2)};`;
+            var blob = new Blob([jsCode], { type: "application/javascript" });
+            a.href = URL.createObjectURL(blob);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
           }
         })
       }
@@ -121,11 +106,38 @@ export function useButtons(data, commands, previewRef, editorRef, clearBlockFocu
     },
     {
       label: '图片',
-      icon: 'icon-tupian',
+      icon: Picture,
       handler: () => {
         saveImg()
       }
     },
+    {
+      label: () => {
+        return store.state.preview  ? '关闭预览' : '预览'
+      },
+      icon: Position,
+      handler: () => {      
+        store.commit('setPreview')
+        
+        // location.reload()
+        // 当开启预览时，getItem获取到为'true'
+        if(store.getters.getPreview){         
+          localStorage.setItem('preview',true); 
+          localStorage.setItem('data', JSON.stringify(data.value));
+          // // 当前 URL
+          // const currentURL = window.location.href;
+          // // 要添加的字符串
+          // const queryString = 'preview=true';
+          // // 构建新的 URL
+          // const newURL = currentURL + '?' + queryString;
+          // 打开新窗口
+          window.open('/prototype_preview=true');
+        } else {
+          localStorage.setItem('preview',false); 
+        }
+      },
+    },
+    
   ]
   return buttons
 }

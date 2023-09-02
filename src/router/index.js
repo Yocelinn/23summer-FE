@@ -84,10 +84,17 @@ const routes = [
     component: () => import('@/components/ProjectCenter/ProjectCenter.vue')
   },
   {
-    path: '/demo',
+    path: '/designPage',
     component: () => import('@/views/prototype/demoView.vue'),
     meta: {
       title: '原型设计',
+    }
+  },
+  {
+    path: '/prototype_preview=true',
+    component: () => import('@/views/prototype/previewPage.vue'),
+    meta: {
+      title: '预览原型',
     }
   },
 ]

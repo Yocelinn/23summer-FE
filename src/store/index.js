@@ -11,7 +11,13 @@ export default createStore({
     // curProjectId: {},
     curRoleNum: {},
     projectData: [],
-    personData: []
+    personData: [],
+    preview: false,
+  },
+  getters: {
+    getPreview: (state) => {
+      return state.preview
+    },
   },
   actions: {
     updateUser({ commit }, data) {
@@ -104,6 +110,11 @@ export default createStore({
     },
     setCurRoleNum(state, data) {
       state.curRoleNum = data;
+    },
+    // 用于设置预览和取消预览
+    setPreview(state) {
+      state.preview = !state.preview 
     }
+    
   },
 })

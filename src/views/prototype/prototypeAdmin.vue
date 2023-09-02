@@ -1,43 +1,24 @@
 <template>
     <div class="layout">
-      <el-container class="el-body" >
-        <el-container >
+      <el-container class="el-body" style="height: 100%">
+        <el-container style="height: 100%">
           <el-aside width="180px" height="93vh" style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;">
-            <el-row>
-                <el-menu active-text-color="#ffd04b" background-color="#545c64" text-color="#fff"
-                  @open="handleOpen"
-                  @close="handleClose"
-                >
-                  <h2>原型管理</h2>
-                  <router-link to="/person/protectCenter">
-                    <el-menu-item index="1">
-                      <el-icon><document /></el-icon>
-                      <span>返回项目</span>
-                  </el-menu-item>
-                  </router-link>
-                  <router-link to="/documentadmin">
-                    <el-menu-item index="2">
-                      <el-icon><EditPen /></el-icon>
-                      <span>文档编辑</span>
-                    </el-menu-item>
-                  </router-link>
-                </el-menu>
-            </el-row>
+            <adminMenu></adminMenu>
           </el-aside>
           <el-main style="height: 100%">
             <el-row style="height: 100%">
               <el-col :span="8" style="width: 40%; display: flex; flex-direction: column; height: 100%">
                 <el-card class="project">
                   <div class="projectshow">
-                    <img src="@/assets/project.png" alt="">
+                    <img src="@/assets/project.png" >
                     <div class="projectinfo">
                       <div class="projectname">项目名：{{project_name}}</div>
                       <div class="projectteam">团队名：{{team_name}}</div>
                     </div>
                   </div>
                   <div class="projectmessage">
-                    <p>项目创建时间：{{created_time}} </p>
-                    <p>项目简介:    {{project_description}} </p>
+                    <p>项目创建时间：{{ formatTime(created_time) }} </p>
+                    <p>项目简介:    {{ project_description }} </p>
                   </div>
                 </el-card>
   
@@ -79,22 +60,12 @@
                 <d-modal v-model="plNewPjVisable">
                   <template #header>
                     <d-modal-header>
-                      <!--                <d-icon name="like"></d-icon>-->
                       <span>新建{{titleNew}}</span>
                     </d-modal-header>
                   </template>
-  
-                  <!--                <div class="text">昵称：</div>-->
                   <div class="pl-div-input-d">
-                    <el-input
-                            v-model="newPjName"
-                            placeholder=文件名
-                            clearable
-                            class="pl-input-d"
-                    />
-                    <!--                @input="cNewPjDes"-->
+                    <el-input v-model="newPjName" placeholder=文件名 clearable class="pl-input-d" />
                   </div>
-  
                   <template #footer>
                     <d-modal-footer class="pl-button-container-d" style="text-align: right; padding-right: 20px;">
                       <d-button class="pl-button-d-i" @click="createNewDoc">确认</d-button>
@@ -102,20 +73,13 @@
                     </d-modal-footer>
                   </template>
                 </d-modal>
-  
-  
-  
+
                 <el-card class="docslist" >
                   <el-table :data="docs" stripe style="left:10px; width: 95%;" height='600' center>
                     <el-table-column fixed prop="id" label="原型id" width="100" >
                     </el-table-column>
                     <el-table-column prop="name" label="原型名" width="160">
                     </el-table-column>
-                    <!-- <el-table-column label="是否为文件夹" width="160" >
-                      <template #default="scope">
-                        {{ isFolder(scope.row) }}
-                      </template>
-                    </el-table-column> -->
                     <el-table-column prop="created_time" label="创建时间" width="220">
                     </el-table-column>
                     <el-table-column prop="update_time" label="更新时间" width="220">
@@ -137,18 +101,14 @@
   </template>
   
   <script>
-  import CommonAside from "@/components/CommonAside.vue";
   import {onMounted, ref, computed} from "vue";
   import axios from "axios";
   import {ElMessage} from "element-plus";
   import router from "@/router";
+  import adminMenu from "./adminMenu.vue";
+
   export default {
-  
-    components: {
-      CommonAside
-    },
-  
-  
+    components: { adminMenu },
     setup () {
       // const project_id = ref('');
       const fileName = ref('');
@@ -166,10 +126,6 @@
       const titleNew = ref('');
       const refresh = () => {
         location.reload();
-      }
-  
-      const isFolder = (row) => {
-        return (row.is_folder === 1) ? '是' : '否';
       }
   
       const getdocslist = () => {
@@ -374,12 +330,6 @@
           router.push(`/documentadmin/${row.id}`);
         }
       }
-  
-      const gotoFile = () => {
-        let a = 1;
-        // nothing infect
-      }
-
       const plNewPjVisable = ref(false);
   
       const isDropdownVisible = ref(false);
@@ -491,7 +441,16 @@
         }
       };
   
-  
+      const formatTime = (dateTimeStr) => {
+        const dateTime = new Date(dateTimeStr);
+        const year = dateTime.getFullYear(); // 获取年份
+        const month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
+        const day = dateTime.getDate().toString().padStart(2, '0');
+        const hours = dateTime.getHours().toString().padStart(2, '0');
+        const minutes = dateTime.getMinutes().toString().padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
+      };
+      
       onMounted(()=>{
         getdocslist()
         getprojectmessage()
@@ -521,12 +480,12 @@
         titleNew,
         newPjName,
   
-        isFolder,
         refresh,
         getdocslist,
         docsdelete,
         docsedit,
-        gotoFile
+
+        formatTime: formatTime
       }
     }
   }
@@ -577,7 +536,6 @@
     line-height: 28px;
     font-size: 14px;
     color: #999999;
-    text-align: left;
   }
   
   .members {
