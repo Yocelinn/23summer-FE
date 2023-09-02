@@ -568,7 +568,7 @@ export default {
       if(this.$store.state.isLoggedIn = true)
       {
       this.dialogFormVisible=false;
-      if(window.sessionStorage.getItem('curRoleNum')=='0'||window.sessionStorage.getItem('curRoleNum')=='1')
+      if(window.sessionStorage.getItem('curRoleNum')=='2'||window.sessionStorage.getItem('curRoleNum')=='1')
       {
         if(this.tourist=='游客不能编辑文档')
         {
