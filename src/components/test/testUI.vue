@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+// import Vue from 'vue';
 import Quill from 'quill';
 
 export default {
