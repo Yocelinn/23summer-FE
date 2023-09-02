@@ -1,12 +1,12 @@
 <template>
     <el-row class="tac">
         <el-menu
-          active-text-color="#ffd04b"
-          background-color="#545c64"
-          class="el-menu-vertical-demo"
-          text-color="#fff"
-          @open="handleOpen"
-          @close="handleClose"
+                active-text-color="#7E7CF4"
+                background-color="#9E9CF451"
+                class="el-menu-vertical-demo"
+                text-color="#7E7CF4"
+                @open="handleOpen"
+                @close="handleClose"
         >
           <h2>原型管理</h2>
           <router-link to="/person/protectCenter">
