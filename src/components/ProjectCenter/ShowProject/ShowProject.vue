@@ -6,7 +6,7 @@
                     原型设计
                 </h2>
                 <div class="sh-p-l">
-                    <el-empty :v-if="show_p" description="empty" />
+                    <el-empty v-if="show_p" description="empty" />
                     <div class="grid-container" v-if="!show_p">
                         <d-card shadow="always" class="card" v-for="element in elements_p" :key="element.id">
                             <h3>{{ element.prototypeName }}</h3>
@@ -19,8 +19,8 @@
                     文档编辑
                 </h2>
                 <div class="sh-w-l">
-                    <div class="grid-container">
-                        <el-empty v-if="show_w" description="empty" />
+                    <el-empty v-if="show_w" description="empty" />
+                    <div class="grid-container" v-if="!show_w">
                         <d-card shadow="always" class="card" v-for="element in elements_w" :key="element.id">
                             <h3>{{ element.name }}</h3>
                         </d-card>
@@ -233,7 +233,7 @@ export default {
     display: flex;
     flex: 1;
     margin: 10px;
-    height: 45%;
+    height: 43%;
     flex-direction: column; /* This makes cards stack vertically */
 }
 
@@ -241,7 +241,7 @@ export default {
     display: flex;
     flex: 1;
     margin: 10px;
-    height: 45%;
+    height: 43%;
     flex-direction: column; /* This makes cards stack vertically */
 }
 
@@ -257,15 +257,18 @@ export default {
     margin-bottom: 30px;
 }
 
-.sh-p-l {
+.sh-w-l {
     height: 75%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.sh-w-l {
+.sh-p-l {
     height: 75%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 h3 {

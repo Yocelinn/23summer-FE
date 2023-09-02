@@ -7,10 +7,13 @@
       <el-container class="big-container">
         <div class="header" style="margin: 0; padding: 0; flex: 0 0 auto;">
           <el-header>
-            <div class="headerleft" style="margin-top: 0;">
+            <div class="headerleft" style="margin-top: 0; display: flex; flex-wrap: wrap-reverse">
               <router-link to="/documentadmin">
                 <el-button size="mini" color="#545c64">返回管理页</el-button>
               </router-link>
+
+
+
               <el-button type="info" style="margin-top: 0;margin-left: 795px;" color="#545c64"
                          @click="this.dialogFormVisible = true">分享文档</el-button>
               <el-dialog v-model="this.dialogFormVisible" title="分享文档">
@@ -52,8 +55,8 @@
         <!--        <el-header>-->
         <!--        </el-header>-->
         <div class="small-container">
-          <div class="card1" style="width: 20%; flex: 1; height: 100%">
-            <el-card class="box-card" style="background-color: rgba(255, 255, 255, 0.85); height: 100%">
+          <div class="card1" style="width: 20%; flex: 1; height: 100%; padding: 20px">
+            <el-card class="box-card" style="background-color: rgba(255, 255, 255, 0.85); height: 100%; padding: 20px">
               <div slot="header" class="clearfix">
                 <h3>文档操作区</h3>
                 <h4>文档名:<span>{{ this.doc_name }}</span></h4>
@@ -72,8 +75,8 @@
               @updateContent="update" @textChange="textChange" :options="options" style="width: 800px;left:420px; top:160px" height: 800 />
 			<MemerDialog ref="MemerDialog" @rowClick="rowClick"></MemerDialog>
           </div>
-          <div class="card2" style="width: 20%; flex: 1; height: 100%">
-            <el-card class="box-card2" style="background-color: rgba(255, 255, 255, 0.85); height: 100%" >
+          <div class="card2" style="width: 20%; flex: 1; height: 100%; padding: 20px">
+            <el-card class="box-card2" style="background-color: rgba(255, 255, 255, 0.85); height: 100%; padding: 20px" >
               <div>
                 <div slot="header" class="clearfix">
                   <h3>文档模板</h3>
@@ -187,8 +190,9 @@ import QuillEditor from '../components/Editor/index.vue';
 import MemerDialog from './member-dialog.vue'
 // import { Mentionable } from 'vue-mention'
 import axios, {options} from 'axios';
-import { ref, onMounted, getCurrentInstance, toRaw } from 'vue';
-import {ElNotification, ArrowDown, ElMessage} from 'element-plus'
+import { toRaw, onUnmounted } from 'vue';
+import {ElNotification, ElMessage} from 'element-plus'
+// import timer from "@element-plus/icons/lib/Timer";
 export default {
   components: {
     CommonAside,
@@ -219,7 +223,7 @@ export default {
       power:false,
       tourist: '游客不能编辑文档',
       perm: '1',
-      username: window.sessionStorage.getItem('userName')
+      username: window.sessionStorage.getItem('userName'),
     };
   },
   created(){
@@ -396,9 +400,8 @@ export default {
         })
         .then((response) => {
           this.editorContent = response.data.content;
-        }
-        )
-      return response.data.content;
+            return response.data.content;
+        })
     },
     docsedit() {
       if(this.$store.state.isLoggedIn==true || (this.$store.state.isLoggedIn ==false)&&this.perm == 1){
@@ -608,6 +611,17 @@ export default {
       });
       },
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.timer = setInterval(this.docsedit, 10000);
+    });
+    onUnmounted(() => {
+      clearInterval(this.timer); // 清除定时器
+    });
+  },
+  // beforeUnmount() {
+  //   clearInterval(this.timer); // 清除定时器
+  // },
 }
 </script>
 

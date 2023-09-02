@@ -8,7 +8,7 @@ import moment from 'moment'
     <div class="container main-container">
       <el-row>
         <el-col :span="10" :offset="7">
-          <el-card>
+          <el-card style="padding: 20px">
             <template #header>
               <div class="header">
                 <div class="header-welcome">
