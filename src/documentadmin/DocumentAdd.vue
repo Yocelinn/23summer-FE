@@ -397,7 +397,7 @@ export default {
       })
         .then((response) => {
           this.doc_id = response.data.doc_id;
-          this.$router.push(`/documentadmin/${this.doc_id}`);
+          this.$router.push(`/documentadd/${this.doc_id}`);
           this.editorContent = '请于此处开始编辑';
           this.$refs.myQuillEditor.changeContent( this.editorContent );
           console.log(this.editorContent);
@@ -460,7 +460,7 @@ export default {
           console.log(response.data.content);
           this.editorContent = response.data.content;
           this.$refs.myQuillEditor.changeContent( this.editorContent );
-          this.$router.push(`/documentadmin/${this.doc_id1}`);
+          this.$router.push(`/documentadd/${this.doc_id1}`);
           this.doc_id1='';
         }
         ).catch(error=>{
@@ -490,7 +490,7 @@ export default {
             "perm": Number('0'),
          })
          .then((response) => {
-          this.link='http://localhost:8080/documentadmin/'+ response.data.doc_token;
+          this.link='http://localhost:8080/documentadd/'+ response.data.doc_token;
           console.log(this.link);
           this.copyText();
           this.link='/documandadmin/token'
@@ -511,7 +511,7 @@ export default {
             "perm": Number('1'),
          })
          .then((response) => {
-          this.link='http://localhost:8080/documentadmin/'+ response.data.doc_token;
+          this.link='http://localhost:8080/documentadd/'+ response.data.doc_token;
           console.log(this.link);
           this.copyText();
           this.link='/documandadmin/token';

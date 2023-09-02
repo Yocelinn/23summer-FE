@@ -160,16 +160,18 @@ export default {
       axios.post('/doc/root', {
         "project_id": Number(window.sessionStorage.getItem('curProjectId')),
       })
-              .then((response)=>{
-                console.log(response.data.docs);
-                if(response.data.code === 200)
-                {
-                  console.log(response.data);
-                  docs.value = response.data.docs;
-                  console.log(docs.value);
-                  console.log(docs);
-                }
-              })
+      .then((response)=>{
+      console.log(response.data.docs);
+      if(response.data.code === 200)
+      {
+        console.log(response.data);
+        docs.value = response.data.docs;
+        console.log(docs.value);
+        console.log(docs);
+      }
+      }).catch(error=>{
+        console.log(error)
+      })
     }
     const getprojectmessage = () => {
       rooter.value = window.sessionStorage.getItem('curProjectName');
@@ -177,130 +179,132 @@ export default {
                 "project_id": Number(window.sessionStorage.getItem('curProjectId')),
               }
       )
-              .then((response)=>{
-                        console.log(response.data.project_name);
-                        console.log(response.data.project_description);
-                        console.log(response.data.created_time);
-                        created_time.value=response.data.created_time;
-                        project_description.value=response.data.project_description;
-                        project_name.value=response.data.project_name;
-                        team_id.value=response.data.team_id;
-                        console.log("tid", team_id.value);
-
-                        console.log("tid",team_id.value)
-                        axios.post('/team/seemember',
-                                {
-                                  "team_id":team_id.value,
-                                }
-                        )
-                                .then((response)=>{
-                                          console.log(response.data);
-                                          console.log(team_id);
-                                          staff.value=response.data.res;
-                                          console.log(staff.value);
-                                        }
-                                )
-                      }
-              )
+     .then((response)=>{
+      console.log(response.data.project_name);
+      console.log(response.data.project_description);
+      console.log(response.data.created_time);
+      created_time.value=response.data.created_time;
+      project_description.value=response.data.project_description;
+      project_name.value=response.data.project_name;
+      team_id.value=response.data.team_id;
+      console.log("tid", team_id.value);
+      console.log("tid",team_id.value)
+      axios.post('/team/seemember',
+      {
+        "team_id":team_id.value,
+      })
+      .then((response)=>{
+      console.log(response.data);
+      console.log(team_id);
+      staff.value=response.data.res;
+      console.log(staff.value);
+      }
+      ).catch(error=>{
+        console.log(error)
+      })
+      }
+      ).catch(error=>{
+        console.log(error)
+      })
     }
 
     const deleteFile = (row) => {
       axios.post('/doc/delete',
-              {
-                "doc_id": row.id,
-                "folder_id": Number(window.sessionStorage.getItem('curFolderId'))
-              })
-              .then((response) => {
-                if (response.data.code === 200) {
-                  ElMessage({
-                    message: response.data.message,
-                    type: 'sucess'
-                  });
-                  console.log(response.config.data);
-                  console.log(response.data);
-                  if (lengthEnough.value) {
-                    axios.post('/doc/folder/docs', {
-                      folder_id: Number(window.sessionStorage.getItem('curFolderId'))
-                    })
-                            .then((response2) => {
-                              if (response2.data.code === 200) {
-                                ElMessage ({
-                                  message: response2.data.message,
-                                  type: 'success'
-                                });
-                                docs.value = response2.data.docs;
-                              }
-                              else {
-                                ElMessage ({
-                                  message: response2.data.error,
-                                  type: 'error'
-                                });
-                                console.log(response2.config.data);
-                                console.log(response2.data);
-                              }
-                            })
-                            .catch((error2) => {
-                              ElMessage ({
-                                message: "打开文件夹失败，请重试",
-                                type: 'error'
-                              });
-                              console.log(error2.config.data);
-                              console.log(error2.data);
-                            })
-                  }
-                  else
-                    getdocslist();
-                }
-                else {
-                  ElMessage({
-                    message: response.data.error,
-                    type: 'error'
-                  });
-                  console.log(response.config.data);
-                  console.log(response.data);
-                }
-              })
-              .catch((error) => {
-                ElMessage({
-                  message: "删除文件失败，请重试",
-                  type: 'error'
-                });
-                console.log(error.config.data);
-                console.log(error.data);
-              })
+    {
+      "doc_id": row.id,
+      "folder_id": Number(window.sessionStorage.getItem('curFolderId'))
+    })
+    .then((response) => {
+      if (response.data.code === 200) {
+        ElMessage({
+          message: response.data.message,
+          type: 'sucess'
+        });
+        console.log(response.config.data);
+        console.log(response.data);
+        if (lengthEnough.value) {
+          axios.post('/doc/folder/docs', {
+            folder_id: Number(window.sessionStorage.getItem('curFolderId'))
+          })
+        .then((response2) => {
+          if (response2.data.code === 200) {
+            ElMessage ({
+              message: response2.data.message,
+              type: 'success'
+            });
+            docs.value = response2.data.docs;
+          }
+          else {
+            ElMessage ({
+              message: response2.data.error,
+              type: 'error'
+            });
+            console.log(response2.config.data);
+            console.log(response2.data);
+          }
+        })
+        .catch((error2) => {
+          ElMessage ({
+            message: "打开文件夹失败，请重试",
+            type: 'error'
+          });
+          console.log(error2.config.data);
+          console.log(error2.data);
+        })
+        }
+        else
+          getdocslist();
+      }
+      else {
+        ElMessage({
+          message: response.data.error,
+          type: 'error'
+        });
+        console.log(response.config.data);
+        console.log(response.data);
+      }
+    })
+    .catch((error) => {
+      ElMessage({
+        message: "删除文件失败，请重试",
+        type: 'error'
+      });
+      console.log(error.config.data);
+      console.log(error.data);
+    })
     }
 
     const deleteFolder = (row) => {
       axios.post('/doc/folder/delete', {
         folder_id: row.id
       })
-              .then((response) => {
-                if (response.data.code === 200) {
-                  ElMessage({
-                    message: response.data.message,
-                    type: 'success'
-                  });
-                  console.log(response.config.data);
-                  console.log(response.data);
-                  getdocslist();
-                }
-                else {
-                  ElMessage({
-                    message: response.data.error,
-                    type: 'error'
-                  });
-                  console.log(response.config.data);
-                  console.log(response.data);
-                }
-              })
-              .catch((error) => {
-                ElMessage({
-                  message: "删除文件夹失败，请重试",
-                  type: 'error'
-                });
-                console.log(error.config.data);
-                console.log(error.data);
-              })
+    .then((response) => {
+      if (response.data.code === 200) {
+        ElMessage({
+          message: response.data.message,
+          type: 'success'
+        });
+        console.log(response.config.data);
+        console.log(response.data);
+        getdocslist();
+      }
+      else {
+        ElMessage({
+          message: response.data.error,
+          type: 'error'
+        });
+        console.log(response.config.data);
+        console.log(response.data);
+      }
+    })
+    .catch((error) => {
+      ElMessage({
+        message: "删除文件夹失败，请重试",
+        type: 'error'
+      });
+      console.log(error.config.data);
+      console.log(error.data);
+    })
     }
 
     const docsdelete = (row) => {
@@ -357,7 +361,7 @@ export default {
       else {
         window.sessionStorage.setItem('curDocId', row.id);
         // window.sessionStorage.setItem('curDocName', row.name);
-        router.push(`/documentadmin/${row.id}`);
+        router.push(`/documentadd/${row.id}`);
       }
     }
 

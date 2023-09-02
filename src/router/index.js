@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
-
-
+import VueRouter from 'vue-router'
+import store from '@/store/index';
+import { match } from 'path-to-regexp';
 const routes = [
   {
     path: '/',
@@ -34,7 +34,7 @@ const routes = [
         },
       },
       {
-        path: '/documentadmin/:id',
+        path: '/documentadd/:id',
         component: () => import('@/documentadmin/DocumentAdd.vue'),
         meta: {
           title: '编辑文档',
@@ -91,10 +91,28 @@ const routes = [
     }
   },
 ]
+const whiteList = ['/', '/signup', '/login', '/home','/documentadd','/documentadd/:id']
+const excludedRoute = '/documentadd/:id';
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  const isExcluded = match(excludedRoute)(to.path);
+  if (whiteList.indexOf(to.path) !== -1) {
+    // 放行，进入下一个路由
+    next()
+  }
+  else if(isExcluded)
+  {
+    next()
+  } 
+  else if (!store.state.isLoggedIn) {
+    next('/');
+  } else {
+    next()
+  }
+})
 export default router
