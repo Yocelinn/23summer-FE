@@ -243,6 +243,7 @@ export default {
 }
 .card {
   width: 400px;
+  padding: 20px;
 }
 
 .body-wrapper {

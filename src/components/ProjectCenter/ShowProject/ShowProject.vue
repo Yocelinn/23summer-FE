@@ -233,7 +233,7 @@ export default {
     display: flex;
     flex: 1;
     margin: 10px;
-    height: 45%;
+    height: 43%;
     flex-direction: column; /* This makes cards stack vertically */
     width: 100%;
 }
@@ -242,7 +242,7 @@ export default {
     display: flex;
     flex: 1;
     margin: 10px;
-    height: 45%;
+    height: 43%;
     flex-direction: column; /* This makes cards stack vertically */
 }
 
@@ -258,7 +258,7 @@ export default {
     margin-bottom: 30px;
 }
 
-.sh-p-l {
+.sh-w-l {
     height: 75%;
     display: flex;
     justify-content: center;
@@ -266,8 +266,11 @@ export default {
     width: 100%;
 }
 
-.sh-w-l {
+.sh-p-l {
     height: 75%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 h3 {

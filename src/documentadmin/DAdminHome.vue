@@ -8,7 +8,7 @@
         <el-main style="height: 100%">
           <el-row style="height: 100%">
             <el-col :span="8" style="width: 40%; display: flex; flex-direction: column; height: 100%"><div class="left" />
-              <el-card class="project"  style="flex: 1; width: 100%">
+              <el-card class="project"  style="flex: 1; width: 90%; padding: 20px">
                 <div class="projectshow">
                   <img src="../assets/project.png" alt="">
                   <div class="projectinfo">
@@ -22,7 +22,7 @@
                 </div>
               </el-card>
 
-              <el-card class="members" style="width: 100%; flex: 1;">
+              <el-card class="members" style="width: 90%; flex: 1; padding: 20px">
                 <el-table :data="staff" stripe style="align: center; display: flex; flex: 1" height='280'>
                   <el-table-column prop="nickname" label="成员昵称" width="180" align="center"/>
                   <el-table-column prop="name" label="成员名" width="180" align="center"/>
@@ -106,9 +106,57 @@
                     <template #default="scope">
                       <el-button link type="primary" size="small" @click="docsedit(scope.row)">Edit</el-button>
                       <el-button link type="primary" size="small" @click="docsdelete(scope.row)">Delete</el-button>
+                      <el-icon v-if="!scope.row.is_folder" size="18" style="margin-left: 7px; margin-top: 7px" @click="openHistory(scope.row)"><Clock /></el-icon>
                     </template>
                   </el-table-column>
                 </el-table>
+
+
+                <d-modal v-model="showHistory" style="display: inline-block; max-width: 100%; width: 650px; height: 450px">
+                  <template #header>
+                    <d-modal-header>
+                      <span>历史版本</span>
+                    </d-modal-header>
+                  </template>
+
+                  <el-table class="table-pl" :data="historyData" style="width: 100%; height: 370px" stripe="true" fit="true">
+                    <el-table-column>
+                      <template #header>
+                          版本编号
+                      </template>
+                      <template #default="scope">
+                        <div style="display: flex; align-items: center">
+                          <span>{{ scope.row.history_id }}</span>
+                        </div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column>
+                      <template #header>
+                          编辑时间
+                      </template>
+                      <template #default="scope">
+                        <div style="display: flex; align-items: center">
+                          <span>{{ scope.row.update_time }}</span>
+                        </div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" style="color:#9E9CF4;">
+                      <template #default="scope">
+                        <div style="color:#9E9CF4;">
+                          <d-button
+                                  class="copy"
+                                  size="small"
+                                  @click="pullBack(scope.$index, scope.row)"
+                          >
+                            版本回溯
+                          </d-button>
+                        </div>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </d-modal>
+
+
               </el-card>
             </el-col>
           </el-row>
@@ -145,6 +193,94 @@ export default {
     const file = ref([]);
     const rooter = ref('');
     const titleNew = ref('');
+
+    const showHistory = ref(false);
+    const historyData = ref([]);
+    // const historyData = [
+    //   {
+    //     "history_id": 2,
+    //     "update_time": "2023-09-02T12:47:13.219Z",
+    //     "content": "11111111111111111111\n11111111111"
+    //   },
+    //   {
+    //     "history_id": 2,
+    //     "update_time": "2023-09-02T12:47:13.219Z",
+    //     "content": "11111111111111111111\n11111111111"
+    //   },
+    //   {
+    //     "history_id": 2,
+    //     "update_time": "2023-09-02T12:47:13.219Z",
+    //     "content": "11111111111111111111\n11111111111"
+    //   },
+    // ]
+    const currFileId = ref('');
+    const openHistory = (data) => {
+      showHistory.value = true;
+      axios.post('/doc/history', {
+        doc_id: data.id
+      })
+              .then((response) => {
+                if(response.data.code === 200) {
+                  ElMessage({
+                    message: response.data.message,
+                    type: 'success'
+                  });
+                  historyData.value = response.data.history;
+                  console.log(historyData.value)
+                  historyData.value.forEach(item => {
+                    item.checked = false;
+                  });
+                  currFileId.value = data.id;
+                }
+                else {
+                  ElMessage({
+                    message: response.data.error,
+                    type: 'error'
+                  });
+                  console.log(response.config.data);
+                  console.log(response.data);
+                }
+              })
+              .catch((error) => {
+                ElMessage({
+                  message: "获取版本数据错误，请重试",
+                  type: 'error'
+                });
+                console.log(error.config.data);
+                console.log(error.data);
+              })
+    }
+
+    const pullBack = (index, data) => {
+      axios.post('/doc/back', {
+        history_id: data.history_id
+      })
+              .then((response) => {
+                if(response.data.code === 200) {
+                  ElMessage({
+                    message: response.data.message,
+                    type: 'success'
+                  });
+                  router.push(`/documentadmin/${currFileId.value}`);
+                }
+                else {
+                  ElMessage({
+                    message: response.data.error,
+                    type: 'error'
+                  });
+                  console.log(response.config.data);
+                  console.log(response.data);
+                }
+              })
+              .catch((error) => {
+                ElMessage({
+                  message: "获取版本数据错误，请重试",
+                  type: 'error'
+                });
+                console.log(error.config.data);
+                console.log(error.data);
+              })
+    }
     const refresh = () => {
       location.reload();
     }
@@ -160,18 +296,24 @@ export default {
       axios.post('/doc/root', {
         "project_id": Number(window.sessionStorage.getItem('curProjectId')),
       })
-      .then((response)=>{
-      console.log(response.data.docs);
-      if(response.data.code === 200)
-      {
-        console.log(response.data);
-        docs.value = response.data.docs;
-        console.log(docs.value);
-        console.log(docs);
-      }
-      }).catch(error=>{
-        console.log(error)
-      })
+              .then((response)=>{
+                console.log(response.data.docs);
+                if(response.data.code === 200)
+                {
+                  console.log(response.data);
+                  docs.value = response.data.docs;
+                  console.log(docs.value);
+                  console.log(docs);
+                }
+              })
+              .catch((error)=>{
+                ElMessage({
+                  message: "获取文档错误，请重试",
+                  type: 'error'
+                });
+                console.log(error.config.data);
+                console.log(error.data);
+              })
     }
     const getprojectmessage = () => {
       rooter.value = window.sessionStorage.getItem('curProjectName');
@@ -179,33 +321,49 @@ export default {
                 "project_id": Number(window.sessionStorage.getItem('curProjectId')),
               }
       )
-     .then((response)=>{
-      console.log(response.data.project_name);
-      console.log(response.data.project_description);
-      console.log(response.data.created_time);
-      created_time.value=response.data.created_time;
-      project_description.value=response.data.project_description;
-      project_name.value=response.data.project_name;
-      team_id.value=response.data.team_id;
-      console.log("tid", team_id.value);
-      console.log("tid",team_id.value)
-      axios.post('/team/seemember',
-      {
-        "team_id":team_id.value,
-      })
-      .then((response)=>{
-      console.log(response.data);
-      console.log(team_id);
-      staff.value=response.data.res;
-      console.log(staff.value);
-      }
-      ).catch(error=>{
-        console.log(error)
-      })
-      }
-      ).catch(error=>{
-        console.log(error)
-      })
+              .then((response)=>{
+                        console.log(response.data.project_name);
+                        console.log(response.data.project_description);
+                        console.log(response.data.created_time);
+                        created_time.value=response.data.created_time;
+                        project_description.value=response.data.project_description;
+                        project_name.value=response.data.project_name;
+                        team_id.value=response.data.team_id;
+                        console.log("tid", team_id.value);
+
+                        console.log("tid",team_id.value)
+                        axios.post('/team/seemember',
+                                {
+                                  "team_id":team_id.value,
+                                }
+                        )
+                                .then((response2)=>{
+                                          console.log(response2.data);
+                                          console.log(team_id);
+                                          staff.value=response2.data.res;
+                                          console.log(staff.value);
+                                        }
+                                )
+                                .catch((error2)=>{
+                                  ElMessage({
+                                    message: "获取队员信息错误，请重试",
+                                    type: 'error'
+                                  });
+                                  console.log(error2.config.data);
+                                  console.log(error2.data);
+                                })
+
+                      }
+              )
+              .catch((error)=>{
+                ElMessage({
+                  message: "获取项目信息错误，请重试",
+                  type: 'error'
+                });
+                console.log(error.config.data);
+                console.log(error.data);
+              })
+
     }
 
     const deleteFile = (row) => {
@@ -318,7 +476,9 @@ export default {
     }
 
     const docsedit = (row) => {
+      console.log("是否是文件夹", row.is_folder);
       if (row.is_folder === 1) {
+        console.log("进入if")
         // 记录文件夹名称和id，打开文件夹
         lengthEnough.value = true;
         window.sessionStorage.setItem('curFolderId', row.id);
@@ -494,13 +654,18 @@ export default {
       }
     };
 
-
     onMounted(()=>{
       getdocslist()
       getprojectmessage()
     })
 
     return {
+      showHistory,
+      historyData,
+      currFileId,
+      openHistory,
+      pullBack,
+
       selectedOption,
       options,
       placeholder,
@@ -591,6 +756,8 @@ export default {
 }
 .docslist {
   margin-left: 40px;
+  padding: 20px;
+  width: 90%;
 }
 
 .button-select {
@@ -617,7 +784,7 @@ export default {
   margin-top: 3px;
   top: 100%;
   left: 0;
-  width: 120px;
+  width: 80px;
   border: 1px solid #ccc;
   background-color: #fff;
   border-radius: 4px; /* 添加圆角半径 */
