@@ -325,6 +325,20 @@ export default defineComponent( {
         const description = ref(""); // Initialize with
         const curDescription = ref(""); // Initialize with
         const updateVisable = ref(false);
+
+        const { fetchElementWList } = mapActions(['fetchElementWList']);
+
+        const callFetchElementWList = () => {
+            store.dispatch('fetchElementWList', Number(window.sessionStorage.getItem('curProjectId')));
+        }
+
+        const { fetchElementPList } = mapActions(['fetchElementPList']);
+
+        const callFetchElementPList = () => {
+            store.dispatch('fetchElementPList', Number(window.sessionStorage.getItem('curProjectId')));
+        }
+
+
         const inClick = () => {
             router.push('/person');
         }
@@ -386,6 +400,8 @@ export default defineComponent( {
             window.sessionStorage.setItem('curProjectDes', data.projectDescription);
             callFetchInProjectList();
             fetchSelfInform();
+            callFetchElementWList();
+            callFetchElementPList();
         }
 
         const updateCurDescription = (newValue) => {
@@ -548,6 +564,8 @@ export default defineComponent( {
         onMounted(async () => {
             fetchSelfInform();
             await fetchCPList(); // 组件挂载后获取团队列表数据
+            callFetchElementWList();
+            callFetchElementPList();
         });
 
         return {
@@ -564,6 +582,10 @@ export default defineComponent( {
             updateVisable,
             fetchProjectList,
             curTeamName,
+            fetchElementWList,
+            fetchElementPList,
+            callFetchElementWList,
+            callFetchElementPList,
             chooseCurProject,
             getTagClass,
             updateName,

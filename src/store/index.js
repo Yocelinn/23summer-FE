@@ -13,7 +13,11 @@ export default createStore({
     projectData: [],
     personData: [],
     preview: false,
-    pageData: {}
+    pageData: {},
+    elements_W: [],
+    elements_P: [],
+    show_W: false,
+    show_P: false
   },
   getters: {
     getPreview: (state) => {
@@ -75,7 +79,82 @@ export default createStore({
               });
               console.log("错误", error.config);
             })
-    }
+    },
+
+    async fetchElementWList({commit, state}, curProjectId) {
+      axios.post('/doc/root', {
+        "project_id": curProjectId
+      })
+          .then((response)=>{
+            if (response.data.code === 200) {
+              // ElMessage({
+              //     message: response.data.message,
+              //     type: 'success'
+              // });
+              commit('setElementWList', response.data.docs);
+              console.log(response.config.data);
+              console.log(response.data);
+            }
+            else {
+              ElMessage({
+                message: response.data.error,
+                type: 'error'
+              });
+              console.log(response.config.data);
+              console.log(response.data);
+            }
+            console.log(state.elements_W.length);
+            commit('setShowW', state.elements_W.length === 0);
+            // show_w.value = (this.elements_W.value.length === 0);
+            console.log(state.show_W);
+          })
+          .catch((error) => {
+            ElMessage({
+              message: "获取文档错误，请重试",
+              type: 'error'
+            });
+            console.log(error.config.data);
+            console.log(error.data);
+          })
+    },
+
+    async fetchElementPList({commit, state}, curProjectId) {
+      axios.post('/prototype/info', {
+        "project_id": curProjectId
+      })
+          .then((response)=>{
+            if (response.data.code === 200) {
+              // ElMessage({
+              //     message: response.data.message,
+              //     type: 'success'
+              // });
+              commit('setElementPList', response.data.prototypes);
+              // elements_p.value = response.data.prototypes;
+              console.log(response.config.data);
+              console.log(response.data);
+            }
+            else {
+              ElMessage({
+                message: response.data.error,
+                type: 'error'
+              });
+              console.log(response.config.data);
+              console.log(response.data);
+            }
+            console.log(state.elements_P.length);
+            commit('setShowP', state.elements_P.length === 0);
+            // show_p.value = ();
+            console.log(state.show_P);
+          })
+          .catch((error) => {
+            ElMessage({
+              message: "获取文档错误，请重试",
+              type: 'error'
+            });
+            console.log(error.config.data);
+            console.log(error.data);
+          })
+    },
   },
   mutations: {
     login(state, user) {
@@ -121,6 +200,18 @@ export default createStore({
     },
     clearPageData(state) {
       state.pageData = {}
+    },
+    setElementWList(state, wList) {
+      state.elements_W = wList;
+    },
+    setElementPList(state, pList) {
+      state.elements_P = pList;
+    },
+    setShowW(state, w) {
+      state.show_W = w;
+    },
+    setShowP(state, p) {
+      state.show_P = p;
     }
   },
 })
