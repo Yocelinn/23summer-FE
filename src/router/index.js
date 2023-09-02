@@ -84,7 +84,7 @@ const routes = [
     }
   },
   {
-    path: '/prototype_preview=true',
+    path: '/designPage/prototype_preview/:pathMatch(.*)*',
     component: () => import('@/views/prototype/previewPage.vue'),
     meta: {
       title: '预览原型',

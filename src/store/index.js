@@ -13,6 +13,7 @@ export default createStore({
     projectData: [],
     personData: [],
     preview: false,
+    pageData: {}
   },
   getters: {
     getPreview: (state) => {
@@ -114,7 +115,12 @@ export default createStore({
     // 用于设置预览和取消预览
     setPreview(state) {
       state.preview = !state.preview 
+    },
+    setPageData(state, data) {
+      state.pageData = data
+    },
+    clearPageData(state) {
+      state.pageData = {}
     }
-    
   },
 })

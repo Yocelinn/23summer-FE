@@ -30,70 +30,130 @@
                 </el-card>
               </el-col>
               <el-col :span="16" style="height: 100%">
-                <div class="line">
-                  <el-breadcrumb separator="/" style="max-width: 95%; margin-left: 43px; margin-bottom: 10px; display: flex; align-content: center; font-size: 18px">
-                    <el-breadcrumb-item @click="getdocslist">{{ rooter }}</el-breadcrumb-item>
-                    <el-breadcrumb-item v-if="lengthEnough" @click="gotoFile" style="pointer-events: none">
-                      <a href="/">
-                        {{ fileName }}
-                      </a>
-                    </el-breadcrumb-item>
-                  </el-breadcrumb>
-  
+                <div class="line">  
                   <div class="button-select">
-                    <button class="selected-button" @click="toggleDropdown">{{ selectedOption || placeholder }}</button>
-                    <div v-if="isDropdownVisible" class="dropdown" @click.stop>
-                      <button
-                              v-for="(option, index) in options"
-                              :key="index"
-                              class="option-button"
-                              @click="selectOption(option)"
-                      >
-                        {{ option }}
-                      </button>
-                    </div>
+                    <button class="selected-button" @click="createVisible = true">新建原型</button>                    
                   </div>
-  
-  
                 </div>
-  
-                <d-modal v-model="plNewPjVisable">
-                  <template #header>
-                    <d-modal-header>
-                      <span>新建{{titleNew}}</span>
-                    </d-modal-header>
-                  </template>
-                  <div class="pl-div-input-d">
-                    <el-input v-model="newPjName" placeholder=文件名 clearable class="pl-input-d" />
-                  </div>
-                  <template #footer>
-                    <d-modal-footer class="pl-button-container-d" style="text-align: right; padding-right: 20px;">
-                      <d-button class="pl-button-d-i" @click="createNewDoc">确认</d-button>
-                      <d-button class="pl-button-d-c" @click="plNewPjVisable=false; newPjName=''">取消</d-button>
-                    </d-modal-footer>
-                  </template>
-                </d-modal>
 
-                <el-card class="docslist" >
-                  <el-table :data="docs" stripe style="left:10px; width: 95%;" height='600' center>
-                    <el-table-column fixed prop="id" label="原型id" width="100" >
+                <el-card class="datalist" >
+                  <el-table :data="prototype_list" stripe style="left:10px; width: 95%;" height='600' center>
+                    <el-table-column fixed prop="prototypeId" label="原型id" width="100" >
                     </el-table-column>
-                    <el-table-column prop="name" label="原型名" width="160">
+                    <el-table-column prop="prototypeName" label="原型名" width="160">
+                    </el-table-column>
+                    <el-table-column prop="creator_name" label="创建者" width="160">
                     </el-table-column>
                     <el-table-column prop="created_time" label="创建时间" width="220">
+                      <template #default="scope">
+                        <span> {{formatTime(scope.row.created_time)}}</span>
+                      </template>
                     </el-table-column>
-                    <el-table-column prop="update_time" label="更新时间" width="220">
+                    <el-table-column prop="last_modify_time" label="更新时间" width="220">
+                      <template #default="scope">
+                        <span> {{formatTime(scope.row.last_modify_time)}}</span>
+                      </template>
                     </el-table-column>
                     <el-table-column prop="option" label="选择" width="180">
                       <template #default="scope">
-                        <el-button link type="primary" size="small" @click="docsedit(scope.row)">Edit</el-button>
-                        <el-button link type="primary" size="small" @click="docsdelete(scope.row)">Delete</el-button>
+                        <el-button link type="primary" size="small" @click="openRename(scope.row)">Rename</el-button>
+                        <el-button link type="primary" size="small" @click="openPages(scope.row)">Open</el-button>
+                        <el-button link type="primary" size="small" @click="deletePrototype(scope.row)">Delete</el-button>
                       </template>
                     </el-table-column>
                   </el-table>
                 </el-card>
               </el-col>
             </el-row>
+
+            <el-dialog v-model="createVisible" title="新建原型" width="500px">
+              <el-form-item label="原型名称">
+                <el-input v-model="prototype_name"></el-input>
+              </el-form-item>
+              <template #footer>
+                <el-button type="primary" @click="chooseModelVisible = true">使用模板创建原型</el-button>
+                <el-button color="#ca96ff" @click="createPrototye">确认</el-button>
+                <el-button @click="createVisible = false">取消</el-button>
+              </template>
+            </el-dialog>
+            <el-dialog v-model="chooseModelVisible" title="选择原型模板" width="500px">
+              <el-select v-model="model_type" placeholder="请选择原型模板">
+                <el-option
+                  v-for="item in models"
+                  :key="item.label"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+              <template #footer>
+                <el-button color="#ca96ff" @click="useModel">确认</el-button>
+                <el-button @click="chooseModelVisible = false">取消</el-button>
+              </template>
+            </el-dialog>
+            <el-dialog v-model="renameVisible" title="重命名原型" width="500px">
+              <el-form-item label="原型名称">
+                <el-input v-model="prototype_rename"></el-input>
+              </el-form-item>
+              <template #footer>
+                <el-button color="#ca96ff" @click="renamePrototype()">确认</el-button>
+                <el-button @click="renameVisible = false">取消</el-button>
+              </template>
+            </el-dialog>
+            <el-dialog v-model="pagesVisible" title="原型内容" width="800px">
+              <el-table :data="page_list" stripe height="400">
+                <el-table-column prop="page_id" label="页面id" width="80" >
+                </el-table-column>
+                <el-table-column prop="pageName" label="页面名称" width="200">
+                </el-table-column>
+                <el-table-column prop="creator_name" label="创建者" width="160">
+                </el-table-column>
+                <el-table-column prop="created_time" label="创建时间" width="160">
+                  <template #default="scope">
+                    <span> {{formatTime(scope.row.created_time)}}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="option" label="操作" width="180">
+                  <template #default="scope">
+                    <el-button link type="primary" size="small" @click="openRenamePage(scope.row)">Rename</el-button>
+                    <el-button link type="primary" size="small" @click="openOnePage(scope.row)">Open</el-button>
+                    <el-button link type="primary" size="small" @click="deletePage(scope.row)">Delete</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <template #footer>
+                <el-button color="#ca96ff" @click="createPageVisible = true">创建页面</el-button>
+                <el-button @click="pagesVisible = false">关闭</el-button>
+              </template>
+            </el-dialog>
+            <el-dialog v-model="createPageVisible" title="新建页面" width="500px">
+              <el-form-item label="页面名称">
+                <el-input v-model="newPageName"></el-input>
+              </el-form-item>
+              <el-form-item label="页面尺寸">
+                <el-select v-model="page_size" placeholder="请选择页面尺寸">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.label"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+              <template #footer>
+                <el-button color="#ca96ff" @click="createPage">确认</el-button>
+                <el-button @click="createPageVisible = false">取消</el-button>
+              </template>
+            </el-dialog>
+            <el-dialog v-model="renamePageVisible" title="重命名页面" width="500px">
+              <el-form-item label="页面名称">
+                <el-input v-model="newPageName"></el-input>
+              </el-form-item>
+              <template #footer>
+                <el-button color="#ca96ff" @click="renamePage()">确认</el-button>
+                <el-button @click="renamePageVisible = false">取消</el-button>
+              </template>
+            </el-dialog>
+
           </el-main>
         </el-container>
       </el-container>
@@ -101,17 +161,24 @@
   </template>
   
   <script>
-  import {onMounted, ref, computed} from "vue";
+  import { onMounted, ref } from "vue";
   import axios from "axios";
   import {ElMessage} from "element-plus";
   import router from "@/router";
   import adminMenu from "./adminMenu.vue";
+  import { useStore, mapState } from 'vuex'
 
   export default {
     components: { adminMenu },
+    computed: {
+        ...mapState(['pageData']),
+        // 其他 computed properties
+    },
     setup () {
-      // const project_id = ref('');
-      const fileName = ref('');
+      const store = useStore()
+      // 项目内容
+      const project_id = Number(window.sessionStorage.getItem('curProjectId'))
+      const createVisible = ref(false)
       const lengthEnough = ref(false);
       const staff = ref([]);
       const created_time =ref('');
@@ -120,327 +187,298 @@
       // 团队内容
       const team_id = ref('');
       const team_name = window.sessionStorage.getItem('curTeamName');
-      const docs = ref([]);
-      const file = ref([]);
       const rooter = ref('');
-      const titleNew = ref('');
-      const refresh = () => {
-        location.reload();
-      }
-  
-      const getdocslist = () => {
-        lengthEnough.value = false;
-        window.sessionStorage.setItem('curFolderId', 0);
-        window.sessionStorage.setItem('curFolderName', window.sessionStorage.getItem('curProjectName'));
-        axios.post('/doc/root', {
-          "project_id": Number(window.sessionStorage.getItem('curProjectId')),
+      // 原型内容    
+      const prototype_name = ref('');
+      const prototype_rename = ref('')
+      // prototype_cur_row是选中的当前行，是原型对象
+      const prototype_cur_row = ref({})
+      // prototype_id 是创建原型成功的返回值
+      const prototype_id = ref('')
+      const prototype_list = ref([])
+      const renameVisible = ref(false)
+      // 原型中的页面内容
+      const pagesVisible = ref(false)
+      const page_list = ref([])
+      const createPageVisible = ref(false)
+      const page_cur_row = ref({})
+      const renamePageVisible = ref(false)
+      const newPageName = ref('')
+      const newPageSize = ref({})
+      const page_size = ref('')
+      const options = [
+      {
+        value: 'iphone',
+        label: 'iPhone 11 (414×896)',
+      },
+      {
+        value: 'web',
+        label: '网页 (1024×768)',
+      },
+      {
+        value: 'ipad',
+        label: 'iPad mini (768×1024)',
+      },
+      {
+        value: 'Huawei',
+        label: 'Huawei P40 (395×856)',
+      },
+      ]
+      const model_type = ref('')
+      const chooseModelVisible = ref(false)
+      const models = [
+        {
+          value: 'aca',
+          label: '学术原型模板',
+        },
+        {
+          value: 'mart',
+          label: '商城模板',
+        },
+      ]
+
+      const getPrototypeList = () => {
+        axios.post('/prototype/info', {
+          "project_id": project_id
+        }).then( (response) => {
+          if(response.data.code === 200) {
+            prototype_list.value = response.data.prototypes
+            console.log(prototype_list.value)
+            // console.log('***************************')
+            // console.log(response)
+          }
         })
-                .then((response)=>{
-                  console.log(response.data.res);
-                  if(response.data.code === 200)
-                  {
-                    console.log(response.data);
-                    docs.value = response.data.res;
-                    console.log(docs.value);
-                    console.log(docs);
-                  }
-                })
       }
       const getprojectmessage = () => {
         rooter.value = window.sessionStorage.getItem('curProjectName');
         axios.post('/project/search',{
-                  "project_id": Number(window.sessionStorage.getItem('curProjectId')),
-                }
-        )
-                .then((response)=>{
-                          console.log(response.data.project_name);
-                          console.log(response.data.project_description);
-                          console.log(response.data.created_time);
-                          created_time.value=response.data.created_time;
-                          project_description.value=response.data.project_description;
-                          project_name.value=response.data.project_name;
-                          team_id.value=response.data.team_id;
-                          console.log("tid", team_id.value);
-  
-                          console.log("tid",team_id.value)
-                          axios.post('/team/seemember',
-                                  {
-                                    "team_id":team_id.value,
-                                  }
-                          )
-                                  .then((response)=>{
-                                            console.log(response.data);
-                                            console.log(team_id);
-                                            staff.value=response.data.res;
-                                            console.log(staff.value);
-                                          }
-                                  )
-                        }
-                )
-      }
-  
-      const deleteFile = (row) => {
-        axios.post('/doc/delete',
-                {
-                  "doc_id": row.id,
-                  "folder_id": Number(window.sessionStorage.getItem('curFolderId'))
-                })
-                .then((response) => {
-                  if (response.data.code === 200) {
-                    ElMessage({
-                      message: response.data.message,
-                      type: 'sucess'
-                    });
-                    console.log(response.config.data);
-                    console.log(response.data);
-                    if (lengthEnough.value) {
-                      axios.post('/doc/folder/docs', {
-                        folder_id: Number(window.sessionStorage.getItem('curFolderId'))
-                      })
-                              .then((response2) => {
-                                if (response2.data.code === 200) {
-                                  // ElMessage ({
-                                  //   message: response2.data.message,
-                                  //   type: 'success'
-                                  // });
-                                  docs.value = response2.data.docs;
-                                }
-                                else {
-                                  ElMessage ({
-                                    message: response2.data.error,
-                                    type: 'error'
-                                  });
-                                  console.log(response2.config.data);
-                                  console.log(response2.data);
-                                }
-                              })
-                              .catch((error2) => {
-                                ElMessage ({
-                                  message: "打开文件夹失败，请重试",
-                                  type: 'error'
-                                });
-                                console.log(error2.config.data);
-                                console.log(error2.data);
-                              })
-                    }
-                    else
-                      getdocslist();
-                  }
-                  else {
-                    ElMessage({
-                      message: response.data.error,
-                      type: 'error'
-                    });
-                    console.log(response.config.data);
-                    console.log(response.data);
-                  }
-                })
-                .catch((error) => {
-                  ElMessage({
-                    message: "删除文件失败，请重试",
-                    type: 'error'
-                  });
-                  console.log(error.config.data);
-                  console.log(error.data);
-                })
-      }
-  
-      const deleteFolder = (row) => {
-        axios.post('/doc/folder/delete', {
-          folder_id: row.id
+          "project_id": Number(window.sessionStorage.getItem('curProjectId')),
         })
-                .then((response) => {
-                  if (response.data.code === 200) {
-                    // ElMessage({
-                    //   message: response.data.message,
-                    //   type: 'success'
-                    // });
-                    console.log(response.config.data);
-                    console.log(response.data);
-                    getdocslist();
-                  }
-                  else {
-                    ElMessage({
-                      message: response.data.error,
-                      type: 'error'
-                    });
-                    console.log(response.config.data);
-                    console.log(response.data);
-                  }
-                })
-                .catch((error) => {
-                  ElMessage({
-                    message: "删除文件夹失败，请重试",
-                    type: 'error'
-                  });
-                  console.log(error.config.data);
-                  console.log(error.data);
-                })
+        .then((response)=>{
+            // console.log(response.data.project_name);
+            // console.log(response.data.project_description);
+            // console.log(response.data.created_time);
+            created_time.value=response.data.created_time;
+            project_description.value=response.data.project_description;
+            project_name.value=response.data.project_name;
+            team_id.value=response.data.team_id;
+            axios.post('/team/seemember',{
+                  "team_id":team_id.value,
+                }
+            ).then((response)=>{
+                console.log(response.data);
+                console.log(team_id);
+                staff.value=response.data.res;
+              }
+            ).catch((error) => {
+              console.log(error)
+            })
+          }
+        ).catch((error) => {
+          console.log(error)
+        })
       }
-  
-      const docsdelete = (row) => {
-        if (row.is_folder === 1) {
-          console.log('删除文件夹')
-          deleteFolder(row);
-        }
-        else {
-          deleteFile(row);
-        }
+      const deletePrototype = (row) => {
+        axios.post('/prototype/delete', {
+          "prototype_id": row.prototypeId
+        }).then((response) => {
+          console.log(response.data)
+          if(response.data.code === 200) {
+            ElMessage({ message: response.data.message, type: 'success' });
+            getPrototypeList()
+          } else {
+            ElMessage({ message: response.data.error, type: 'error' });
+          }
+        }).catch((error) => {
+          ElMessage({ message: "删除原型失败，请重试",type: 'error' });
+          console.log(error)
+        })
       }
-  
-      const docsedit = (row) => {
-        if (row.is_folder === 1) {
-          // 记录文件夹名称和id，打开文件夹
-          lengthEnough.value = true;
-          window.sessionStorage.setItem('curFolderId', row.id);
-          window.sessionStorage.setItem('curFolderName', row.name);
-          fileName.value = row.name;
-          axios.post('/doc/folder/docs', {
-            folder_id: row.id
+      const openRename = (row) => {
+        renameVisible.value = true
+        prototype_cur_row.value = row
+      }
+      const renamePrototype = () => {
+        axios.post('/prototype/rename', {
+          "prototype_id": prototype_cur_row.value.prototypeId,
+          "prototypeName": prototype_rename.value
+        }).then((response) => {
+          console.log(response.data)
+          if(response.data.code === 200) {
+            ElMessage({ message: response.data.message, type: 'success' });
+            getPrototypeList()
+          } else {
+            ElMessage({ message: response.data.error, type: 'error' });
+          }
+        }).catch((error) => {
+          ElMessage({ message: "重命名失败，请重试",type: 'error' });
+          console.log(error)
+        })
+        renameVisible.value = false
+      }
+      const openPages = (row) => {   
+        // 这个cur_row需要传给对于页面的操作，判断prototype_id
+        prototype_cur_row.value = row
+        axios.post('/prototype/page/info', {
+          "prototype_id": row.prototypeId,
+        }).then((response) => {
+          console.log(response.data)
+          if(response.data.code === 200) {
+            page_list.value = response.data.pages
+            page_list.value.created_time = formatTime(page_list.value.created_time)
+            console.log(page_list.value)
+          } else {
+            ElMessage({ message: response.data.error, type: 'error' });
+          }
+        }).catch((error) => {
+          ElMessage({ message: "打开原型失败，请重试",type: 'error' });
+          console.log(error)
+        })
+        pagesVisible.value = true
+      }
+      const openOnePage = (row) => {
+        if(JSON.stringify(row.component) !== "{}") {
+          localStorage.setItem('data', row.component)
+        } 
+        console.log(row.component)
+        localStorage.setItem('curDesignPage', row.page_id)
+        console.log(row.page_id)
+        router.push('/designPage')
+      }
+      const createPage = () => {
+        if(page_size.value === 'iphone') {
+          newPageSize.value = { width: 414, height: 896 }
+        } else if( page_size.value === 'web' ) {
+          newPageSize.value = { width: 1024, height: 768 }
+        } else if( page_size.value === 'ipad' ) {
+          newPageSize.value = { width: 768, height: 1024 }
+        } else if( page_size.value === 'Huawei' ) {
+          newPageSize.value = { width: 395, height: 856 }
+        }
+        // 对于editor的处理是，检查store.state.pageData的内容，若有，则不从localStorage读取，而是初始化
+        store.commit('setPageData',newPageSize)
+        // console.log(newPageSize)
+        // console.log(store.state.pageData)
+
+        axios.post('/prototype/page/create', { 
+          "page_name": newPageName.value,
+          "prototype_id": prototype_cur_row.value.prototypeId 
+        }).then( (response) => {
+          if(response.data.code === 200) {
+            ElMessage({ message: response.data.message, type: 'success' });
+            router.push('/designPage')
+          } else {
+            ElMessage({ message: response.data.error, type: 'error' });
+          }
+        }).catch((error) => {
+          ElMessage({ message: "新建页面失败，请重试",type: 'error' });
+          console.log(error)
+        })
+        createPageVisible.value = false
+      }
+      const deletePage = (row) => {
+        axios.post('/prototype/page/delete', { 
+          "page_id": row.page_id
+        }).then( (response) => {
+          if(response.data.code === 200) {
+            ElMessage({ message: response.data.message, type: 'success' });
+            openPages(prototype_cur_row.value)
+          } else {
+            ElMessage({ message: response.data.error, type: 'error' });
+          }
+        }).catch((error) => {
+          ElMessage({ message: "删除页面失败，请重试",type: 'error' });
+          console.log(error)
+        })
+      }
+      const openRenamePage = (row) => {
+        renamePageVisible.value = true
+        page_cur_row.value = row
+      }
+      const renamePage = () => {
+        axios.post('/prototype/page/rename', {
+          "page_id": page_cur_row.value.page_id,
+          "new_name": newPageName.value
+        }).then((response) => {
+          console.log(response.data)
+          if(response.data.code === 200) {
+            ElMessage({ message: response.data.message, type: 'success' });
+            openPages(prototype_cur_row.value)
+          } else {
+            ElMessage({ message: response.data.error, type: 'error' });
+          }
+        }).catch((error) => {
+          ElMessage({ message: "重命名失败，请重试",type: 'error' });
+          console.log(error)
+        })
+        renamePageVisible.value = false
+      }
+      
+      const createPrototye = () => {
+        axios.post('/prototype/create', {
+          "project_id": project_id,
+          "team_id": team_id.value,
+          "name": prototype_name.value
+        }).then((response) =>{
+          if(response.data.code === 200) {
+            ElMessage({ message: response.data.message, type: 'success' });
+            prototype_id.value = response.data.prototype_id
+            createVisible.value = false
+            getPrototypeList()
+          }else {
+            ElMessage({ message: response.data.error, type: 'error' });
+          }
+        }).catch((error) => {
+          ElMessage({ message: "创建原型失败，请重试", type: 'error' });
+          console.log(error);
+        })
+      }
+      const useModel = () => {
+        if(prototype_name.value == '') {
+          ElMessage({ message: '请输入原型名称', type: 'error' });
+          chooseModelVisible.value = false
+          return
+        }
+        if(model_type.value == 'mart'){
+          axios.post('/prototype/model/mart', {
+            "project_id": project_id,
+            "team_id": team_id.value,
+            "name": prototype_name.value
+          }).then((response) =>{
+            if(response.data.code === 200) {
+              ElMessage({ message: response.data.message, type: 'success' });
+              prototype_id.value = response.data.prototype_id
+              chooseModelVisible.value = false
+              createVisible.value = false
+              getPrototypeList()
+            }else {
+              ElMessage({ message: response.data.error, type: 'error' });
+            }
+          }).catch((error) => {
+            ElMessage({ message: "创建原型失败，请重试", type: 'error' });
+            console.log(error);
           })
-                  .then((response) => {
-                    if (response.data.code === 200) {
-                      // ElMessage({
-                      //   message: response.data.message,
-                      //   type: 'success'
-                      // });
-                      console.log("进入文件夹")
-                      docs.value = response.data.docs;
-                      fileName.value = row.name;
-                    }
-                    else {
-                      ElMessage({
-                        message: response.data.error,
-                        type: 'error'
-                      });
-                      console.log(response.config.data);
-                      console.log(response.data);
-                    }
-                  })
-                  .catch((error) => {
-                    ElMessage({
-                      message: "打开失败，请重试",
-                      type: 'error'
-                    });
-                    console.log(error.config.data);
-                    console.log(error.data);
-                  })
-        }
-        else {
-          router.push(`/documentadmin/${row.id}`);
+        } else {
+          axios.post('/prototype/model/aca', {
+            "project_id": project_id,
+            "team_id": team_id.value,
+            "name": prototype_name.value
+          }).then((response) =>{
+            if(response.data.code === 200) {
+              ElMessage({ message: response.data.message, type: 'success' });
+              prototype_id.value = response.data.prototype_id
+              chooseModelVisible.value = false
+              createVisible.value = false
+              getPrototypeList()
+            }else {
+              ElMessage({ message: response.data.error, type: 'error' });
+            }
+          }).catch((error) => {
+            ElMessage({ message: "创建原型失败，请重试", type: 'error' });
+            console.log(error);
+          })
         }
       }
-      const plNewPjVisable = ref(false);
-  
-      const isDropdownVisible = ref(false);
-      const selectedOption = ref(null);
-      const options = computed(() => {
-        if (lengthEnough.value === true) {
-          return ["文件"];
-        }
-        else {
-          return [
-            "文件",
-            "文件夹"
-          ];
-        }
-      })
-      const placeholder = ref('新建');
-  
-      const toggleDropdown = () => {
-        isDropdownVisible.value = !isDropdownVisible.value;
-      };
-  
-      const creatType = ref('');
-  
-      const createNewDoc = () => {
-        const Type = ref('');
-        if (creatType.value) {
-          Type.value = '';
-        }
-        else {
-          Type.value = Number(window.sessionStorage.getItem('curFolderId'));
-        }
-        if (creatType.value) {
-          axios.post('/doc/folder/create',{
-            folder_name: newPjName.value,
-            project_id: Number(window.sessionStorage.getItem('curProjectId')),
-          })
-                  .then((response) => {
-                    if (response.data.code === 200) {
-                      // ElMessage({
-                      //   message: response.data.message,
-                      //   type: 'success'
-                      // });
-                      docsedit(response.data);
-                      console.log(response.data);
-                    }
-                    else {
-                      ElMessage({
-                        message: response.data.error,
-                        type: 'error'
-                      });
-                      console.log(response.config.data);
-                      console.log(response.data);
-                    }
-                  })
-                  .catch((error) => {
-                    ElMessage({
-                      message: "创建文件夹失败，请重试",
-                      type: 'error'
-                    });
-                    console.log(error.config.data);
-                    console.log(error.data);
-                  })
-        }
-        else {
-          axios.post('/doc/create', {
-            doc_name: newPjName.value,
-            project_id: Number(window.sessionStorage.getItem('curProjectId')),
-            folder: Type.value
-          })
-                  .then((response) => {
-                    if (response.data.code === 200) {
-                      // ElMessage({
-                      //   message: response.data.message,
-                      //   type: 'success'
-                      // });
-                      docsedit(response.data);
-                      console.log(response.data);
-                    }
-                    else {
-                      ElMessage({
-                        message: response.data.error,
-                        type: 'error'
-                      });
-  
-                    }
-                  })
-                  .catch((error) => {
-                    ElMessage({
-                      message: "创建文件失败，请重试",
-                      type: 'error'
-                    });
-                    console.log(error.config);
-                    console.log(error.data);
-                  })
-        }
-        plNewPjVisable.value = false;
-      }
-  
-      const newPjName = ref('');
-      const selectOption = (option) => {
-        if (isDropdownVisible.value === true) {
-          selectedOption.value = option;
-          // 打开弹窗
-          titleNew.value = option;
-          console.log("看名字", titleNew.value);
-          creatType.value = (option === "文件夹");
-          plNewPjVisable.value = true;
-          isDropdownVisible.value = false;
-        }
-      };
-  
       const formatTime = (dateTimeStr) => {
         const dateTime = new Date(dateTimeStr);
         const year = dateTime.getFullYear(); // 获取年份
@@ -452,40 +490,52 @@
       };
       
       onMounted(()=>{
-        getdocslist()
+        getPrototypeList()
         getprojectmessage()
       })
   
       return {
-        selectedOption,
+        createVisible,
+        renameVisible,
+        prototype_name,
+        prototype_list,
+        prototype_rename,
+        prototype_cur_row,
+        
+        pagesVisible,
+        page_list,
         options,
-        placeholder,
-        toggleDropdown,
-        selectOption,
-        isDropdownVisible,
-        createNewDoc,
-  
-        docs,
-        staff,
+        page_size,
+        newPageName,
+        createPageVisible,
+        page_cur_row,
+        renamePageVisible,
+        chooseModelVisible,
+        model_type,
+        models,
+
+        getPrototypeList,
+        createPrototye,
+        deletePrototype,
+        openRename,
+        renamePrototype,
+        openPages,
+        openOnePage,
+        createPage,
+        deletePage,
+        openRenamePage,
+        renamePage,
+        useModel,
+        formatTime: formatTime,
+
         team_id,
         created_time,
         project_description,
         project_name,
+        staff,
         team_name,
-        fileName,
         lengthEnough,
-        file,
-        rooter,
-        plNewPjVisable,
-        titleNew,
-        newPjName,
-  
-        refresh,
-        getdocslist,
-        docsdelete,
-        docsedit,
-
-        formatTime: formatTime
+   
       }
     }
   }
@@ -541,7 +591,7 @@
   .members {
     margin-top: 30px;
   }
-  .docslist {
+  .datalist {
     margin-left: 40px;
   }
   
