@@ -34,13 +34,6 @@ const routes = [
         },
       },
       {
-        path: '/documentadd',
-        component: () => import('@/documentadmin/DocumentAdd.vue'),
-        meta: {
-          title: '新增文档',
-        },
-      },
-      {
         path: '/documentadmin/:id',
         component: () => import('@/documentadmin/DocumentAdd.vue'),
         meta: {

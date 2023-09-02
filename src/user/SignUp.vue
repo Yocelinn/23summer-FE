@@ -6,8 +6,9 @@ import moment from 'moment'
 
 <template>
     <div class="container main-container">
+      <div class="signupcard"> 
       <el-row>
-        <el-col :span="10" :offset="7">
+        <el-col :span="15" :offset="4">
           <el-card>
             <template #header>
               <div class="header">
@@ -71,6 +72,12 @@ import moment from 'moment'
           </el-card>
         </el-col>
       </el-row>
+      </div>
+      <div class="img">
+      <transition>
+       <img v-if="showImg" src="../assets/login.png" class="home-img" alt="img loading..."> 
+      </transition>
+    </div>
     </div>
   </template>
 
@@ -80,7 +87,8 @@ export default {
 
   data() {
     return {
-      signupForm: {
+      showImg:false,
+        signupForm: {
         nickname: '',
         password: '',
         confirm_password: '',
@@ -118,7 +126,9 @@ export default {
       eventId: 0,
     };
   },
-
+  mounted(){
+    this.showImg = true;
+  },
   methods: {
     validatenickname(rule, value, callback) {
       if (value === '') {
@@ -294,17 +304,17 @@ export default {
 </script>
 
 <style scoped>
+.el-card{
+  padding: 20px;
+}
 .container {
-  width: 1536px;
-  margin: auto;
-  padding: 0 20px;
+  display: flex;
 }
 
-.main-container {
-  margin-top: 20px;
-  margin-bottom: 20px;
+.signupcard{
+  margin-top: 150px;
+  width: 60%;
 }
-
 .header {
   text-align: center;
 }
@@ -335,6 +345,16 @@ export default {
 
 .clear {
   clear: both;
+}
+
+.img{
+  width: 70%;
+  margin-left: 0px;
+}
+
+.home-img{
+  max-width: 100%; 
+  height: auto;
 }
 </style>
 

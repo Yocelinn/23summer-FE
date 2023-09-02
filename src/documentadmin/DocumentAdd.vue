@@ -9,9 +9,9 @@
           <el-header>
             <div class="headerleft" style="margin-top: 0;">
               <router-link to="/documentadmin">
-                <el-button size="mini" color="#545c64">返回管理页</el-button>
+                <el-button class="back" size="mini" color="#545c64">返回管理页</el-button>
               </router-link>
-              <el-button type="info" style="margin-top: 0;margin-left: 795px;" color="#545c64"
+              <el-button class="sharedoc" type="info" style="margin-top: 20px;margin-left: 725px;" color="#545c64"
                          @click="this.dialogFormVisible = true">分享文档</el-button>
               <el-dialog v-model="this.dialogFormVisible" title="分享文档">
                 <el-form :model="form">
@@ -35,7 +35,7 @@
                 </template>
               </el-dialog>
               <el-dropdown>
-                <el-button color="#545c64" style="margin-left: 5px">
+                <el-button color="#545c64" style="margin-left:5px;margin-top:20px">
                   导出文档<el-icon class="el-icon--right"><ArrowDown /></el-icon>
                 </el-button>
                 <template #dropdown>
@@ -277,8 +277,10 @@ export default {
         this.doc_name = response.data.doc_name;
         console.log("did",this.doc_id);
         console.log("content",this.editorContent);
-        console.log("dname",this.doc_name);
-      })
+        console.log("dname",this.doc_name) 
+      }).catch(error=>{
+        console.log(error)
+      });
       }
       else{
         axios.get('/doc/decode/'+ documentid)
@@ -297,7 +299,11 @@ export default {
             this.project_id = response1.data.doc_project;
             this.editorContent = response1.data.content;
             this.$refs.myQuillEditor.changeContent( this.editorContent );
+          }).catch(error=>{
+            console.log(error)
           });
+        }).catch(error=>{
+          console.log(error)
         });
       }
     },
@@ -310,7 +316,9 @@ export default {
         .then((response) => {
           this.editorContent = response.data.content;
         }
-        )
+        ).catch(error=>{
+          console.log(error)
+        })
       return response.data.content;
     },
     docsedit() {
@@ -329,7 +337,10 @@ export default {
             message: '保存文档成功',
             type: 'edit',
           });
-        })}
+        }).catch(error=>{
+          console.log(error)
+        })
+      }
         else{
           ElNotification({
             title: 'fail',
@@ -368,7 +379,9 @@ export default {
     }).then((response)=>{
       console.log(response.data.message);
     }
-    )
+    ).catch(error=>{
+      console.log(error)
+    })
 		this.$nextTick(() =>{
 			toRaw(this.$refs.myQuillEditor.$refs.myQuillEditor.getQuill()).setSelection(this.editorContent.length)
 		})
@@ -395,7 +408,9 @@ export default {
             type: 'create',
           });
         }
-        )}
+        ).catch(error=>{
+          console.log(error)
+        })}
       else{
         ElNotification({
             title: 'fail',
@@ -421,7 +436,9 @@ export default {
             type: 'delete',
           });
         }
-        )}
+        ).catch(error=>{
+          console.log(error)
+        })}
       else{
         ElNotification({
             title: 'fail',
@@ -446,7 +463,9 @@ export default {
           this.$router.push(`/documentadmin/${this.doc_id1}`);
           this.doc_id1='';
         }
-        )}
+        ).catch(error=>{
+          console.log(error)
+        })}
         else{
           ElNotification({
             title: 'fail',
@@ -475,6 +494,8 @@ export default {
           console.log(this.link);
           this.copyText();
           this.link='/documandadmin/token'
+         }).catch(error=>{
+          console.log(error)
          })
         ElNotification({
           title: '已复制链接',
@@ -494,6 +515,8 @@ export default {
           console.log(this.link);
           this.copyText();
           this.link='/documandadmin/token';
+         }).catch(error=>{
+          console.log(error)
          })
         ElNotification({
           title: '已复制链接',
@@ -578,11 +601,6 @@ export default {
   /*position: absolute;*/
 }
 
-.headerleft h3 {
-  margin-left: 10px;
-  color: #818080;
-  margin-top: 5px;
-}
 
 .box-card .el-button{
   margin-top:10px;
@@ -591,5 +609,18 @@ export default {
 
 .box-card .el-input{
   width: 80%;
+}
+
+.box-card2{
+  padding:20px;
+}
+
+.back{
+  margin-top: 20px;
+  margin-left: 0px;
+}
+
+.sharedoc{
+  margin-top: 20px;
 }
 </style>

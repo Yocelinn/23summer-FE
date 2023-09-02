@@ -1,5 +1,7 @@
 <template>
   <div class="container main-container">
+    <transition>
+    <div class="cardcontainer" v-if = "showLeft">
     <el-row class="card-wrapper">
       <el-col :span="10" :offset="7">
         <el-card class="card" body-style="padding: 0">
@@ -40,6 +42,13 @@
         </el-card>
       </el-col>
     </el-row>
+    </div>
+  </transition>
+    <div class="img">
+      <transition>
+       <img v-if="showImg" src="../assets/login.png" class="home-img" alt="img loading..."> 
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -53,6 +62,8 @@ export default {
 
   data() {
     return {
+      showImg:false,
+      showLeft:false,
       loginEmailForm: {
         email: '',
         password: '',
@@ -83,7 +94,10 @@ export default {
       select: true,
     };
   },
-
+  mounted(){
+    this.showLeft = true;
+    this.showImg = true;
+  },
   methods: {
     validatePhone(rule, value, callback) {
       if (value === '') {
@@ -210,21 +224,11 @@ export default {
 
 <style scoped>
 .container {
-  width: 1024px;
-  margin: auto;
-  padding: 0 20px;
-}
-
-.main-container {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.header {
-  text-align: center;
+  display: flex;
 }
 
 .header-welcome {
+  margin-top: 10px;
   color: var(--el-color-info);
 }
 
@@ -234,11 +238,11 @@ export default {
 }
 
 .card-wrapper {
-  margin-top: 40px;
+  margin-top: 200px;
   margin-bottom: 60px;
 }
 .card {
-  max-width: 1024px;
+  width: 400px;
 }
 
 .body-wrapper {
@@ -262,5 +266,27 @@ export default {
 
 .clear {
   clear: both;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1.1s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+.cardcontainer{
+  width:50%;
+}
+
+.img{
+  justify-content: center;
+  align-content: center;
+  width: 59%;
+}
+
+.home-img{                     
+  max-width: 100%; 
+  height: auto;
 }
 </style>

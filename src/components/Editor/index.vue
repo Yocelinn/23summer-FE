@@ -238,7 +238,6 @@ function onContentChange(content) {
     emit('handleRichTextContentChange', content)
 }
 
-// xxwany 新增
 function textChange(content) {
 	emit('textChange', content)
 }
@@ -295,6 +294,9 @@ onMounted(() => {
 </script>
   //通过css样式来汉化
 <style scoped>
+.ql-container{
+    min-height: 800px;
+}
 .editor,
 .ql-toolbar {
     white-space: pre-wrap !important;
@@ -305,9 +307,8 @@ onMounted(() => {
     display: none;
 }
 
-.ql-editor {
-    min-height: 200px;
-    max-height: 500px;
+:deep(.ql-editor) {
+    min-height: 740px;
     overflow: auto;
 }
 
