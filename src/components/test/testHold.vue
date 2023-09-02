@@ -1,175 +1,43 @@
-<template class="above">
-    <d-row class="body">
-        <div class="sh-card-container">
-            <d-card class="sh-card-p" @click="jumpToP">
-                <h2 class="sh-p-t">
-                    原型设计
-                </h2>
-                <div class="sh-p-l">
-                    <div class="grid-container">
-                        <d-card shadow="always" class="card" v-for="element in elements_p" :key="element.id">
-                            <h3>{{ element.title }}</h3>
-                        </d-card>
-                    </div>
-                </div>
-            </d-card>
-            <d-card class="sh-card-w" @click="jumpToW">
-                <h2 class="sh-w-t">
-                    文档编辑
-                </h2>
-                <div class="sh-w-l">
-                    <div class="grid-container">
-                        <d-card shadow="always" class="card" v-for="element in elements_w" :key="element.id">
-                            <h3>{{ element.name }}</h3>
-                        </d-card>
-                    </div>
-                </div>
-            </d-card>
+<template>
+    <div>
+        <h1>JSON to Vue Component Example</h1>
+        <div id="output">
+            <!-- 渲染的 Vue 组件将在这里显示 -->
         </div>
-    </d-row>
+    </div>
 </template>
 
 <script>
-import router from "@/router";
-import { ref } from "vue";
+
 export default {
-    name: "ShowProject",
-    setup() {
-        const elements_p = ref([]);
-        // const elements_p = [
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     // 其他元素...
-        // ]
-        const elements_w = ref([]);
-        // const elements_w = [
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     { id: 1, title: 'Card 1', content: 'Content for Card 1' },
-        //     { id: 2, title: 'Card 2', content: 'Content for Card 2' },
-        //     { id: 3, title: 'Card 3', content: 'Content for Card 3' },
-        //     // 其他元素...
-        // ]
-        const jumpToP = () => {
-            router.push('/prototype');
-        };
+    mounted() {
+// 示例 JSON 数据
+        const jsonStyles = {"container":{"name":"新建页","width":1024,"height":768,"backgroundColor":"#FFFFFF","backgroundImage":"","backgroundSize":"auto","backgroundRepeat":"repeat"},"isStore":false,"blocks":[{"top":11,"left":182,"zIndex":1,"key":"icon-shoppingCart","name":"icon-shoppingCart5","alignCenter":false,"props":{},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":50,"height":54,"focus":false},{"top":22,"left":259,"zIndex":1,"key":"input","name":"input6","alignCenter":false,"props":{"placeholder":"搜索...","type":"text"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":480,"height":32,"focus":false,"hasResize":true},{"top":22,"left":700,"zIndex":1,"key":"button","name":"button7","alignCenter":false,"props":{"text":" 搜索"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":31,"height":32,"focus":false},{"top":79,"left":47,"zIndex":1,"key":"menu","name":"menu12","alignCenter":false,"props":{"defaultActive":"1"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":104,"height":220,"focus":false},{"top":263,"left":47,"zIndex":1,"key":"menu","name":"menu13","alignCenter":false,"props":{"value1":"导航索引4","defaultActive":"0","value2":"导航索引5","value3":"导航索引6"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":104,"height":220,"focus":false},{"top":92,"left":185,"zIndex":1,"key":"card","name":"card14","alignCenter":false,"props":{"text":"开屏广告","backgroundColor":"#FFFFFF","shadow":"always"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":571,"height":376,"focus":false,"hasResize":true},{"top":89,"left":785,"zIndex":1,"key":"card","name":"card15","alignCenter":false,"props":{"text":"用户信息"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":200,"height":200,"focus":false},{"top":309,"left":785,"zIndex":1,"key":"card","name":"card16","alignCenter":false,"props":{"text":"商品分类"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":200,"height":152,"focus":false,"hasResize":true},{"top":537,"left":37,"zIndex":1,"key":"card","name":"card17","alignCenter":false,"props":{"text":"推荐商品3"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":200,"height":200,"focus":false},{"top":537,"left":275,"zIndex":1,"key":"card","name":"card18","alignCenter":false,"props":{"text":"推荐商品3"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":200,"height":200,"focus":false},{"top":537,"left":531,"zIndex":1,"key":"card","name":"card19","alignCenter":false,"props":{"text":"推荐商品3"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":200,"height":200,"focus":false},{"top":537,"left":778,"zIndex":1,"key":"card","name":"card20","alignCenter":false,"props":{"text":"推荐商品4"},"model":{},"animate":{},"events":[{"key":"redirect","label":"跳转事件","param":""},{"key":"alert","label":"alert 事件","param":""}],"width":200,"height":200,"focus":false}]}
 
-        const jumpToW = () => {
-            router.push('/documentadmin');
-        };
 
-        return {
-            elements_p,
-            elements_w,
-
-            jumpToP,
-            jumpToW
+// 将 JSON 样式对象转换为 CSS 字符串
+        function jsonToCss(styles, selector = '') {
+            let cssString = '';
+            for (const key in styles) {
+                if (styles.hasOwnProperty(key)) {
+                    if (typeof styles[key] === 'object') {
+                        // 如果属性值是对象，则递归调用 jsonToCss 处理嵌套对象
+                        const nestedSelector = selector ? `${selector} ${key}` : key;
+                        cssString += jsonToCss(styles[key], nestedSelector);
+                    } else {
+                        // 否则，将属性和值添加到 CSS 字符串中
+                        cssString += `${selector} ${key}: ${styles[key]};\n`;
+                    }
+                }
+            }
+            return cssString;
         }
-    }
-}
+
+// 使用示例
+        const cssStyles = jsonToCss(jsonStyles);
+
+// 输出生成的 CSS 样式字符串
+        console.log(cssStyles);
+    },
+};
 </script>
-
-<style scoped>
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr); /* 自动适应列宽度，每列最小300px宽 */
-    gap: 20px; /* 设置网格间距 */
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    overflow: auto;
-}
-
-.grid-container::-webkit-scrollbar {
-    width: 0; /* 隐藏Chrome和Safari的滚动条 */
-    display: none; /* 隐藏Chrome和Safari的滚动条 */
-}
-
-.card {
-    border: 1px solid #ccc;
-    padding: 20px;
-    background-color: #fff;
-    width: 100px;
-    height: 100px;
-    box-sizing: border-box;
-    text-align: center;
-    box-sizing: border-box;
-}
-
-
-.above {
-    width: calc(100vh - 20px);
-}
-
-.body {
-    height: calc(93vh - 40px);
-    /*width: calc(100vh - 20px);*/
-    /*width: 80vh;*/
-    /*overflow-y: hidden;*/
-}
-
-.sh-card-container {
-    display: flex;
-    flex-direction: column; /* This makes cards stack vertically */
-    height: 100%;
-}
-
-.sh-card-p {
-    display: flex;
-    flex: 1;
-    margin: 10px;
-    height: 45%;
-    flex-direction: column; /* This makes cards stack vertically */
-}
-
-.sh-card-w {
-    display: flex;
-    flex: 1;
-    margin: 10px;
-    height: 45%;
-    flex-direction: column; /* This makes cards stack vertically */
-}
-
-.sh-p-t {
-    height: 10%;
-    padding-left: 5px;
-    margin-bottom: 30px;
-}
-
-.sh-w-t {
-    height: 10%;
-    padding-left: 5px;
-    margin-bottom: 30px;
-}
-
-.sh-p-l {
-    height: 76%;
-}
-
-.sh-w-l {
-    height: 76%;
-}
-</style>c

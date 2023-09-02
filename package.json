@@ -26,6 +26,7 @@
     "element-plus": "^2.3.12",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.1",
+    "json2html": "^0.0.8",
     "jspdf": "^1.5.3",
     "moment": "^2.29.4",
     "path-to-regexp": "^6.2.1",

@@ -89,24 +89,30 @@
 
               <el-card class="docslist" >
                 <el-table :data="docs" stripe style="left:10px; width: 95%;" height='600' center>
-                  <el-table-column fixed prop="id" label="文档id" width="100" >
-                  </el-table-column>
-                  <el-table-column prop="name" label="文档名" width="160">
-                  </el-table-column>
-                  <el-table-column label="是否为文件夹" width="160" >
+                  <el-table-column label="类型" width="80" align="center" >
                     <template #default="scope">
-                      {{ isFolder(scope.row) }}
+                      <div @click="docsedit(scope.row)">
+                        <el-icon v-if="isFolder(scope.row)"><Files /></el-icon>
+                        <el-icon v-else><Folder /></el-icon>
+                      </div>
+                    </template>
+                  </el-table-column>
+<!--                  <el-table-column fixed prop="id" label="文档id" width="100" >-->
+<!--                  </el-table-column>-->
+                  <el-table-column label="文档名" width="160">
+                    <template #default="scope">
+                      {{ scope.row.name }}
+                      <el-icon v-if="!scope.row.is_folder" size="18" style="margin-left: 7px; margin-top: 7px" @click="openHistory(scope.row)"><Clock /></el-icon>
                     </template>
                   </el-table-column>
                   <el-table-column prop="created_time" label="创建时间" width="220">
                   </el-table-column>
                   <el-table-column prop="update_time" label="更新时间" width="220">
                   </el-table-column>
-                  <el-table-column prop="option" label="选择" width="180">
+                  <el-table-column prop="option" label="删除" width="180">
                     <template #default="scope">
-                      <el-button link type="primary" size="small" @click="docsedit(scope.row)">Edit</el-button>
-                      <el-button link type="primary" size="small" @click="docsdelete(scope.row)">Delete</el-button>
-                      <el-icon v-if="!scope.row.is_folder" size="18" style="margin-left: 7px; margin-top: 7px" @click="openHistory(scope.row)"><Clock /></el-icon>
+<!--                      <el-button link type="primary" size="small" @click="docsedit(scope.row)">Edit</el-button>-->
+                      <el-button plain type="danger" size="small" @click="docsdelete(scope.row)">删除</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -286,7 +292,7 @@ export default {
     }
 
     const isFolder = (row) => {
-      return (row.is_folder === 1) ? '是' : '否';
+      return (row.is_folder === 1);
     }
 
     const getdocslist = () => {
