@@ -122,11 +122,11 @@
               <div class="chat-window-text">
                   <div class="toolbar">
                           <el-upload class="upload-demo" ref="uploadRef"  accept="image/png, image/jpeg,image.jpg" :auto-upload="false"
-                          :on-change="sendImg" show-file-list="false">
+                          :on-change="sendImg" :show-file-list="false">
                                   <el-icon class="tool-icon"><Picture /></el-icon>
                           </el-upload>
                           <el-upload class="upload-demo" ref="uploadRef" accept=".doc,.docx,.pdf,.zip,.pptx" :auto-upload="false"
-                           :on-change="sendFile" show-file-list="false">
+                           :on-change="sendFile" :show-file-list="false">
                               <template #trigger>
                                   <el-icon class="tool-icon" ><FolderOpened /></el-icon>
                               </template>

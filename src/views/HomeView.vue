@@ -3,7 +3,7 @@
     <div class="home-content">
       <transition name="fade" appear>
         <div class="home-left" v-if="showLeft">
-          <span class="title">管理平台</span>
+          <span class="title">无域管理平台</span>
           <div class="button-container">
             <button class="open" @click="goUse()">开始使用</button>
           </div>

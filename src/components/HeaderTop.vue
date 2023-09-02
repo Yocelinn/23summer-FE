@@ -4,7 +4,9 @@
             <img src="../assets/logo.jpg" alt="logo" class="logo">
         </div>
         <div class="right-container">
-            
+            <div class="item chat" @click="goGuide">
+                <el-icon size="20" ><Guide /></el-icon>
+            </div>
             <div class="item chat" @click="goPerson">
                 <el-icon size="20" ><House /></el-icon>
             </div>
@@ -116,6 +118,9 @@ export default {
             this.userNickName = window.sessionStorage.getItem('userNickName')
             this.curTeamName = window.sessionStorage.getItem('curTeamName')
         },
+        goGuide(){
+            router.push('/guide')
+        },
         goPerson() {
             router.push('/person')
         },
@@ -147,6 +152,10 @@ export default {
     align-items: center;
     height: 50px;
     border-bottom: 1px solid rgb(200, 199, 199);
+     position: sticky;
+  top: 0;
+  background-color: white; /* 可以添加背景颜色，使其更明显 */
+  z-index: 100; 
 }
 .left-container {
     margin-left: 20px;
