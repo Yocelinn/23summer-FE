@@ -581,7 +581,7 @@ export default {
           this.link='http://81.70.184.77/documentadd/'+ response.data.doc_token;
           console.log(this.link);
           this.copyText();
-          this.link='/documandadmin/token'
+          this.link='http://81.70.184.77/documentadd/token'
          }).catch(error=>{
           console.log(error)
          })
@@ -602,7 +602,7 @@ export default {
           this.link='http://81.70.184.77/documentadd/'+ response.data.doc_token;
           console.log(this.link);
           this.copyText();
-          this.link='/documandadmin/token';
+          this.link='http://81.70.184.77/documentadd/token';
          }).catch(error=>{
           console.log(error)
          })

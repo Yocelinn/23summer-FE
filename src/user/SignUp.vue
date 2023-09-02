@@ -13,7 +13,7 @@ import moment from 'moment'
             <template #header>
               <div class="header">
                 <div class="header-welcome">
-                  欢迎来到绿色心情！
+                  欢迎来到无域！
                 </div>
                 <div class="header-title">
                   <h1>注册新用户</h1>
