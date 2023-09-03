@@ -90,10 +90,11 @@ const routes = [
       title: '预览原型',
     }
   },
+
   {
-    path: '/homeshow',
-    name:'homeshow',
-    component: () => import('@/views/HomeShow.vue'),
+    path: '/guide',
+    name:'guide',
+    component: () => import('@/views/GuideView.vue'),
   
   },
 ]
