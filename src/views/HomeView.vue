@@ -3,7 +3,16 @@
     <div class="home-content">
       <transition name="fade" appear>
         <div class="home-left" v-if="showLeft">
+          
           <span class="title">无域管理平台</span>
+          <div class="wave-text-container">
+          <div class="descrip">
+            <span class="wave">简洁：提供高效的团队与项目管理，助力事务协作</span><br>
+            <span class="wave">互通：提供完善的团队聊天和群聊，保障事务沟通</span><br>
+            <span class="wave">设计：提供多功能多页面原型设计，畅快想象实现</span><br>
+            <span class="wave">编辑：提供模版化自由的文本编辑，让所见即所得</span><br>
+          </div>
+          </div>
           <div class="button-container">
             <button class="open" @click="goUse()">开始使用</button>
           </div>
@@ -72,6 +81,46 @@ export default {
   font-size: 50px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin-top: 20%;
+}
+.descrip{
+  margin-top:20px;
+  font-size: 20px;;
+}
+
+
+/* 添加逐字逐个弹入的 CSS */
+.wave {
+  display: inline-block;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+/* 使用 nth-child 来分别设置不同的延迟时间 */
+.wave:nth-child(1) {
+  animation-delay: 0.3s; /* 第一个文本延迟 0.5s */
+}
+
+.wave:nth-child(2) {
+  animation-delay: 0.6s; /* 第二个文本延迟 1s */
+}
+
+.wave:nth-child(3) {
+  animation-delay: 0.7s; /* 第三个文本延迟 1.5s */
+}
+
+.wave:nth-child(4) {
+  animation-delay: 1s; /* 第四个文本延迟 2s */
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .img-content {
   width: 50%;
