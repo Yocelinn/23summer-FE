@@ -12,10 +12,10 @@
                 <div class="group-member-avatar" v-for="member in friend_list" :key="member">
                     
                     <!-- <span>我是群主</span> -->
-                        <n-badge  v-if="member.perm===1" value="群主" color=" #A1EBDE " >
+                        <n-badge  v-if="member.perm===2" value="群主" color=" #A1EBDE " >
                             <n-avatar  round :size="40">{{ member.nickname.slice(-2) }}</n-avatar>
                      </n-badge>
-                     <n-badge  v-else-if="member.perm===2" value="管理员" color=" #A1EBDE">
+                     <n-badge  v-else-if="member.perm===1" value="管理员" color=" #A1EBDE">
                             <n-avatar  round :size="40">{{ member.nickname.slice(-2) }}</n-avatar>
                      </n-badge>
                      <n-badge  v-else >

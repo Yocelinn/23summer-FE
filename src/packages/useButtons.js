@@ -158,9 +158,9 @@ export function useButtons(data, commands, previewRef, editorRef, clearBlockFocu
               console.log(link_token.value)
               localStorage.setItem('preview',true); 
               const shareUrl = location.href + '/prototype_preview/token=' + link_token.value;
-              navigator.clipboard.writeText(shareUrl).then(() => {});
+             
               ElMessageBox({
-                title: '分享链接',
+                title: '分享链接(请手动复制)',
                 message: shareUrl,
                 showClose: false,
                 confirmButtonText: '我知道了',
